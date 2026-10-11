@@ -67,9 +67,9 @@ Everything you are meant to change is in `foxone-config.css`. It is variables on
 | `--ut-puzzle-color` | Colour of the extensions (puzzle) button icon. |
 | `--ut-bookmarks-bg`, `--ut-bookmarks-height`, `--ut-bookmarks-inflow` | The bookmarks bar: fill while floating, height, and floating (`0`) or in-flow (`1`). |
 | `--ut-drag-left` | Window-drag area left of the sidebar button when not maximized. `0` removes it. |
-| `--ut-charms-on-hover`, `--ut-charm-delay` | Whether the URL-bar icons also appear on hover, and after what delay. Default: only when the bar is focused. |
-| `--ut-hide-disabled-nav` | Hide a Back/Forward button that has nowhere to go (`0` off, `1` Forward only, `2` both). |
-| `--ut-nav-delay` | Delay before hovering reveals the back/forward/reload buttons. |
+| `--ut-hide-trust-label` | Hide the text next to the site-info icon ("Not secure"). Default: hidden. |
+| `--ut-hide-pip-button` | Hide the picture-in-picture button in the URL bar (the video has its own). Default: hidden. |
+| `--ut-hide-disabled-nav` | Hide the Forward button alone while it has nowhere to go (`0` off, `1` on). FoxOne's own `--uc-hide-disabled-nav-buttons` hides Back as well. |
 | `--ut-pin-downloads` | Pin the Downloads button at the right edge (`1`) or leave it in the tab row (`0`). |
 
 Further down the file are FoxOne's own settings with the values chosen here (URL bar width, tab widths, and so on). FoxOne's [customisation guide](https://firnschnee.github.io/FoxOne/customisation.html) documents those.
@@ -96,7 +96,7 @@ Windows scale settings are very welcome, see [#23](https://github.com/snkiz/FoxM
 
 ## Credits
 
-- [FoxOne](https://github.com/Firnschnee/FoxOne) by Firnschnee (MIT). `userChrome-foxone.css` is FoxOne 3.8.7 exactly as released; `userContent.css` is FoxOne's with a few edits. FoxOne in turn credits [LittleFox](https://github.com/biglavis/LittleFox) and [Cascade](https://github.com/andreasgrafen/cascade).
+- [FoxOne](https://github.com/Firnschnee/FoxOne) by Firnschnee (MIT). `userChrome-foxone.css` is FoxOne 3.9.1 exactly as released; `userContent.css` is FoxOne's with a few edits. FoxOne in turn credits [LittleFox](https://github.com/biglavis/LittleFox) and [Cascade](https://github.com/andreasgrafen/cascade).
 - The Mica rules in `userChrome-foxone-overrides.css` are derived from [Wintego's Firefox-transparent-theme](https://github.com/Wintego/Firefox-transparent-theme).
 - The look was matched by eye against Windows 11 Explorer and the MicaBar theme of Windhawk's [Windows 11 File Explorer Styler](https://windhawk.net/mods/windows-11-file-explorer-styler) mod (Windhawk is by [m417z](https://github.com/m417z)). No code from that project was used.
 - Tab style: written by snkiz, with help from Claude (Anthropic).

@@ -19,10 +19,13 @@ where they disagree.
 
 ## Next time
 
-- **Pull the next FoxOne release.** It should include two of ours: the find-bar escape (FoxOne #56,
-  closes our #10) and the row height as `--uc-row-height`, which now follows Firefox's density
-  (FoxOne #57, commit 644ab85; closes our #6). Then check section 4 of the overrides (bar height):
-  some of it may no longer be needed. Firn notes vertical tabs change `--tabstrip-min-height`.
+- **Check section 4 of the overrides (bar height).** FoxOne 3.9.1 has `--uc-row-height` (FoxOne #57), which follows
+  Firefox's density, so some of what section 4 pins may no longer be needed. Firn notes vertical tabs change
+  `--tabstrip-min-height`.
+- **userContent.css is still FoxOne 3.8.7's** (with our edits). Compare it with 3.9.1's and carry over anything new.
+- **Click-to-cancel on the nav reveal (optional, FoxMica-only).** Clicking into the URL text cancels a pending nav
+  reveal. We had it as an experiment on the old 59 branches and liked it; Firn took the star hot-area part but not
+  this. If wanted, write it fresh as an override against 3.9.1's selectors, not a paste of the old one.
 
 ## First bug-fix pass
 
@@ -31,10 +34,6 @@ where they disagree.
   window-grab padding). Did we cause it?
 - 2. Sidebar spacer: [#3] stop bookmarks/tools covering the minimized sidebar button.
   Maybe hide it when the sidebar is open.
-- 3. Charm delays: [#1] the permissions icon left of the URL bar has no delay. Check all
-  optional URL-bar icons (PWAs for Firefox uses one).
-- 11. Find-bar diacritics [#10]: change `content: "aá"` to `content: "a\E1"` (pure ASCII).
-  Note: this is in FoxOne's file, so it's an override or an upstream note, not an edit.
 - 14. Tab loading highlight is white [#12] (keep it or match the palette?).
 - 28. [#13] Nova on: one animated built-in theme left the tab bar transparent. Fine with
   Nova off. Only one theme seen so far; check a few others before chasing it.
@@ -60,7 +59,8 @@ where they disagree.
 - **Submit to the FirefoxCSS Store** [#30] (https://firefoxcss-store.github.io/submit/). They take a GitHub
   issue (their template): repo URL, short description, screenshots, tags. Their bot opens a PR and
   maintainers review it. Before submitting: more screenshots (more views, not just the main window)
-  and a docs pass. Check their issue template for image size and allowed tags.
+  and a docs pass. Check their issue template for image size and allowed tags. Firn (FoxOne) says it's a form and
+  that most of FoxOne's traffic comes from the store, and he approved the idea on #30, so this is worth doing well.
 - 8. [#24] Stock-plus mode: turn off the one-line bar but keep the other goodies. Needs
   every feature switchable, and testing each feature off.
 - 12. [#22] Backport to ESR 153. Check the Nova pref name there. Test Nova on and off.
@@ -91,8 +91,9 @@ where they disagree.
 
 ## Upstream notes (only once things are stable, one small issue per idea, no surprise PRs)
 
-- FoxOne: a variable for the hard-coded 44px row [#6, label Drafts]; nav hover delay [#17]; hiding disabled
-  Back/Forward [#18]; one shared config for chrome and content [#16, offered on FoxOne #50]; the Firefox View fix.
+- FoxOne: a variable for the hard-coded 44px row [#6, label Drafts]; (landed in 3.9.1: nav hover delay [#17],
+  hiding disabled Back/Forward [#18], the star and shield reveals [#1]); one shared config for chrome and
+  content [#16, offered on FoxOne #50]; the Firefox View fix.
 - Wintego: FF157+ dropdown fix (also paint `.urlbarView-background`); find-bar fix;
   the double-encoded text in his file; license-holder question.
   Wintego has no issues open and asks for pull requests instead, so these go to him as PRs.
@@ -102,8 +103,15 @@ where they disagree.
 - README "tested on" line: says Nightly 159, Nova on and off.
 - Released 0.5 "Warts and all" (2026-10-07): FoxOne 3.8.7 [#14], [focused] fix [#15], new screenshot,
   dev files left out of the zip. Next releases: 0.5.1, 0.5.2 ... until 1.0.
-- Nav-button hover delay, --ut-nav-delay [#17, closed]. Upstream issue drafted.
-- Hide disabled Back/Forward, --ut-hide-disabled-nav [#18, closed]. Upstream issue drafted.
+- Nav-button hover delay, --ut-nav-delay [#17, closed]. Landed upstream as --uc-autohide-nav-delay (FoxOne 3.9.1, #58).
+- Hide disabled Back/Forward, --ut-hide-disabled-nav [#18, closed]. Landed upstream as --uc-hide-disabled-nav-buttons
+  (FoxOne 3.9.1, #54, #58). Only the Forward-alone option stays in our overrides.
+- Charm and permission-icon delays [#1]: the URL-bar icons reveal when you rest on the bookmark star, the permission
+  icons when you rest on the site-info icon or shield (FoxOne 3.9.1, #59; --uc-urlbar-icons-reveal). Our 7b/7c
+  overrides and --ut-charms-on-hover, --ut-charm-delay, --ut-nav-delay are gone. Added --ut-hide-trust-label and
+  --ut-hide-pip-button. Find-bar diacritics [#10] and the row-height variable [#6] also landed (3.8.8).
+- Pulled FoxOne 3.9.1 (2026-10-11, branch 3.9.1-upstream-pull). Widths tuned: URL bar 30vw/224px collapsed,
+  40vw/548px expanded; active tab 108-192px, inactive 48-66px, tab minimum 48px.
 - One shared config file for chrome and content [#16, closed]. Offered on FoxOne #50 (closed there).
   Firn finds controlling the whole theme from 5 colours ambitious. Our answer is #8 (palette readability).
 - 26. Tab fill/corners with Nova on [#11, closed]: fixed 2026-10-04 (background-clip on the

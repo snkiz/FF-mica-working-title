@@ -346,7 +346,7 @@ notification-message {
 
 
 /* ==========================================================================
-   7. WINDOW GRAB AREA, URL-BAR ICONS, PUZZLE CLEARANCE
+   7. WINDOW GRAB AREA, URL-BAR CLUTTER, PUZZLE CLEARANCE
    ========================================================================== */
 
 /* 7a. Grab area. The sidebar button sat flush in the window corner when not
@@ -358,64 +358,20 @@ notification-message {
   }
 }
 
-/* 7b. URL-bar icons (the "page actions" beside the star). FoxOne reveals them
-   on hover AND focus. Active permission / sharing icons are a security
-   indicator and stay visible regardless (the identity rule excludes them).
-   Focus (clicking into the bar) still reveals everything at once. */
-@container style(--ut-charms-on-hover: 0) {
-  #urlbar:hover:not([focused]) :is(
-    #reader-mode-button,
-    #taskbar-tabs-button,
-    #translations-button,
-    .urlbar-addon-page-action
-  ),
-  #urlbar:hover:not([focused]) #identity-permission-box:not([hasPermissions]):not([hasSharingIcon]) {
-    max-width: 0 !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
+/* 7b. Site-info label (Nova). The trust icon in front of the URL bar carries a text label, "Not secure" on
+   plain http pages. The struck icon says the same, and the label makes the collapsed bar wrap onto two lines
+   on hover. The container keeps its own aria-label, so this is visual only. FoxMica-only. */
+@container style(--ut-hide-trust-label: 1) {
+  #urlbar #trust-icon-container #trust-label {
+    display: none !important;
   }
 }
 
-/* Hover reveal, but late. Entering the hover state picks up its own
-   transition-delay; leaving it uses the base rule's (none). */
-@container style(--ut-charms-on-hover: 1) {
-  #urlbar:hover:not([focused]) :is(
-    #reader-mode-button,
-    #taskbar-tabs-button,
-    #translations-button,
-    .urlbar-addon-page-action,
-    #identity-permission-box
-  ) {
-    transition-delay: var(--ut-charm-delay, 600ms) !important;
-  }
-}
-
-/* 7c. Nav buttons: delay the hover reveal. Same trick as 7b: the hover state
-   carries its own transition-delay, so they slide in late and leave promptly.
-   Mode 1 also reveals on focus, which stays immediate. */
-@container style(--uc-autohide-nav-buttons: 1) {
-  #nav-bar:hover:not(:focus-within) :is(
-    #back-button,
-    #forward-button,
-    #reload-button,
-    #stop-reload-button,
-    #ipprotection-button
-  ) {
-    transition-delay: var(--ut-nav-delay, 600ms) !important;
-  }
-}
-
-@container style(--uc-autohide-nav-buttons: 2) {
-  #nav-bar:hover :is(
-    #back-button,
-    #forward-button,
-    #reload-button,
-    #stop-reload-button,
-    #ipprotection-button
-  ) {
-    transition-delay: var(--ut-nav-delay, 600ms) !important;
+/* 7c. Picture-in-picture button. FoxOne leaves it in the URL bar for as long as a video plays, and the video
+   has the same button on it. FoxMica-only. */
+@container style(--ut-hide-pip-button: 1) {
+  #urlbar #picture-in-picture-button {
+    display: none !important;
   }
 }
 
@@ -445,30 +401,16 @@ notification-message {
 
 
 /* ==========================================================================
-   8. DISABLED BACK / FORWARD BUTTONS
-   FoxOne's auto-hide reveals the nav buttons with `width: revert` and keeps
-   the disabled ones "visible but dimmed, like native", which also overrides
-   any collapse Firefox does itself. This puts the old behaviour back: a
-   button with no history to go to stays collapsed, and slides in when it has
-   somewhere to go. The #nav-bar id is there to outrank FoxOne's reveal rules.
-   Not applied in Customize mode, where every button must stay reachable.
+   8. DISABLED FORWARD BUTTON ONLY
+   FoxOne's --uc-hide-disabled-nav-buttons collapses a disabled Back and
+   Forward together. This is the extra option it doesn't have: collapse the
+   Forward button alone (the old Firefox behaviour) and keep Back in place.
+   The #nav-bar id is there to outrank FoxOne's reveal rules. Not applied in
+   Customize mode, where every button must stay reachable.
    ========================================================================== */
 
-@container style(--ut-hide-disabled-nav: 1), style(--ut-hide-disabled-nav: 2) {
+@container style(--ut-hide-disabled-nav: 1) {
   :root:not([customizing]) #nav-bar #forward-button[disabled] {
-    opacity: 0 !important;
-    width: 0 !important;
-    min-width: 0 !important;
-    max-width: 0 !important;
-    padding: 0 !important;
-    margin-inline: 0 !important;
-    overflow: hidden !important;
-    pointer-events: none !important;
-  }
-}
-
-@container style(--ut-hide-disabled-nav: 2) {
-  :root:not([customizing]) #nav-bar #back-button[disabled] {
     opacity: 0 !important;
     width: 0 !important;
     min-width: 0 !important;
