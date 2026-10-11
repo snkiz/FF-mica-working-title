@@ -23,9 +23,24 @@ where they disagree.
   Firefox's density, so some of what section 4 pins may no longer be needed. Firn notes vertical tabs change
   `--tabstrip-min-height`.
 - **userContent.css is still FoxOne 3.8.7's** (with our edits). Compare it with 3.9.1's and carry over anything new.
-- **Click-to-cancel on the nav reveal (optional, FoxMica-only).** Clicking into the URL text cancels a pending nav
-  reveal. We had it as an experiment on the old 59 branches and liked it; Firn took the star hot-area part but not
-  this. If wanted, write it fresh as an override against 3.9.1's selectors, not a paste of the old one.
+- **Customize mode: pinned extension icons overrun the hamburger and puzzle** (low; fine in normal use). Customize
+  mode shows every item at once, and FoxOne drops the cluster's clearance margin while the icons are collapsed
+  (it restates `margin-inline-end: 0`), so the icons slide under the fixed hamburger and puzzle. The icons are in the
+  same space as the two fixed buttons. Idea, untested: one `:root[customizing]` rule that puts the clearance back.
+- **Customize-mode quirks that are stock Firefox/FoxOne, not ours:** the new-tab button pins itself to the end of the
+  tab bar, and a large gap shows on the left. Note them in the README so they aren't reported as bugs.
+- **README update: hover-reveal is by design.** The pinned-extension hover reveal (FoxOne's --uc-hide-extension-icons,
+  default 1) is left on and not offered as a FoxMica setting. With it off the icons share the corner with the fixed
+  hamburger and puzzle, and the overlap is a misclick risk (see the Customize-mode item above). Say that plainly.
+  Cute tip to go with it: pinned extensions land mid-bar and behave normally, but if you move one next to the
+  hamburger it is inside the hover zone, so the burger eats it until you hover.
+- **README update: tips for the pinned-extension layout.** Nothing stops you putting things in the bookmarks bar.
+  Pinned icons land in the default place (is that a bug?). The hamburger takes the items you put next to it in the
+  stack, and the hover reveal pushes the tabs and buttons over, which is intended. The right side can hold one or
+  two toolbar buttons, but only if you aren't using many pinned extensions (placement). Spacing is finicky; what is
+  tuned: `--uc-hamburger-width` (30px) sets how far out the extensions flyout sits, and 28px fits the puzzle;
+  `--uc-extensions-button-width` (32px) is the puzzle's spacing, and 28px will not fit it; `--uc-toolbar-button-width`
+  and `--uc-newtab-width` (26px) are the generic icon spacing (pinned extensions, Customize tools).
 
 ## First bug-fix pass
 
@@ -110,6 +125,8 @@ where they disagree.
   icons when you rest on the site-info icon or shield (FoxOne 3.9.1, #59; --uc-urlbar-icons-reveal). Our 7b/7c
   overrides and --ut-charms-on-hover, --ut-charm-delay, --ut-nav-delay are gone. Added --ut-hide-trust-label and
   --ut-hide-pip-button. Find-bar diacritics [#10] and the row-height variable [#6] also landed (3.8.8).
+- Click into the URL text cancels the nav reveal (override 7e, mode 2 only), rewritten against 3.9.1's selectors.
+  Firn's hot-area change only covers the star.
 - Pulled FoxOne 3.9.1 (2026-10-11, branch 3.9.1-upstream-pull). Widths tuned: URL bar 30vw/224px collapsed,
   40vw/548px expanded; active tab 108-192px, inactive 48-66px, tab minimum 48px.
 - One shared config file for chrome and content [#16, closed]. Offered on FoxOne #50 (closed there).

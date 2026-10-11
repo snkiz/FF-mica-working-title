@@ -346,7 +346,7 @@ notification-message {
 
 
 /* ==========================================================================
-   7. WINDOW GRAB AREA, URL-BAR CLUTTER, PUZZLE CLEARANCE
+   7. WINDOW GRAB AREA, URL-BAR CLUTTER, NAV REVEAL, PUZZLE CLEARANCE
    ========================================================================== */
 
 /* 7a. Grab area. The sidebar button sat flush in the window corner when not
@@ -399,6 +399,29 @@ notification-message {
   }
 }
 
+
+/* 7e. Clicking into the URL text cancels the nav reveal (FoxMica-only; --uc-autohide-nav-buttons: 2).
+   FoxOne reveals the nav buttons while the pointer is anywhere on the bar, so a click into the text, where
+   you are about to type, meets buttons sliding in on the left and pushing the text over. Once the URL bar
+   is focused the buttons collapse, or never open if the reveal delay hasn't elapsed yet, and the bar takes
+   the room. Clicking out (or Esc) hands the hover reveal back. Mode 1 reveals on focus by design, so it is
+   left alone. Same collapse as FoxOne's own star rule: width and min-width keep the reveal's revert and
+   follow max-width down. No delay on this one, the collapse should answer the click. #nav-bar and #urlbar
+   in the selector put it above the hover reveal; it ties FoxOne's star rule and wins on source order. */
+@container style(--uc-autohide-nav-buttons: 2) {
+  :where(:root:not([customizing])) #nav-bar:has(#urlbar[focused]) :is(
+    #back-button,
+    #forward-button,
+    #reload-button,
+    #stop-reload-button,
+    #ipprotection-button
+  ) {
+    opacity: 0 !important;
+    max-width: 0 !important;
+    padding: 0 !important;
+    transition: all 0.2s ease !important;
+  }
+}
 
 /* ==========================================================================
    8. DISABLED FORWARD BUTTON ONLY
