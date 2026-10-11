@@ -54,7 +54,7 @@
      height you picked as your tightest; stock compact would be about 34px.
      Set all three equal to ignore density altogether. */
   --ut-bar-height-compact: 28px;
-  --ut-bar-height-normal: 40px;
+  --ut-bar-height-normal: 36px;
   --ut-bar-height-touch: 44px;
 
   /* Space left above and below the tabs and the URL field inside the bar. This
@@ -149,21 +149,23 @@
         (everything else keeps FoxOne's default from the FoxOne file)
      ======================================================================== */
   --uc-status-panel-spacing: 6px;
-  --uc-urlbar-min-width: min(30vw, 224px);   /* collapsed width; was min(25vw, 192px) */
-  --uc-urlbar-max-width: min(40vw, 548px);   /* expanded width; FoxOne's is min(50vw, 800px) */
-  --uc-active-tab-width: clamp(108px, 40vw, 192px);
-  --uc-inactive-tab-width: clamp(48px, 12vw, 66px);
-  --uc-tab-min-width: 48px;
+  --uc-urlbar-min-width: min(22vw, 236px);   /* collapsed width; was min(25vw, 192px) */
+  --uc-urlbar-max-width: min(44vw, 510px);   /* expanded width; FoxOne's is min(50vw, 800px) */
+  --uc-active-tab-width: clamp(108px, 40vw, 184px);
+  --uc-inactive-tab-width: clamp(48px, 15vw, 78px);
+  --uc-tab-min-width: 18px;
   --uc-show-context-splitview: 1;
-  --uc-window-buttons-width: 64px;
-  --uc-hamburger-width: 32px;
-  --uc-extensions-button-width: 32px;
-  --uc-toolbar-button-width: 32px;
-  --uc-newtab-width: 32px;
-  --uc-drag-space: 18px;
+  /*--uc-window-buttons-width: 64px;   /*Doc's say this doesn't do anything on windows. Cut it?*/
+  --uc-hamburger-width: 30px;   /*Changes how far out the extensions flyout is. 28px fits the puzzle*/
+  --uc-extensions-button-width: 32px;   /*Puzzle spacing. 28px will not fit the puzzle if you change this*/
+  --uc-toolbar-button-width: 26px;   /*Generic toolbar icon spacing (pinned extensions, customize tools)*/
+  --uc-newtab-width: 26px;
+  --uc-drag-space: 20px;   /*Note, might as well leave this out?*/
   --uc-show-loading-progress: 1;
-  --uc-autohide-nav-buttons: 1;
+  --uc-autohide-nav-buttons: 2;   /*Nav hover-reveal (0 = always show, 1 = reveal with hover and focus, 2 = reveal with hover) */ /*Note, I don't see a difference?*/
+  --uc-autohide-nav-delay: 450ms;   /* Nav reveal delay (with auto-hide 1 or 2), so a quick pass over the bar doesn't shift the URL bar. (0ms = instant) */
   --uc-hide-disabled-nav-buttons: 1;   /* hide Back and Forward while they have nowhere to go */
+  --uc-hide-extension-icons: 1; /* Pinned toolbar extensions – hover reveal on hamburger. (1 = hide + hover-reveal, 0 = always show) */ /*Note, README, PRO TIP: Nothing is stoping you from putting things in the Bookmark Bar. Pinned icons go into the default place, bug? The haburger grabs them if you put them next to them in the stack. The right side can hold 1-2 toolbar buttons. Only if you aren't using to many pinned extensions (placemnet). The hover pushes the tabs, buttons, good. This is finicky, I did what I could on spacing*/
 }
 
 /* Density switch. Firefox puts uidensity="compact" or "touch" on the root
