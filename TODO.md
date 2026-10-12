@@ -22,7 +22,7 @@ where they disagree.
 - **Check section 4 of the overrides (bar height).** FoxOne 3.9.1 has `--uc-row-height` (FoxOne #57), which follows
   Firefox's density, so some of what section 4 pins may no longer be needed. Firn notes vertical tabs change (#31)
   `--tabstrip-min-height`.
-- **userContent.css is still FoxOne 3.8.7's** (with our edits). Compare it with 3.9.1's and carry over anything new.
+- **userContent.css is still FoxOne 3.8.7's** (with our edits). Compare it with 3.9.1's and carry over anything new. (#33)
 - **Customize mode: pinned extension icons overrun the hamburger and puzzle** (low; fine in normal use). Customize
   mode shows every item at once, and FoxOne drops the cluster's clearance margin while the icons are collapsed
   (it restates `margin-inline-end: 0`), so the icons slide under the fixed hamburger and puzzle. The icons are in the
@@ -54,7 +54,7 @@ where they disagree.
   Nova off. Only one theme seen so far; check a few others before chasing it.
 - 31. [#20] Fix the comment on the static bookmarks bar in foxone-config.css: it says the static bar uses the
   translucent layer, but so far only Customize mode does. (Static on the layer is still the plan.)
-- 32. [#19] Try pinning the overflow (>>) button the way --ut-pin-downloads pins Downloads. Might not work out.
+- 32. [#19] Try pinning the overflow (>>) button the way --ut-pin-downloads pins Downloads. Might not work out. Decided, no.
 - 33. Tab-bar right stop: FoxOne's max-width on #tabbrowser-tabs reserves hamburger + one button + drag space +
   new-tab (about line 1037). We shrank those four in foxone-config.css (lines 170-174). Last time I looked,
   tabs could overrun the buttons with the flexible spacer taken out. Test: remove the spacer, fill the bar

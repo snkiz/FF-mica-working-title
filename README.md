@@ -13,6 +13,12 @@ A Firefox theme for Windows 11: the real Mica backdrop behind a one-line browser
 - **Two layers, like Explorer.** The top row is the plain Mica "strip". The selected tab, the bookmarks bar and the sidebar sit on a lighter "layer" above it.
 - **Explorer-style tabs:** rounded top corners, flat inactive tabs, a filled selected tab, thin separators.
 - **Bar height follows Firefox's UI density** (compact, normal, touch).
+- **Quiet nav buttons.** Back, Forward and Reload reveal when you hover the bar, after a short delay so a quick pass
+  doesn't shift the URL field. Click into the URL text and they give way again.
+- **Quiet URL-bar icons.** They hide on the edges: permissions under the shield on the left, content actions (Reader,
+  translate and so on) under the star on the right. The URL field grows from the middle when you hover either.
+- **Pinned extensions tuck behind the hamburger** and reveal when you hover it. This has no off switch, by design
+  (see Limitations below).
 - **One settings file**, `foxone-config.css`, shared by the browser UI and the about: pages and new tab, so the two can't drift apart.
 - **Nothing forced.** No `user.js`, no preference changes, no toolbar layout changes. You set the prefs below yourself.
 
@@ -70,6 +76,7 @@ Everything you are meant to change is in `foxone-config.css`. It is variables on
 | `--ut-hide-trust-label` | Hide the text next to the site-info icon ("Not secure"). Default: hidden. |
 | `--ut-hide-pip-button` | Hide the picture-in-picture button in the URL bar (the video has its own). Default: hidden. |
 | `--ut-hide-disabled-nav` | Hide the Forward button alone while it has nowhere to go (`0` off, `1` on). FoxOne's own `--uc-hide-disabled-nav-buttons` hides Back as well. |
+| `--uc-autohide-nav-buttons`, `--uc-autohide-nav-delay` | FoxOne's nav reveal: `0` always show, `1` hover and focus, `2` hover only. Mode `2` also gives click-to-cancel. The delay is how long you hover first. |
 | `--ut-pin-downloads` | Pin the Downloads button at the right edge (`1`) or leave it in the tab row (`0`). |
 
 Further down the file are FoxOne's own settings with the values chosen here (URL bar width, tab widths, and so on). FoxOne's [customisation guide](https://firnschnee.github.io/FoxOne/customisation.html) documents those.
@@ -78,11 +85,32 @@ Further down the file are FoxOne's own settings with the values chosen here (URL
 
 `userChrome.css` contains a switched-off block that sets a font for the browser interface. The instructions are in the comment above it. It only affects the browser UI; the about: pages are separate documents.
 
+## Limitations and quirks
+
+- There is almost no usable toolbar on the right: one tool, maybe two. The extension hover pushes them over, and
+  things are cramped in Customize mode.
+- The hamburger hover-reveal has no off switch, by design. The right corner is a shockingly cramped area, held
+  together with hopes and dreams.
+- Pinned extensions land at the end of the toolbar, which is now next to the URL bar, and behave normally. Move one
+  into the stack beside the hamburger and it is inside the hover zone, so the hamburger eats it until you hover.
+- Customize mode does strange things to the bar, in stock Firefox too (the new-tab button pins to the end of the tab
+  bar and a large gap shows on the left). It's not real, it can't hurt you.
+
+## Tips
+
+- Short on toolbar? Nothing stops you putting things in the bookmarks bar. ;)
+- Spacing is finicky. `--uc-hamburger-width` (30px) sets how far out the extensions flyout sits, and 30px fits the
+  puzzle. `--uc-extensions-button-width` (32px) is the puzzle's spacing, 30px will not fit if you change it.
+  `--uc-toolbar-button-width` and `--uc-newtab-width` (26px) are the generic icon spacing.
+
 ## Known issues
+
+- Customize mode: pinned extensions overrun the hamburger and puzzle ([#32](https://github.com/snkiz/FoxMica/issues/32)).
+- Vertical tabs are untested ([#31](https://github.com/snkiz/FoxMica/issues/31)).
 
 - The floating bookmarks bar only reveals when the pointer is over the URL bar, not the whole top row. That is how FoxOne works.
 - Hovering Mica areas sometimes flickered during development on a laptop with NVIDIA and integrated graphics. It went away after reboots and driver updates, so it is probably a driver problem, but this isn't proven.
-- Not tested yet: turning each feature off to check the theme degrades cleanly, other Firefox versions, and non-Windows systems.
+- Not tested yet: turning each feature off to check the theme degrades cleanly, other Firefox versions, and non-Windows systems. Vertical mode has not been worked on as yet.
 
 ## Contributing
 
@@ -99,6 +127,7 @@ Windows scale settings are very welcome, see [#23](https://github.com/snkiz/FoxM
 - [FoxOne](https://github.com/Firnschnee/FoxOne) by Firnschnee (MIT). `userChrome-foxone.css` is FoxOne 3.9.1 exactly as released; `userContent.css` is FoxOne's with a few edits. FoxOne in turn credits [LittleFox](https://github.com/biglavis/LittleFox) and [Cascade](https://github.com/andreasgrafen/cascade).
 - The Mica rules in `userChrome-foxone-overrides.css` are derived from [Wintego's Firefox-transparent-theme](https://github.com/Wintego/Firefox-transparent-theme).
 - The look was matched by eye against Windows 11 Explorer and the MicaBar theme of Windhawk's [Windows 11 File Explorer Styler](https://windhawk.net/mods/windows-11-file-explorer-styler) mod (Windhawk is by [m417z](https://github.com/m417z)). No code from that project was used.
+- [@C-O-D](https://github.com/C-O-D) for the catch that put the finishing polish on the URL-bar icons ([FoxOne#59](https://github.com/Firnschnee/FoxOne/issues/59)). First outsider.
 - Tab style: written by snkiz, with help from Claude (Anthropic).
 
 ## License
