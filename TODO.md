@@ -19,28 +19,10 @@ where they disagree.
 
 ## Next time
 
-- **Check section 4 of the overrides (bar height).** FoxOne 3.9.1 has `--uc-row-height` (FoxOne #57), which follows
-  Firefox's density, so some of what section 4 pins may no longer be needed. Firn notes vertical tabs change (#31)
-  `--tabstrip-min-height`.
-- **userContent.css is still FoxOne 3.8.7's** (with our edits). Compare it with 3.9.1's and carry over anything new. (#33)
-- **Customize mode: pinned extension icons overrun the hamburger and puzzle** (low; fine in normal use). Customize
-  mode shows every item at once, and FoxOne drops the cluster's clearance margin while the icons are collapsed
-  (it restates `margin-inline-end: 0`), so the icons slide under the fixed hamburger and puzzle. The icons are in the
-  same space as the two fixed buttons. Idea, untested: one `:root[customizing]` rule that puts the clearance back. (#32)
-- **Customize-mode quirks that are stock Firefox/FoxOne, not ours:** the new-tab button pins itself to the end of the
-  tab bar, and a large gap shows on the left. Note them in the README so they aren't reported as bugs.
-- **README update: hover-reveal is by design.** The pinned-extension hover reveal (FoxOne's --uc-hide-extension-icons,
-  default 1) is left on and not offered as a FoxMica setting. With it off the icons share the corner with the fixed
-  hamburger and puzzle, and the overlap is a misclick risk (see the Customize-mode item above). Say that plainly.
-  Cute tip to go with it: pinned extensions land mid-bar and behave normally, but if you move one next to the
-  hamburger it is inside the hover zone, so the burger eats it until you hover.
-- **README update: tips for the pinned-extension layout.** Nothing stops you putting things in the bookmarks bar.
-  Pinned icons land in the default place (is that a bug?). The hamburger takes the items you put next to it in the
-  stack, and the hover reveal pushes the tabs and buttons over, which is intended. The right side can hold one or
-  two toolbar buttons, but only if you aren't using many pinned extensions (placement). Spacing is finicky; what is
-  tuned: `--uc-hamburger-width` (30px) sets how far out the extensions flyout sits, and 28px fits the puzzle;
-  `--uc-extensions-button-width` (32px) is the puzzle's spacing, and 28px will not fit it; `--uc-toolbar-button-width`
-  and `--uc-newtab-width` (26px) are the generic icon spacing (pinned extensions, Customize tools).
+- **Customize mode: pinned extension icons overrun the hamburger and puzzle** [#32] (low; fine in normal use).
+  Customize mode shows every item at once, and FoxOne drops the cluster's clearance margin while the icons are
+  collapsed, so the icons slide under the fixed hamburger and puzzle. Idea, untested: one `:root[customizing]` rule
+  that puts the clearance back.
 
 ## First bug-fix pass
 
@@ -49,19 +31,13 @@ where they disagree.
   window-grab padding). Did we cause it?
 - 2. Sidebar spacer: [#3] stop bookmarks/tools covering the minimized sidebar button.
   Maybe hide it when the sidebar is open.
-- 14. Tab loading highlight is white [#12] (keep it or match the palette?).
 - 28. [#13] Nova on: one animated built-in theme left the tab bar transparent. Fine with
   Nova off. Only one theme seen so far; check a few others before chasing it.
 - 31. [#20] Fix the comment on the static bookmarks bar in foxone-config.css: it says the static bar uses the
   translucent layer, but so far only Customize mode does. (Static on the layer is still the plan.)
-- 32. [#19] Try pinning the overflow (>>) button the way --ut-pin-downloads pins Downloads. Might not work out. Decided, no.
-- 33. Tab-bar right stop: FoxOne's max-width on #tabbrowser-tabs reserves hamburger + one button + drag space +
-  new-tab (about line 1037). We shrank those four in foxone-config.css (lines 170-174). Last time I looked,
-  tabs could overrun the buttons with the flexible spacer taken out. Test: remove the spacer, fill the bar
-  with tabs, see if they run under the buttons. If so, the reserve is too tight and the spacer hides it. Done
-- 34. Density moved: in Nightly 159 the Customize -> Density switch redirects to about:settings (Appearance). Checked 2026-10-11 0.7 release. 
-  Look into what changed (does `browser.compactmode.show` still matter? ESR?), then update README line 48 and
-  the comment in foxone-config.css lines 52-54.
+- 34. Density moved: Nightly has dropped `browser.compactmode.show` entirely; the Customize -> Density switch
+  now redirects to about:settings (Appearance). Not looked into yet. Check what ESR does, then update the README's
+  about:config table (the `browser.compactmode.show` row) and the comment in foxone-config.css (about line 53).
 
 ## After launch
 
@@ -92,11 +68,11 @@ where they disagree.
 - 5. [#23] Scaling: "certified good enough", poke at it later.
 - 19. [#28] Try `widget.windows.mica.popups` (it's 0 in the good profile's user.js).
 - 20. [#29] Check `widget.windows.apply-dwm-resize-hack` with Mica (fullscreen from maximized).
-- 23. Maybe hide nav controls [#1] while the URL dropdown is open or the cursor is in it.
 - 10. Tab right-click menu: it's far too long. Trim it and reorder it with CSS (hide unused items, move
   Reopen Closed Tab to the top; untested idea: `#context_undoCloseTab { order: -1; }`). Plus a small
   extension for "New Tab to the Left" (no add-on found that does left; extensions can add items but
   not place them at the top).
+- [#31] Vertical tabs are untested. Firn notes vertical tabs change `--tabstrip-min-height` (bar-height overrides).
 - [#21] Refactor: condense the files, trim the very long comments, move rarely used
   settings to an advanced section.
 
@@ -115,6 +91,11 @@ where they disagree.
 
 ## Done
 
+- 2026-10-12 check-in: section 4 (bar height) checked against `--uc-row-height`, all good. userContent.css is on
+  FoxOne 3.9.1 (#33). README is current with 0.7, including the Customize-mode quirks and the hover-reveal notes.
+- 23. Hide nav controls while typing [#1]: done as click-to-cancel (override 7e, mode 2).
+- 33. Tab bar does not overrun the buttons; the extension hover pushes them, and so do the tools tried.
+- Gave up, issues closed: 14, white tab-loading highlight [#12]; 32, pinning the overflow button [#19].
 - README "tested on" line: says Nightly 159, Nova on and off.
 - Released 0.5 "Warts and all" (2026-10-07): FoxOne 3.8.7 [#14], [focused] fix [#15], new screenshot,
   dev files left out of the zip. Next releases: 0.5.1, 0.5.2 ... until 1.0.

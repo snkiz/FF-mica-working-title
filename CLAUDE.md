@@ -42,20 +42,19 @@ Load order is set in `userChrome.css` and it matters (later wins ties):
 
 ## Where things stand (update this section at the end of every session)
 
-**Last updated:** 2026-10-07
+**Last updated:** 2026-10-12
 
-- **Released 0.5 "Warts and all"** (tag `0.5`, no "v"). Release zip leaves out dev files via
-  `export-ignore` in .gitattributes. Fixes go out as 0.5.1, 0.5.2 ... until 1.0. A release is pinned
-  to its tag: push first, then publish.
-- Issues #1-#18 are on GitHub. `TODO.md` maps items to issue numbers. Upstream suggestions for
-  FoxOne were sent as a batch; the URL-bar icon (charm) work goes upstream after #1 is done.
-
-- Works with `browser.nova.enabled = false` on Nightly 159.0a1. That's the state it
-  was built and hand-tested in.
-- Works with Nova on too since 2026-10-04 (item 26 fixed, separators back).
-  Proton/old look is a dead end; Nova is the target.
-- Daily browser is ESR 140. Plan: get Nightly right, then move to ESR 153 (has the
-  Nova switch) and backport.
+- **Released 0.7 "Better together"** on FoxOne 3.9.1 (merge tracked in #33; branch `3.9.1-upstream-pull`, rebased
+  on 3.9.1). Earlier: 0.5 "Warts and all". Tags have no "v". Fixes go out as point releases until 1.0. A release is
+  pinned to its tag: push first, then publish. Release zip leaves out dev files via `export-ignore` in .gitattributes.
+- Upstream: three FoxMica overrides landed in FoxOne 3.9.1 (nav hover delay, hide disabled Back/Forward, URL-bar
+  icon reveals; FoxOne #54, #55, #58, #59), so our 7b/7c overrides are gone. Find-bar fix and `--uc-row-height`
+  landed in 3.8.8. FoxMica keeps click-to-cancel (override 7e), Forward-only hiding, and the trust-label and PiP
+  switches.
+- Issues #1-#34 are on GitHub. `TODO.md` maps items to issue numbers.
+- Built and hand-tested on Nightly 160 with Nova on (the default) and off. Proton/old look is a dead end.
+- Daily browser is ESR 140. Plan: get Nightly right, then move to ESR 153 (has the Nova switch) and backport (#22).
+- Nightly has dropped `browser.compactmode.show`; density is now set in about:settings (TODO item 34).
 
 ### Item 26 (solved): how it was found
 
@@ -89,6 +88,10 @@ Load order is set in `userChrome.css` and it matters (later wins ties):
   and sidebar share one layer (`--ut-layer`).
 - Floating bookmarks bar is solid (Mica can't paint over page pixels). Wintego's
   in-flow bar was dropped because it pushes the page down.
+- Pinned extensions: placement is the switch. Left of the overflow chevron (nav-bar) they always show; beside the
+  hamburger FoxOne hides them behind the hamburger hover. Firefox's own tools never hide (they have the overflow).
+  Intended and tested 2026-10-12; don't "fix" it. Trap: extensions between the chevron and the tabs also hide, but
+  can't be reached (crossing the tabs closes the reveal).
 - Download button is not pinned. The overflow chevron stays where Firefox puts it.
 - Long term: condense the six files. Pull upstream, patch it, output something leaner.
   Every feature must be switchable on its own (needed for "stock-plus" mode and
