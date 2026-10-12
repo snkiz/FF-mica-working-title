@@ -20,13 +20,13 @@ where they disagree.
 ## Next time
 
 - **Check section 4 of the overrides (bar height).** FoxOne 3.9.1 has `--uc-row-height` (FoxOne #57), which follows
-  Firefox's density, so some of what section 4 pins may no longer be needed. Firn notes vertical tabs change
+  Firefox's density, so some of what section 4 pins may no longer be needed. Firn notes vertical tabs change (#31)
   `--tabstrip-min-height`.
 - **userContent.css is still FoxOne 3.8.7's** (with our edits). Compare it with 3.9.1's and carry over anything new.
 - **Customize mode: pinned extension icons overrun the hamburger and puzzle** (low; fine in normal use). Customize
   mode shows every item at once, and FoxOne drops the cluster's clearance margin while the icons are collapsed
   (it restates `margin-inline-end: 0`), so the icons slide under the fixed hamburger and puzzle. The icons are in the
-  same space as the two fixed buttons. Idea, untested: one `:root[customizing]` rule that puts the clearance back.
+  same space as the two fixed buttons. Idea, untested: one `:root[customizing]` rule that puts the clearance back. (#32)
 - **Customize-mode quirks that are stock Firefox/FoxOne, not ours:** the new-tab button pins itself to the end of the
   tab bar, and a large gap shows on the left. Note them in the README so they aren't reported as bugs.
 - **README update: hover-reveal is by design.** The pinned-extension hover reveal (FoxOne's --uc-hide-extension-icons,
@@ -58,8 +58,8 @@ where they disagree.
 - 33. Tab-bar right stop: FoxOne's max-width on #tabbrowser-tabs reserves hamburger + one button + drag space +
   new-tab (about line 1037). We shrank those four in foxone-config.css (lines 170-174). Last time I looked,
   tabs could overrun the buttons with the flexible spacer taken out. Test: remove the spacer, fill the bar
-  with tabs, see if they run under the buttons. If so, the reserve is too tight and the spacer hides it.
-- 34. Density moved: in Nightly 159 the Customize -> Density switch redirects to about:settings (Appearance).
+  with tabs, see if they run under the buttons. If so, the reserve is too tight and the spacer hides it. Done
+- 34. Density moved: in Nightly 159 the Customize -> Density switch redirects to about:settings (Appearance). Checked 2026-10-11 0.7 release. 
   Look into what changed (does `browser.compactmode.show` still matter? ESR?), then update README line 48 and
   the comment in foxone-config.css lines 52-54.
 
