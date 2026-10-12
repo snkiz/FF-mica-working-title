@@ -54,7 +54,7 @@
      height you picked as your tightest; stock compact would be about 34px.
      Set all three equal to ignore density altogether. */
   --ut-bar-height-compact: 28px;
-  --ut-bar-height-normal: 40px;
+  --ut-bar-height-normal: 36px;
   --ut-bar-height-touch: 44px;
 
   /* Space left above and below the tabs and the URL field inside the bar. This
@@ -123,30 +123,19 @@
      Stock Firefox leaves this space so you can drag the window; 0 removes it. */
   --ut-drag-left: 12px;
 
-  /* The URL-bar icons that slide in beside the star (reader mode, translate,
-     extension icons, permission icons). FoxOne reveals them the moment the
-     pointer touches the bar, which, with the bar collapsed, widens them over
-     the address and makes it hard to hover or click.
-       0 = only when the bar is focused (you clicked into it). Hovering
-           changes nothing. Default.
-       1 = on hover too, but after --ut-charm-delay, so a quick pass over the
-           bar doesn't trigger them. Focus still shows them at once. */
-  --ut-charms-on-hover: 0;
-  --ut-charm-delay: 600ms;
+  /* Hide the disabled Forward button only (no forward history; the old Firefox behaviour), even while
+     the nav buttons are revealed by hover or focus. FoxOne's own --uc-hide-disabled-nav-buttons (section 4)
+     hides Back as well, so this is only the extra option.
+       0 = off, 1 = Forward only */
+  --ut-hide-disabled-nav: 0;
 
-  /* Hide back/forward buttons that have nowhere to go (no forward history, no
-     back history), even while the nav buttons are revealed by hover or focus.
-       0 = leave FoxOne's behaviour (disabled buttons shown, dimmed)
-       1 = hide the disabled Forward button only (the old Firefox behaviour)
-       2 = hide disabled Back as well */
-  --ut-hide-disabled-nav: 1;
+  /* Hide the text label next to the site-info icon ("Not secure" on http pages). The struck icon says the
+     same, and the label can push the collapsed bar onto two lines. 0 = leave Firefox's label. */
+  --ut-hide-trust-label: 1;
 
-  /* Delay before hovering the nav bar slides the back / forward / reload
-     buttons in (--uc-autohide-nav-buttons 1 or 2). Without it, passing over
-     the collapsed bar widens the buttons at once and the URL bar jumps under
-     the pointer. Clicking into the bar (mode 1) still reveals them at once.
-     0ms = FoxOne's original behaviour. */
-  --ut-nav-delay: 600ms;
+  /* Hide the picture-in-picture button in the URL bar. The video has its own button, and this one stays
+     visible for as long as a video plays. 0 = leave it. */
+  --ut-hide-pip-button: 1;
 
   /* Pin the Downloads button beside the puzzle button, at the right edge.
      OFF by default: the hamburger, puzzle and window controls are already
@@ -160,20 +149,23 @@
         (everything else keeps FoxOne's default from the FoxOne file)
      ======================================================================== */
   --uc-status-panel-spacing: 6px;
-  --uc-urlbar-min-width: min(25vw, 192px);   /* collapsed width; one icon (32px) narrower than 224px */
-  --uc-urlbar-max-width: min(35vw, 500px);   /* expanded width; was min(50vw, 800px). 520 was a little long, 480 a little short */
-  --uc-active-tab-width: clamp(100px, 40vw, 180px);
-  --uc-inactive-tab-width: clamp(50px, 10vw, 72px);
-  --uc-tab-min-width: 54px;
+  --uc-urlbar-min-width: min(22vw, 236px);   /* collapsed width; was min(25vw, 192px) */
+  --uc-urlbar-max-width: min(44vw, 510px);   /* expanded width; FoxOne's is min(50vw, 800px) */
+  --uc-active-tab-width: clamp(108px, 40vw, 184px);
+  --uc-inactive-tab-width: clamp(48px, 15vw, 78px);
+  --uc-tab-min-width: 18px;
   --uc-show-context-splitview: 1;
-  --uc-window-buttons-width: 64px;
-  --uc-hamburger-width: 32px;
-  --uc-extensions-button-width: 32px;
-  --uc-toolbar-button-width: 32px;
-  --uc-newtab-width: 32px;
-  --uc-drag-space: 18px;
+  --uc-hamburger-width: 30px;   /*Changes how far out the extensions flyout is. 30px fits the puzzle*/
+  --uc-extensions-button-width: 32px;   /*Puzzle spacing. 30px will not fit the puzzle if you change this*/
+  --uc-toolbar-button-width: 26px;   /*Generic toolbar icon spacing (pinned extensions, customize tools)*/
+  --uc-newtab-width: 26px;
   --uc-show-loading-progress: 1;
-  --uc-autohide-nav-buttons: 1;
+  --uc-autohide-nav-buttons: 2;   /*Nav hover-reveal (0 = always show, 1 = reveal with hover and focus, 2 = reveal with hover) */ /*Mode 2 also lets a click into the URL text cancel the reveal (override 7e). Mode 1 only differs on keyboard focus.*/
+  --uc-autohide-nav-delay: 450ms;   /* Nav reveal delay (with auto-hide 1 or 2), so a quick pass over the bar doesn't shift the URL bar. (0ms = instant) */
+  --uc-hide-disabled-nav-buttons: 1;   /* hide Back and Forward while they have nowhere to go */
+  /* Pinned toolbar extensions – hover reveal on hamburger. (1 = hide + hover-reveal, 0 = always show) */
+  /* FoxMica keeps this on and offers no switch. Turning it off yourself is unsupported (here be dragons): the
+     icons overrun the fixed hamburger and puzzle, most visibly in Customize mode. */
 }
 
 /* Density switch. Firefox puts uidensity="compact" or "touch" on the root

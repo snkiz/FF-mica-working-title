@@ -19,10 +19,28 @@ where they disagree.
 
 ## Next time
 
-- **Pull the next FoxOne release.** It should include two of ours: the find-bar escape (FoxOne #56,
-  closes our #10) and the row height as `--uc-row-height`, which now follows Firefox's density
-  (FoxOne #57, commit 644ab85; closes our #6). Then check section 4 of the overrides (bar height):
-  some of it may no longer be needed. Firn notes vertical tabs change `--tabstrip-min-height`.
+- **Check section 4 of the overrides (bar height).** FoxOne 3.9.1 has `--uc-row-height` (FoxOne #57), which follows
+  Firefox's density, so some of what section 4 pins may no longer be needed. Firn notes vertical tabs change (#31)
+  `--tabstrip-min-height`.
+- **userContent.css is still FoxOne 3.8.7's** (with our edits). Compare it with 3.9.1's and carry over anything new. (#33)
+- **Customize mode: pinned extension icons overrun the hamburger and puzzle** (low; fine in normal use). Customize
+  mode shows every item at once, and FoxOne drops the cluster's clearance margin while the icons are collapsed
+  (it restates `margin-inline-end: 0`), so the icons slide under the fixed hamburger and puzzle. The icons are in the
+  same space as the two fixed buttons. Idea, untested: one `:root[customizing]` rule that puts the clearance back. (#32)
+- **Customize-mode quirks that are stock Firefox/FoxOne, not ours:** the new-tab button pins itself to the end of the
+  tab bar, and a large gap shows on the left. Note them in the README so they aren't reported as bugs.
+- **README update: hover-reveal is by design.** The pinned-extension hover reveal (FoxOne's --uc-hide-extension-icons,
+  default 1) is left on and not offered as a FoxMica setting. With it off the icons share the corner with the fixed
+  hamburger and puzzle, and the overlap is a misclick risk (see the Customize-mode item above). Say that plainly.
+  Cute tip to go with it: pinned extensions land mid-bar and behave normally, but if you move one next to the
+  hamburger it is inside the hover zone, so the burger eats it until you hover.
+- **README update: tips for the pinned-extension layout.** Nothing stops you putting things in the bookmarks bar.
+  Pinned icons land in the default place (is that a bug?). The hamburger takes the items you put next to it in the
+  stack, and the hover reveal pushes the tabs and buttons over, which is intended. The right side can hold one or
+  two toolbar buttons, but only if you aren't using many pinned extensions (placement). Spacing is finicky; what is
+  tuned: `--uc-hamburger-width` (30px) sets how far out the extensions flyout sits, and 28px fits the puzzle;
+  `--uc-extensions-button-width` (32px) is the puzzle's spacing, and 28px will not fit it; `--uc-toolbar-button-width`
+  and `--uc-newtab-width` (26px) are the generic icon spacing (pinned extensions, Customize tools).
 
 ## First bug-fix pass
 
@@ -31,21 +49,17 @@ where they disagree.
   window-grab padding). Did we cause it?
 - 2. Sidebar spacer: [#3] stop bookmarks/tools covering the minimized sidebar button.
   Maybe hide it when the sidebar is open.
-- 3. Charm delays: [#1] the permissions icon left of the URL bar has no delay. Check all
-  optional URL-bar icons (PWAs for Firefox uses one).
-- 11. Find-bar diacritics [#10]: change `content: "aá"` to `content: "a\E1"` (pure ASCII).
-  Note: this is in FoxOne's file, so it's an override or an upstream note, not an edit.
 - 14. Tab loading highlight is white [#12] (keep it or match the palette?).
 - 28. [#13] Nova on: one animated built-in theme left the tab bar transparent. Fine with
   Nova off. Only one theme seen so far; check a few others before chasing it.
 - 31. [#20] Fix the comment on the static bookmarks bar in foxone-config.css: it says the static bar uses the
   translucent layer, but so far only Customize mode does. (Static on the layer is still the plan.)
-- 32. [#19] Try pinning the overflow (>>) button the way --ut-pin-downloads pins Downloads. Might not work out.
+- 32. [#19] Try pinning the overflow (>>) button the way --ut-pin-downloads pins Downloads. Might not work out. Decided, no.
 - 33. Tab-bar right stop: FoxOne's max-width on #tabbrowser-tabs reserves hamburger + one button + drag space +
   new-tab (about line 1037). We shrank those four in foxone-config.css (lines 170-174). Last time I looked,
   tabs could overrun the buttons with the flexible spacer taken out. Test: remove the spacer, fill the bar
-  with tabs, see if they run under the buttons. If so, the reserve is too tight and the spacer hides it.
-- 34. Density moved: in Nightly 159 the Customize -> Density switch redirects to about:settings (Appearance).
+  with tabs, see if they run under the buttons. If so, the reserve is too tight and the spacer hides it. Done
+- 34. Density moved: in Nightly 159 the Customize -> Density switch redirects to about:settings (Appearance). Checked 2026-10-11 0.7 release. 
   Look into what changed (does `browser.compactmode.show` still matter? ESR?), then update README line 48 and
   the comment in foxone-config.css lines 52-54.
 
@@ -60,7 +74,8 @@ where they disagree.
 - **Submit to the FirefoxCSS Store** [#30] (https://firefoxcss-store.github.io/submit/). They take a GitHub
   issue (their template): repo URL, short description, screenshots, tags. Their bot opens a PR and
   maintainers review it. Before submitting: more screenshots (more views, not just the main window)
-  and a docs pass. Check their issue template for image size and allowed tags.
+  and a docs pass. Check their issue template for image size and allowed tags. Firn (FoxOne) says it's a form and
+  that most of FoxOne's traffic comes from the store, and he approved the idea on #30, so this is worth doing well.
 - 8. [#24] Stock-plus mode: turn off the one-line bar but keep the other goodies. Needs
   every feature switchable, and testing each feature off.
 - 12. [#22] Backport to ESR 153. Check the Nova pref name there. Test Nova on and off.
@@ -91,8 +106,9 @@ where they disagree.
 
 ## Upstream notes (only once things are stable, one small issue per idea, no surprise PRs)
 
-- FoxOne: a variable for the hard-coded 44px row [#6, label Drafts]; nav hover delay [#17]; hiding disabled
-  Back/Forward [#18]; one shared config for chrome and content [#16, offered on FoxOne #50]; the Firefox View fix.
+- FoxOne: a variable for the hard-coded 44px row [#6, label Drafts]; (landed in 3.9.1: nav hover delay [#17],
+  hiding disabled Back/Forward [#18], the star and shield reveals [#1]); one shared config for chrome and
+  content [#16, offered on FoxOne #50]; the Firefox View fix.
 - Wintego: FF157+ dropdown fix (also paint `.urlbarView-background`); find-bar fix;
   the double-encoded text in his file; license-holder question.
   Wintego has no issues open and asks for pull requests instead, so these go to him as PRs.
@@ -102,8 +118,17 @@ where they disagree.
 - README "tested on" line: says Nightly 159, Nova on and off.
 - Released 0.5 "Warts and all" (2026-10-07): FoxOne 3.8.7 [#14], [focused] fix [#15], new screenshot,
   dev files left out of the zip. Next releases: 0.5.1, 0.5.2 ... until 1.0.
-- Nav-button hover delay, --ut-nav-delay [#17, closed]. Upstream issue drafted.
-- Hide disabled Back/Forward, --ut-hide-disabled-nav [#18, closed]. Upstream issue drafted.
+- Nav-button hover delay, --ut-nav-delay [#17, closed]. Landed upstream as --uc-autohide-nav-delay (FoxOne 3.9.1, #58).
+- Hide disabled Back/Forward, --ut-hide-disabled-nav [#18, closed]. Landed upstream as --uc-hide-disabled-nav-buttons
+  (FoxOne 3.9.1, #54, #58). Only the Forward-alone option stays in our overrides.
+- Charm and permission-icon delays [#1]: the URL-bar icons reveal when you rest on the bookmark star, the permission
+  icons when you rest on the site-info icon or shield (FoxOne 3.9.1, #59; --uc-urlbar-icons-reveal). Our 7b/7c
+  overrides and --ut-charms-on-hover, --ut-charm-delay, --ut-nav-delay are gone. Added --ut-hide-trust-label and
+  --ut-hide-pip-button. Find-bar diacritics [#10] and the row-height variable [#6] also landed (3.8.8).
+- Click into the URL text cancels the nav reveal (override 7e, mode 2 only), rewritten against 3.9.1's selectors.
+  Firn's hot-area change only covers the star.
+- Pulled FoxOne 3.9.1 (2026-10-11, branch 3.9.1-upstream-pull). Widths tuned: URL bar 30vw/224px collapsed,
+  40vw/548px expanded; active tab 108-192px, inactive 48-66px, tab minimum 48px.
 - One shared config file for chrome and content [#16, closed]. Offered on FoxOne #50 (closed there).
   Firn finds controlling the whole theme from 5 colours ambitious. Our answer is #8 (palette readability).
 - 26. Tab fill/corners with Nova on [#11, closed]: fixed 2026-10-04 (background-clip on the
