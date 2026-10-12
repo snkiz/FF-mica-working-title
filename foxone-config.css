@@ -155,8 +155,8 @@
   --uc-inactive-tab-width: clamp(48px, 15vw, 78px);
   --uc-tab-min-width: 18px;
   --uc-show-context-splitview: 1;
-  --uc-hamburger-width: 30px;   /*Changes how far out the extensions flyout is. 28px fits the puzzle*/
-  --uc-extensions-button-width: 32px;   /*Puzzle spacing. 28px will not fit the puzzle if you change this*/
+  --uc-hamburger-width: 30px;   /*Changes how far out the extensions flyout is. 30px fits the puzzle*/
+  --uc-extensions-button-width: 32px;   /*Puzzle spacing. 30px will not fit the puzzle if you change this*/
   --uc-toolbar-button-width: 26px;   /*Generic toolbar icon spacing (pinned extensions, customize tools)*/
   --uc-newtab-width: 26px;
   --uc-show-loading-progress: 1;
