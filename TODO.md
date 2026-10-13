@@ -19,16 +19,13 @@ where they disagree.
 
 ## Next time
 
-- **Customize mode: pinned extension icons overrun the hamburger and puzzle** [#32] (low; fine in normal use).
-  Customize mode shows every item at once, and FoxOne drops the cluster's clearance margin while the icons are
-  collapsed, so the icons slide under the fixed hamburger and puzzle. Idea, untested: one `:root[customizing]` rule
-  that puts the clearance back.
+- Nothing queued.
 
 ## First bug-fix pass
 
 - 18. Selection contrast on about: pages [#7] (optional separate variable).
-- 4. Sidebar button click target [#2] is much bigger than the icon (about half the
-  window-grab padding). Did we cause it?
+- 4. Sidebar button click target [#2]: fix in place, needs testing (override 7a+). Cause: Firefox pads the first
+  nav-bar button on purpose so a corner click hits it (browser-shared.css); not maximized, that ate our grab area.
 - 2. Sidebar spacer: [#3] stop bookmarks/tools covering the minimized sidebar button.
   Maybe hide it when the sidebar is open.
 - 28. [#13] Nova on: one animated built-in theme left the tab bar transparent. Fine with
@@ -38,6 +35,9 @@ where they disagree.
 - 34. Density moved: Nightly has dropped `browser.compactmode.show` entirely; the Customize -> Density switch
   now redirects to about:settings (Appearance). Not looked into yet. Check what ESR does, then update the README's
   about:config table (the `browser.compactmode.show` row) and the comment in foxone-config.css (about line 53).
+- 35. Reduced motion: check FoxMica (and FoxOne's reveals) with Windows' "Animation effects" off, which Firefox
+  reports as `prefers-reduced-motion: reduce`. The hover reveals, tab and URL-bar transitions should go instant or
+  near-instant. Raised on FoxOne #62.
 
 ## After launch
 
@@ -83,7 +83,8 @@ where they disagree.
 ## Upstream notes (only once things are stable, one small issue per idea, no surprise PRs)
 
 - FoxOne: a variable for the hard-coded 44px row [#6, label Drafts]; (landed in 3.9.1: nav hover delay [#17],
-  hiding disabled Back/Forward [#18], the star and shield reveals [#1]); one shared config for chrome and
+  hiding disabled Back/Forward [#18], the star and shield reveals [#1]);
+  extension icons before the tabs [landed in 3.9.4: FoxOne #62/#63, with #32]; one shared config for chrome and
   content [#16, offered on FoxOne #50]; the Firefox View fix.
 - Wintego: FF157+ dropdown fix (also paint `.urlbarView-background`); find-bar fix;
   the double-encoded text in his file; license-holder question.
@@ -91,6 +92,9 @@ where they disagree.
 
 ## Done
 
+- Pulled FoxOne 3.9.4 "Icons where you put them" (2026-10-13, branch Pull-3.9.4-to-0.7.1, for 0.7.1). Our #62 fix
+  landed upstream as #63 (Firn added `[hidden]` for FF158's Smart Window buttons). Closes #32: Customize-mode overrun.
+  Tested FoxOne and FoxMica on 3.9.4 in all three Firefox versions.
 - 2026-10-12 check-in: section 4 (bar height) checked against `--uc-row-height`, all good. userContent.css is on
   FoxOne 3.9.1 (#33). README is current with 0.7, including the Customize-mode quirks and the hover-reveal notes.
 - 23. Hide nav controls while typing [#1]: done as click-to-cancel (override 7e, mode 2).

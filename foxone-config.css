@@ -168,9 +168,10 @@
      icons overrun the fixed hamburger and puzzle, most visibly in Customize mode. */
   /* Where you put an icon decides it. The split is the overflow chevron (>>):
        - Left of it (the nav-bar, next to the URL bar, where Firefox pins new extensions): always visible.
-       - Beside the hamburger: hidden until you hover the hamburger. The place for icons you want tucked away.
-       - Between the chevron and the tabs: also hidden, but out of reach. Hovering the hamburger reveals them,
-         and crossing the tabs to get there closes the reveal again. Don't put extensions there.
+       - Beside the hamburger (the unbroken run of extensions against it): hidden until you hover the hamburger.
+         The place for icons you want tucked away.
+       - Anywhere else in that row (between the chevron and the tabs, or with a tool or spacer after them):
+         always visible. (FoxOne 3.9.4, #62; before that they hid and couldn't be reached.)
      Only extension icons hide. Firefox's own tools stay visible anywhere; they already spill into the >> overflow.
      Move icons in Customize mode. */
 }

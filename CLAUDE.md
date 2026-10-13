@@ -24,7 +24,7 @@ get things done, not to have Claude do it for me (boilerplate aside).
 FoxOne's one-line UI (tabs and URL bar in one row), with Windows 11 Explorer-style
 tabs. Repo: https://github.com/snkiz/FoxMica (public, MIT). Local: Documents\GitHub\FoxMica.
 
-- Built on FoxOne by Firnschnee (vendored unmodified, currently 3.9.1).
+- Built on FoxOne by Firnschnee (vendored unmodified, currently 3.9.4).
 - Mica rules come from Wintego's Firefox-transparent-theme (written for FoxOne 3.5).
 - The look is matched by eye to Explorer with Windhawk's Explorer Styler "MicaBar" theme.
 
@@ -88,10 +88,10 @@ Load order is set in `userChrome.css` and it matters (later wins ties):
   and sidebar share one layer (`--ut-layer`).
 - Floating bookmarks bar is solid (Mica can't paint over page pixels). Wintego's
   in-flow bar was dropped because it pushes the page down.
-- Pinned extensions: placement is the switch. Left of the overflow chevron (nav-bar) they always show; beside the
-  hamburger FoxOne hides them behind the hamburger hover. Firefox's own tools never hide (they have the overflow).
-  Intended and tested 2026-10-12; don't "fix" it. Trap: extensions between the chevron and the tabs also hide, but
-  can't be reached (crossing the tabs closes the reveal).
+- Pinned extensions: placement is the switch. Only the unbroken run of extensions beside the hamburger hides behind
+  the hamburger hover; anywhere else (nav-bar, or before the tabs) they always show. Firefox's own tools never hide
+  (they have the overflow). Intended; don't "fix" it. The before-the-tabs trap was fixed upstream in FoxOne 3.9.4
+  (#62, our fix, accepted as #63), which also fixed the Customize overrun (#32).
 - Download button is not pinned. The overflow chevron stays where Firefox puts it.
 - Long term: condense the six files. Pull upstream, patch it, output something leaner.
   Every feature must be switchable on its own (needed for "stock-plus" mode and
