@@ -358,6 +358,15 @@ notification-message {
   }
 }
 
+/* 7a+. Sidebar button click area (#2). Firefox gives the first nav-bar button extra start padding on purpose
+   ("make that space click the first toolbarbutton", browser-shared.css), so a click in the corner hits it. Not
+   maximized, that padding ate the grab area above, and the button's hover started well left of its icon. Give it
+   the same padding as every other button. Maximized and fullscreen keep Firefox's corner target. */
+:root:not([sizemode="maximized"]):not([inFullscreen])
+  #nav-bar-customization-target > :is(toolbarbutton, toolbaritem):first-child {
+  padding-inline-start: var(--toolbarbutton-outer-padding) !important;
+}
+
 /* 7b. Site-info label (Nova). The trust icon in front of the URL bar carries a text label, "Not secure" on
    plain http pages. The struck icon says the same, and the label makes the collapsed bar wrap onto two lines
    on hover. The container keeps its own aria-label, so this is visual only. FoxMica-only. */

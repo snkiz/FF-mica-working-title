@@ -1,6 +1,6 @@
 /*==============================================================================================*
 
-  FoxOne 3.9.1 – A minimalistic one-line Firefox theme
+  FoxOne 3.9.4 – A minimalistic one-line Firefox theme
   Based on Cascade (https://github.com/andreasgrafen/cascade)
   Floating Find Bar and dynamic Bookmarks Bar by LittleFox
   (https://github.com/biglavis/LittleFox)
@@ -98,6 +98,13 @@
      this value is used just on macOS and on Firefox builds without anchor
      support. No need to measure it by hand on a modern build. */
   --uc-window-buttons-width: 138px;
+
+  /* Window controls (minimise/maximise/close) – hide them to free the space
+   * (1 = hide, 0 = show). Windows/Linux only, macOS keeps its traffic lights.
+   * Close with Ctrl+Shift+W or Alt+F4, maximise by double-clicking the drag
+   * space. In fullscreen (F11) the reveal loses its exit button too, F11
+   * leaves. (#60) */
+  --uc-hide-window-buttons: 0;
 
   /* Hamburger button width – reserved in tab bar to prevent overlap */
   --uc-hamburger-width: 44px;
@@ -2469,6 +2476,23 @@ sidebar-main {
   }
 }
 
+/* Hidden window controls (toggle in CONFIG). Without a rendered box the
+   anchor() above has no target and falls back to --uc-window-buttons-width,
+   zeroed here so the hamburger and the pinned puzzle button slide to the
+   right edge. Set on the toolbox, not :root: a style query on :root has no
+   ancestor container to ask. The box sits in the tab strip's flow, so the
+   tabs take the freed width on their own. (#60) */
+@media not (-moz-platform: macos) {
+  @container style(--uc-hide-window-buttons: 1) {
+    .titlebar-buttonbox-container {
+      display: none !important;
+    }
+    #navigator-toolbox {
+      --uc-window-buttons-width: 0px;
+    }
+  }
+}
+
 /* Fullscreen (F11): position:fixed pins the hamburger to the viewport, so it
    stayed on screen while the toolbox autohid (issue #44). A neutral transform
    makes the toolbox the containing block for FIXED descendants (position:
@@ -2506,14 +2530,23 @@ sidebar-main {
 #TabsToolbar-customization-target > toolbaritem {
   margin-inline: 0 !important;
 }
-/* Only the first item gets the auto start-margin, so the whole group shifts
-   right as one cluster instead of each item claiming its own slice of free
-   space (which split a second icon off toward the middle). */
-#TabsToolbar-customization-target > toolbaritem:first-of-type {
+/* The cluster is the unbroken run of extension items at the end of the
+   toolbar, against the hamburger: an item with only extension items after it.
+   Invisible items don't break the run: #alltabs-button (hidden by FoxOne) and
+   anything Firefox hides with [hidden], such as the Smart Window widgets that
+   FF158 parks at the end of the tab strip and keeps hidden wherever Smart
+   Window is unavailable or off (not created in private windows). Items placed
+   before the tabs, or before a tool or spacer, aren't in it: they stay where
+   they are, always visible, and don't trigger the reveal. (#62)
+   Only the first item of the cluster (no cluster item before it) gets the
+   auto start-margin, so the whole group shifts right as one cluster instead
+   of each item claiming its own slice of free space (which split a second
+   icon off toward the middle). */
+#TabsToolbar-customization-target > toolbaritem:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))):where(:not(toolbaritem:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden]))) ~ *)) {
   margin-inline-start: auto !important;
 }
 /* Only the last item clears the fixed hamburger; intermediate items stay snug. */
-#TabsToolbar-customization-target > toolbaritem:last-of-type {
+#TabsToolbar-customization-target > toolbaritem:last-of-type:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
   margin-inline-end: var(--uc-hamburger-width) !important;
 }
 
@@ -2524,8 +2557,18 @@ sidebar-main {
 #TabsToolbar .private-browsing-indicator-button {
   margin-inline-end: var(--uc-hamburger-width) !important;
 }
-:root[privatebrowsingmode] #TabsToolbar-customization-target > toolbaritem:last-of-type {
+:root[privatebrowsingmode] #TabsToolbar-customization-target > toolbaritem:last-of-type:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
   margin-inline-end: 0 !important;
+}
+
+/* Customize mode wraps every item in a toolbarpaletteitem, so none of the
+   toolbaritem rules apply there and the last items slid under the fixed
+   hamburger (and puzzle). Give the toolbar's last wrapper the clearance.
+   Private windows: the mask carries it instead. Vertical tabs left as they
+   are. (#62, snkiz/FoxMica#32) */
+:root[customizing]:not([privatebrowsingmode]):not(:has(#tabbrowser-tabs[orient="vertical"]))
+  #TabsToolbar-customization-target > toolbarpaletteitem:last-child {
+  margin-inline-end: calc(var(--uc-hamburger-width) + var(--uc-extensions-button-width) * var(--uc-extensions-button-right)) !important;
 }
 
 /* Opt-in: hide the pinned extension icons and reveal them on hamburger hover.
@@ -2536,7 +2579,7 @@ sidebar-main {
    must target the toolbaritems specifically, not the customization-target,
    which spans the whole tab strip and would reveal on any tab hover. (#13) */
 @container style(--uc-hide-extension-icons: 1) {
-  #TabsToolbar-customization-target > toolbaritem {
+  #TabsToolbar-customization-target > toolbaritem:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
     max-width: 0 !important;
     opacity: 0 !important;
     pointer-events: none !important;
@@ -2546,18 +2589,23 @@ sidebar-main {
                 padding-inline 0.2s ease, margin-inline 0.2s ease !important;
   }
   /* collapsed last item drops the hamburger clearance so no gap is reserved */
-  #TabsToolbar-customization-target > toolbaritem:last-of-type {
+  #TabsToolbar-customization-target > toolbaritem:last-of-type:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
     margin-inline-end: 0 !important;
   }
 
   /* Reveal: hovering the hamburger, an extension item itself (the bridge), or
      in private windows the mask button, which sits between the two and would
-     otherwise break the bridge on the way across. */
+     otherwise break the bridge on the way across. An open extension popup
+     holds the reveal too: the popup is a separate panel outside the toolbar,
+     so moving into it drops every :hover, and the collapsing cluster dragged
+     the button-anchored popup sideways. Firefox sets [open] on the button
+     while its popup is up. (#61) */
   :root:is(
     :has(#PanelUI-button:hover),
-    :has(#TabsToolbar-customization-target > toolbaritem:hover),
+    :has(#TabsToolbar-customization-target > toolbaritem:hover):where(:not(:has(#TabsToolbar-customization-target > toolbaritem:hover ~ :not(toolbaritem, #alltabs-button, [hidden])))),
+    :has(#TabsToolbar-customization-target > toolbaritem [open]),
     :has(#TabsToolbar .private-browsing-indicator-button:hover)
-  ) #TabsToolbar-customization-target > toolbaritem {
+  ) #TabsToolbar-customization-target > toolbaritem:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
     max-width: 60px !important;
     opacity: 1 !important;
     pointer-events: auto !important;
@@ -2571,9 +2619,10 @@ sidebar-main {
      amount so the icon is not squeezed by the padding (border-box). (#13) */
   :root:is(
     :has(#PanelUI-button:hover),
-    :has(#TabsToolbar-customization-target > toolbaritem:hover),
+    :has(#TabsToolbar-customization-target > toolbaritem:hover):where(:not(:has(#TabsToolbar-customization-target > toolbaritem:hover ~ :not(toolbaritem, #alltabs-button, [hidden])))),
+    :has(#TabsToolbar-customization-target > toolbaritem [open]),
     :has(#TabsToolbar .private-browsing-indicator-button:hover)
-  ) #TabsToolbar-customization-target > toolbaritem:last-of-type {
+  ) #TabsToolbar-customization-target > toolbaritem:last-of-type:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
     max-width: calc(60px + var(--uc-hamburger-width)) !important;
     padding-inline-end: var(--uc-hamburger-width) !important;
   }
@@ -2582,9 +2631,10 @@ sidebar-main {
      gap doubles. The mask's :hover in the lists above is the bridge here. */
   :root[privatebrowsingmode]:is(
     :has(#PanelUI-button:hover),
-    :has(#TabsToolbar-customization-target > toolbaritem:hover),
+    :has(#TabsToolbar-customization-target > toolbaritem:hover):where(:not(:has(#TabsToolbar-customization-target > toolbaritem:hover ~ :not(toolbaritem, #alltabs-button, [hidden])))),
+    :has(#TabsToolbar-customization-target > toolbaritem [open]),
     :has(#TabsToolbar .private-browsing-indicator-button:hover)
-  ) #TabsToolbar-customization-target > toolbaritem:last-of-type {
+  ) #TabsToolbar-customization-target > toolbaritem:last-of-type:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
     max-width: 60px !important;
     padding-inline-end: revert !important;
   }
@@ -2627,7 +2677,7 @@ sidebar-main {
   /* The extension cluster and the private-window mask now clear two fixed
      buttons instead of one. The private-window zeroing of the cluster margin
      above outranks this by specificity, so it keeps working. */
-  #TabsToolbar-customization-target > toolbaritem:last-of-type,
+  #TabsToolbar-customization-target > toolbaritem:last-of-type:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))),
   #TabsToolbar .private-browsing-indicator-button {
     margin-inline-end: calc(var(--uc-hamburger-width) + var(--uc-extensions-button-width)) !important;
   }
@@ -2638,15 +2688,16 @@ sidebar-main {
      reveal, because the pointer now crosses it on the way from the hamburger
      to the icons and the bridge would otherwise break there. */
   @container style(--uc-hide-extension-icons: 1) {
-    #TabsToolbar-customization-target > toolbaritem:last-of-type {
+    #TabsToolbar-customization-target > toolbaritem:last-of-type:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
       margin-inline-end: 0 !important;
     }
     :root:is(
       :has(#PanelUI-button:hover),
       :has(#unified-extensions-button:hover),
-      :has(#TabsToolbar-customization-target > toolbaritem:hover),
+      :has(#TabsToolbar-customization-target > toolbaritem:hover):where(:not(:has(#TabsToolbar-customization-target > toolbaritem:hover ~ :not(toolbaritem, #alltabs-button, [hidden])))),
+      :has(#TabsToolbar-customization-target > toolbaritem [open]),
       :has(#TabsToolbar .private-browsing-indicator-button:hover)
-    ) #TabsToolbar-customization-target > toolbaritem {
+    ) #TabsToolbar-customization-target > toolbaritem:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
       max-width: 60px !important;
       opacity: 1 !important;
       pointer-events: auto !important;
@@ -2655,9 +2706,10 @@ sidebar-main {
     :root:is(
       :has(#PanelUI-button:hover),
       :has(#unified-extensions-button:hover),
-      :has(#TabsToolbar-customization-target > toolbaritem:hover),
+      :has(#TabsToolbar-customization-target > toolbaritem:hover):where(:not(:has(#TabsToolbar-customization-target > toolbaritem:hover ~ :not(toolbaritem, #alltabs-button, [hidden])))),
+      :has(#TabsToolbar-customization-target > toolbaritem [open]),
       :has(#TabsToolbar .private-browsing-indicator-button:hover)
-    ) #TabsToolbar-customization-target > toolbaritem:last-of-type {
+    ) #TabsToolbar-customization-target > toolbaritem:last-of-type:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
       max-width: calc(60px + var(--uc-hamburger-width) + var(--uc-extensions-button-width)) !important;
       padding-inline-end: calc(var(--uc-hamburger-width) + var(--uc-extensions-button-width)) !important;
     }
@@ -2666,9 +2718,10 @@ sidebar-main {
     :root[privatebrowsingmode]:is(
       :has(#PanelUI-button:hover),
       :has(#unified-extensions-button:hover),
-      :has(#TabsToolbar-customization-target > toolbaritem:hover),
+      :has(#TabsToolbar-customization-target > toolbaritem:hover):where(:not(:has(#TabsToolbar-customization-target > toolbaritem:hover ~ :not(toolbaritem, #alltabs-button, [hidden])))),
+      :has(#TabsToolbar-customization-target > toolbaritem [open]),
       :has(#TabsToolbar .private-browsing-indicator-button:hover)
-    ) #TabsToolbar-customization-target > toolbaritem:last-of-type {
+    ) #TabsToolbar-customization-target > toolbaritem:last-of-type:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
       max-width: 60px !important;
       padding-inline-end: revert !important;
     }
