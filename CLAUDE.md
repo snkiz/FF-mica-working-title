@@ -51,12 +51,12 @@ Load order is set in `userChrome.css` and it matters (later wins ties):
   icon reveals; FoxOne #54, #55, #58, #59), so our 7b/7c overrides are gone. Find-bar fix and `--uc-row-height`
   landed in 3.8.8. FoxMica keeps click-to-cancel (override 7e), Forward-only hiding, and the trust-label and PiP
   switches.
-- Issues #1-#34 are on GitHub. `TODO.md` maps items to issue numbers.
+- Issues #1-#34 are on GitHub. `TODO.md` maps items to issue numbers. Items are `tdN`, issues are `#N`; never a bare number.
 - Built and hand-tested on Nightly 160 with Nova on (the default) and off. Proton/old look is a dead end.
 - Daily browser is ESR 140. Plan: get Nightly right, then move to ESR 153 (has the Nova switch) and backport (#22).
-- Nightly has dropped `browser.compactmode.show`; density is now set in about:settings (TODO item 34).
+- Nightly has dropped `browser.compactmode.show`; density is now set in about:settings (td34).
 
-### Item 26 (solved): how it was found
+### td26 (solved): how it was found
 
 - `.tab-background` still exists under Nova, inside `.tab-stack`, and has `selected`.
 - Our rule `:root .tabbrowser-tab:is([selected],[multiselected]) .tab-background`

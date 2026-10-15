@@ -2,20 +2,21 @@
 
 Items marked [#n] are GitHub issues on snkiz/FoxMica; the issue holds the details.
 
-Numbers are kept stable so old chats still make sense. Don't renumber.
+Numbers are kept stable so old chats still make sense. Don't renumber. TODO items are written `tdN` (td24);
+GitHub issues are `#N`. A bare number means nothing; always use the prefix.
 Gathered from the three setup chats on 2026-10-04. The maintainer's own notes beat this list
 where they disagree.
 
 ## Now
 
-- **24. Modal dialogs: background is back but black** [#4] (Nova on). Fixed the missing
+- **td24. Modal dialogs: background is back but black** [#4] (Nova on). Fixed the missing
   background 2026-10-04 by scoping section 1 of userChrome-foxone-overrides.css to
   `#main-window` (it had made every chrome document transparent, dialogs included).
   Left to do: dialogs should use the theme palette, not black. Readable for now.
-  Item 22 (the "make Firefox your default browser" bar) is the same dialog, so it gets fixed with this one.
-- **29. Bookmarks bar vs sidebar mismatch.** [#5] The sidebar is now properly translucent;
+  Item td22 (the "make Firefox your default browser" bar) is the same dialog, so it gets fixed with this one.
+- **td29. Bookmarks bar vs sidebar mismatch.** [#5] The sidebar is now properly translucent;
   the floating bookmarks bar is still solid, so it looks half on, half off. Ties in
-  with item 1. Test against a busy wallpaper (a brick pattern works well).
+  with td1. Test against a busy wallpaper (a brick pattern works well).
 
 ## Next time
 
@@ -23,21 +24,36 @@ where they disagree.
 
 ## First bug-fix pass
 
-- 18. Selection contrast on about: pages [#7] (optional separate variable).
-- 4. Sidebar button click target [#2]: fix in place, needs testing (override 7a+). Cause: Firefox pads the first
+- td18. Selection contrast on about: pages [#7] (optional separate variable).
+- td4. Sidebar button click target [#2]: fix in place, needs testing (override 7a+). Cause: Firefox pads the first
   nav-bar button on purpose so a corner click hits it (browser-shared.css); not maximized, that ate our grab area.
-- 2. Sidebar spacer: [#3] stop bookmarks/tools covering the minimized sidebar button.
+- td2. Sidebar spacer: [#3] stop bookmarks/tools covering the minimized sidebar button.
   Maybe hide it when the sidebar is open.
-- 28. [#13] Nova on: one animated built-in theme left the tab bar transparent. Fine with
+- td28. [#13] Nova on: one animated built-in theme left the tab bar transparent. Fine with
   Nova off. Only one theme seen so far; check a few others before chasing it.
-- 31. [#20] Fix the comment on the static bookmarks bar in foxone-config.css: it says the static bar uses the
+- td31. [#20] Fix the comment on the static bookmarks bar in foxone-config.css: it says the static bar uses the
   translucent layer, but so far only Customize mode does. (Static on the layer is still the plan.)
-- 34. Density moved: Nightly has dropped `browser.compactmode.show` entirely; the Customize -> Density switch
+- td34. Density moved: Nightly has dropped `browser.compactmode.show` entirely; the Customize -> Density switch
   now redirects to about:settings (Appearance). Not looked into yet. Check what ESR does, then update the README's
   about:config table (the `browser.compactmode.show` row) and the comment in foxone-config.css (about line 53).
-- 35. Reduced motion: check FoxMica (and FoxOne's reveals) with Windows' "Animation effects" off, which Firefox
+- td35. Reduced motion: check FoxMica (and FoxOne's reveals) with Windows' "Animation effects" off, which Firefox
   reports as `prefers-reduced-motion: reduce`. The hover reveals, tab and URL-bar transitions should go instant or
   near-instant. Raised on FoxOne #62.
+- td36. In-flow bookmarks bar (`--ut-bookmarks-inflow: 1`), seen 2026-10-14:
+  - Over-grows on reveal, then snaps to size when the pointer enters the bar. Cause: section 5's in-flow reveal
+    (hover on the top row) still uses FoxOne's `max-height: 4em` + 6px padding; 5d only fixes the "pointer on the
+    bar" case. Fix: give the in-flow reveal `--ut-bookmarks-height` and zero padding. Oddity: it didn't show with
+    the generic icon width at 24px (was 26px, bar at 30px); re-check after the fix.
+  - 1-2px gap under the active tab while the bar is collapsed: the bar's deliberate 2px sliver (opacity 0), from
+    Wintego's version. Reason not written down.
+  - The bar pushes the sidebar down with the page. Idea: negative top margin on the sidebar while the bar is open,
+    so it reaches up into the bar's row and stays put.
+  - Flicker looked fine on Nightly with hardware acceleration off.
+- td37. Overlay bookmarks bar (default) stops at the sidebar launcher: start the bar at the collapsed launcher's right
+  edge so it doesn't cover the icons; the open sidebar panel covers the bar (or the bar sits over it, test both).
+  Must follow the sidebar live: anchor positioning (as FoxOne pins the hamburger), with a fallback to the window
+  edge when the sidebar is hidden, so the bar goes full width. May need the bar switched from absolute to fixed
+  (anchor rules). Jumps rather than slides; fine for a bar that only shows on hover. Experiment first, test profile.
 
 ## After launch
 
@@ -52,23 +68,23 @@ where they disagree.
   maintainers review it. Before submitting: more screenshots (more views, not just the main window)
   and a docs pass. Check their issue template for image size and allowed tags. Firn (FoxOne) says it's a form and
   that most of FoxOne's traffic comes from the store, and he approved the idea on #30, so this is worth doing well.
-- 8. [#24] Stock-plus mode: turn off the one-line bar but keep the other goodies. Needs
+- td8. [#24] Stock-plus mode: turn off the one-line bar but keep the other goodies. Needs
   every feature switchable, and testing each feature off.
-- 12. [#22] Backport to ESR 153. Check the Nova pref name there. Test Nova on and off.
-- 13. [#27] Tab-drag test against upstream's fix (FoxOne 3.8.5, about line 2746).
-- 6, 7, 21. [#25] Theme-aware tint like WinUI (Mica grey tinted by accent/wallpaper),
+- td12. [#22] Backport to ESR 153. Check the Nova pref name there. Test Nova on and off.
+- td13. [#27] Tab-drag test against upstream's fix (FoxOne 3.8.5, about line 2746).
+- td6, td7, td21. [#25] Theme-aware tint like WinUI (Mica grey tinted by accent/wallpaper),
   theme picker support, inherit Windows system colours. Do these together.
-- 30. Palette readability [#8]: pick palette ratios so every text/background pair stays
+- td30. Palette readability [#8]: pick palette ratios so every text/background pair stays
   readable (4.5:1 for text, 3:1 for icons and large text), whatever colours are
-  chosen. Found while drafting 18 (selected text is about 1.8:1). Ties in with 6, 7, 21.
+  chosen. Found while drafting td18 (selected text is about 1.8:1). Ties in with td6, td7, td21.
 - [#26] Five-colour palette: only the main five colours in the user config, the rest derived and moved
   to an advanced section. Depends on #25 and #8.
-- 1. Bookmarks bar on new tab: [#5] drop the background, clear tint with just enough
+- td1. Bookmarks bar on new tab: [#5] drop the background, clear tint with just enough
   contrast for the text.
-- 5. [#23] Scaling: "certified good enough", poke at it later.
-- 19. [#28] Try `widget.windows.mica.popups` (it's 0 in the good profile's user.js).
-- 20. [#29] Check `widget.windows.apply-dwm-resize-hack` with Mica (fullscreen from maximized).
-- 10. Tab right-click menu: it's far too long. Trim it and reorder it with CSS (hide unused items, move
+- td5. [#23] Scaling: "certified good enough", poke at it later.
+- td19. [#28] Try `widget.windows.mica.popups` (it's 0 in the good profile's user.js).
+- td20. [#29] Check `widget.windows.apply-dwm-resize-hack` with Mica (fullscreen from maximized).
+- td10. Tab right-click menu: it's far too long. Trim it and reorder it with CSS (hide unused items, move
   Reopen Closed Tab to the top; untested idea: `#context_undoCloseTab { order: -1; }`). Plus a small
   extension for "New Tab to the Left" (no add-on found that does left; extensions can add items but
   not place them at the top).
@@ -78,7 +94,7 @@ where they disagree.
 
 ## Maybe, probably never
 
-- 9. Fully transparent about: pages and chrome (flaky on Optimus laptops).
+- td9. Fully transparent about: pages and chrome (flaky on Optimus laptops).
 
 ## Upstream notes (only once things are stable, one small issue per idea, no surprise PRs)
 
@@ -97,9 +113,9 @@ where they disagree.
   Tested FoxOne and FoxMica on 3.9.4 in all three Firefox versions.
 - 2026-10-12 check-in: section 4 (bar height) checked against `--uc-row-height`, all good. userContent.css is on
   FoxOne 3.9.1 (#33). README is current with 0.7, including the Customize-mode quirks and the hover-reveal notes.
-- 23. Hide nav controls while typing [#1]: done as click-to-cancel (override 7e, mode 2).
-- 33. Tab bar does not overrun the buttons; the extension hover pushes them, and so do the tools tried.
-- Gave up, issues closed: 14, white tab-loading highlight [#12]; 32, pinning the overflow button [#19].
+- td23. Hide nav controls while typing [#1]: done as click-to-cancel (override 7e, mode 2).
+- td33. Tab bar does not overrun the buttons; the extension hover pushes them, and so do the tools tried.
+- Gave up, issues closed: td14, white tab-loading highlight [#12]; td32, pinning the overflow button [#19].
 - README "tested on" line: says Nightly 159, Nova on and off.
 - Released 0.5 "Warts and all" (2026-10-07): FoxOne 3.8.7 [#14], [focused] fix [#15], new screenshot,
   dev files left out of the zip. Next releases: 0.5.1, 0.5.2 ... until 1.0.
@@ -116,12 +132,12 @@ where they disagree.
   40vw/548px expanded; active tab 108-192px, inactive 48-66px, tab minimum 48px.
 - One shared config file for chrome and content [#16, closed]. Offered on FoxOne #50 (closed there).
   Firn finds controlling the whole theme from 5 colours ambitious. Our answer is #8 (palette readability).
-- 26. Tab fill/corners with Nova on [#11, closed]: fixed 2026-10-04 (background-clip on the
-  selected tab). 25. Separators came back with it.
-- 27. Outline only on the last tab: explained by 26. Nova changed how Firefox draws tabs; no fix needed.
+- td26. Tab fill/corners with Nova on [#11, closed]: fixed 2026-10-04 (background-clip on the
+  selected tab). td25. Separators came back with it.
+- td27. Outline only on the last tab: explained by td26. Nova changed how Firefox draws tabs; no fix needed.
 
-- 15. userContent.css rebased on 3.8.5.
-- 16. UI font as an option (switched-off block in userChrome.css).
-- 17. CI workflow and check.mjs removed, so nothing to adapt.
+- td15. userContent.css rebased on 3.8.5.
+- td16. UI font as an option (switched-off block in userChrome.css).
+- td17. CI workflow and check.mjs removed, so nothing to adapt.
 - Repo published.
 - Renamed to FoxMica (repo, folder, README), 2026-10-04.
