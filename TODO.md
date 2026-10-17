@@ -125,6 +125,11 @@ where they disagree.
 
 ## Done
 
+- Pulled FoxOne 3.9.7 "Mute on the first click" (2026-10-17), skipping 3.9.5 and 3.9.6 in one step. 3.9.5: more
+  Nova fixes. 3.9.6: the new-tab button rewrite that accounts for all the movable buttons (td38). 3.9.7: clicking
+  a tab's mute button no longer stretches the URL bar and eats the click; it now widens only with focus in the
+  nav-bar. Only change needed on our side: the strip patch's FIND text, for one new comment line (#67). The
+  row-height variable we asked for (#57) is upstream. Checked in the dev profile, nothing off.
 - Pulled FoxOne 3.9.4 "Icons where you put them" (2026-10-13, branch Pull-3.9.4-to-0.7.1, for 0.7.1). Our #62 fix
   landed upstream as #63 (Firn added `[hidden]` for FF158's Smart Window buttons). Closes #32: Customize-mode overrun.
   Tested FoxOne and FoxMica on 3.9.4 in all three Firefox versions.

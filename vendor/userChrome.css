@@ -1,6 +1,6 @@
 /*==============================================================================================*
 
-  FoxOne 3.9.4 – A minimalistic one-line Firefox theme
+  FoxOne 3.9.7 – A minimalistic one-line Firefox theme
   Based on Cascade (https://github.com/andreasgrafen/cascade)
   Floating Find Bar and dynamic Bookmarks Bar by LittleFox
   (https://github.com/biglavis/LittleFox)
@@ -113,7 +113,8 @@
    * hamburger, instead of leaving it in the nav-bar after the URL bar
    * (1 = right, beside the hamburger, 0 = Firefox default in the nav-bar).
    * Firefox locks the button to the nav-bar in Customize Toolbar, so this is
-   * the only way to get it there. (issue #48) */
+   * the only way to get it there. Pinned is the tested layout, 0 leaves the
+   * button where Firefox puts it, best effort. (issues #48, #67) */
   --uc-extensions-button-right: 1;
   /* Width reserved for the pinned puzzle button. Also its distance from the
    * window controls beyond the hamburger, so it doubles as the gap knob:
@@ -894,14 +895,14 @@ sidebar-main,
 
   /* Positioning context for the overlay, and stacking above the content.
 
-     overflow is the part LittleFox does not need: Nova gives every
-     .chrome-block container `overflow: clip` (browser-shared.css, inside
-     @media -moz-pref("browser.nova.enabled")), and #navigator-toolbox is
-     one. The overlay's containing block IS the toolbox and it sits at
-     top:100%, i.e. entirely outside it, so the clip erases the bar in every
-     state – reveal included. Lifted on the toolbox only, from inside this
-     block, so setting --uc-dynamic-bookmarks: 0 hands the clip straight
-     back; the shared .chrome-block rule is never touched. */
+     overflow: Nova gives every .chrome-block container `overflow: clip`
+     (browser-shared.css, inside @media -moz-pref("browser.nova.enabled")),
+     and #navigator-toolbox is one. The overlay's containing block IS the
+     toolbox and it sits at top:100%, i.e. entirely outside it, so the clip
+     erases the bar in every state – reveal included. Lifted on the toolbox
+     only, from inside this block, so setting --uc-dynamic-bookmarks: 0
+     hands the clip straight back; the shared .chrome-block rule is never
+     touched. */
   #navigator-toolbox {
     position: relative !important;
     z-index: 9999 !important;
@@ -1086,13 +1087,16 @@ sidebar-main,
                   - var(--uc-extensions-button-width) * var(--uc-extensions-button-right)) !important;
 }
 
-#navigator-toolbox:focus-within #nav-bar {
+/* Widen only for focus inside the nav-bar. The toolbox-wide :focus-within
+   from Cascade also fired when a tab's audio button took focus on mousedown,
+   so the tab strip shrank under the cursor and the click missed. (#68) */
+#navigator-toolbox:has(#nav-bar:focus-within) #nav-bar {
   width: var(--uc-urlbar-max-width);
   &.browser-titlebar {
     width: 100%;
   }
 }
-#navigator-toolbox:focus-within #titlebar {
+#navigator-toolbox:has(#nav-bar:focus-within) #titlebar {
   width: calc(100vw - var(--uc-urlbar-max-width) - 1px);
 }
 
@@ -1453,11 +1457,16 @@ sidebar-main,
    era when the context-fill channel was dead on this path) is retired: 154
    rebuilt the badges as fragment SVGs (badge-bookmark.svg#ltr-icon etc.) on
    a 24px .urlbarView-type-icon box overlaying the whole favicon, with a
-   working fill channel (fill: var(--toolbarbutton-icon-fill-attention)) and
-   a mask that notches the favicon corner. Under the old rule the star was
-   scaled to that full 24px box and swallowed the favicon. FoxOne already
-   pins --toolbarbutton-icon-fill-attention to the accent (identity block),
-   so the native badge arrives amber with no rule needed here. */
+   working fill channel and a mask that notches the favicon corner. Under
+   the old rule the star was scaled to that full 24px box and swallowed the
+   favicon. 154-157 filled the badge from --toolbarbutton-icon-fill-attention
+   (pinned to the accent in the identity block). 158 switched non-selected
+   rows to fill: var(--link-color), which follows the OS accent (cyan) on
+   profiles with browser.theme.native-theme. Pin the fill on the badge
+   itself, all rows, so the selected row's badge matches its amber title. */
+.urlbarView-row > .urlbarView-row-inner > .urlbarView-type-icon {
+  fill: var(--uc-color-accent) !important;
+}
 
 .urlbar-icon,
 #urlbar-go-button {
@@ -2545,19 +2554,21 @@ sidebar-main {
 #TabsToolbar-customization-target > toolbaritem:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))):where(:not(toolbaritem:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden]))) ~ *)) {
   margin-inline-start: auto !important;
 }
-/* Only the last item clears the fixed hamburger; intermediate items stay snug. */
-#TabsToolbar-customization-target > toolbaritem:last-of-type:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
+/* The last visible item gets the hamburger clearance. That's the extension
+   cluster, unless a flexible spacer has pushed a button there instead.
+   :where() lets the #13 rules take the clearance back while the icons are collapsed. */
+#TabsToolbar-customization-target > :is(toolbarbutton, toolbaritem):where(:not(#alltabs-button, [hidden])):where(:not(:has(~ :not(#alltabs-button, [hidden])))) {
   margin-inline-end: var(--uc-hamburger-width) !important;
 }
 
 /* Private windows: Firefox puts a mask toolbarbutton at the end of #TabsToolbar,
    right where the fixed hamburger sits, so the two overlapped. Give the mask
-   the hamburger clearance instead of the extension cluster, so the strip reads
-   [extensions][mask][hamburger][window controls]. */
+   the hamburger clearance instead of whatever item is last in the strip, so
+   the strip reads [last item][mask][hamburger][window controls]. */
 #TabsToolbar .private-browsing-indicator-button {
   margin-inline-end: var(--uc-hamburger-width) !important;
 }
-:root[privatebrowsingmode] #TabsToolbar-customization-target > toolbaritem:last-of-type:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
+:root[privatebrowsingmode] #TabsToolbar-customization-target > :is(toolbarbutton, toolbaritem):where(:not(#alltabs-button, [hidden])):where(:not(:has(~ :not(#alltabs-button, [hidden])))) {
   margin-inline-end: 0 !important;
 }
 
@@ -2591,6 +2602,18 @@ sidebar-main {
   /* collapsed last item drops the hamburger clearance so no gap is reserved */
   #TabsToolbar-customization-target > toolbaritem:last-of-type:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
     margin-inline-end: 0 !important;
+  }
+  /* A button right before the collapsed cluster, pushed to the edge by a
+     flexible space, would slide under the hamburger once the cluster folds
+     to zero. It takes over the clearance while collapsed and hands it back
+     on reveal, when the cluster's padding carries it again. Private windows
+     are left out: the mask holds the clearance there. The transition sits
+     in its own low-specificity rule so the reduced-motion block still wins. */
+  #TabsToolbar-customization-target > toolbarbutton:where(:not(#alltabs-button, [hidden])):where(:has(~ toolbaritem:not([hidden]))):where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
+    transition: margin-inline-end 0.2s ease !important;
+  }
+  :root:not([privatebrowsingmode]) #TabsToolbar-customization-target > toolbarbutton:where(:not(#alltabs-button, [hidden])):where(:has(~ toolbaritem:not([hidden]))):where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
+    margin-inline-end: var(--uc-hamburger-width) !important;
   }
 
   /* Reveal: hovering the hamburger, an extension item itself (the bridge), or
@@ -2638,6 +2661,16 @@ sidebar-main {
     max-width: 60px !important;
     padding-inline-end: revert !important;
   }
+  /* Revealed: the cluster's padding carries the clearance, so the button
+     before it drops its own, or the gap doubles. */
+  :root:is(
+    :has(#PanelUI-button:hover),
+    :has(#TabsToolbar-customization-target > toolbaritem:hover):where(:not(:has(#TabsToolbar-customization-target > toolbaritem:hover ~ :not(toolbaritem, #alltabs-button, [hidden])))),
+    :has(#TabsToolbar-customization-target > toolbaritem [open]),
+    :has(#TabsToolbar .private-browsing-indicator-button:hover)
+  ) #TabsToolbar-customization-target > toolbarbutton:where(:not(#alltabs-button, [hidden])):where(:has(~ toolbaritem:not([hidden]))):where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
+    margin-inline-end: 0 !important;
+  }
 }
 
 /* ==========================================================================
@@ -2674,10 +2707,10 @@ sidebar-main {
     margin-top: 2px !important;
   }
 
-  /* The extension cluster and the private-window mask now clear two fixed
-     buttons instead of one. The private-window zeroing of the cluster margin
+  /* The last visible item and the private-window mask now clear two fixed
+     buttons instead of one. The private-window zeroing of that item's margin
      above outranks this by specificity, so it keeps working. */
-  #TabsToolbar-customization-target > toolbaritem:last-of-type:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))),
+  #TabsToolbar-customization-target > :is(toolbarbutton, toolbaritem):where(:not(#alltabs-button, [hidden])):where(:not(:has(~ :not(#alltabs-button, [hidden])))),
   #TabsToolbar .private-browsing-indicator-button {
     margin-inline-end: calc(var(--uc-hamburger-width) + var(--uc-extensions-button-width)) !important;
   }
@@ -2689,6 +2722,20 @@ sidebar-main {
      to the icons and the bridge would otherwise break there. */
   @container style(--uc-hide-extension-icons: 1) {
     #TabsToolbar-customization-target > toolbaritem:last-of-type:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
+      margin-inline-end: 0 !important;
+    }
+    /* The button before the collapsed cluster clears both fixed buttons,
+       and drops it on reveal, the puzzle's hover included. */
+    :root:not([privatebrowsingmode]) #TabsToolbar-customization-target > toolbarbutton:where(:not(#alltabs-button, [hidden])):where(:has(~ toolbaritem:not([hidden]))):where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
+      margin-inline-end: calc(var(--uc-hamburger-width) + var(--uc-extensions-button-width)) !important;
+    }
+    :root:is(
+      :has(#PanelUI-button:hover),
+      :has(#unified-extensions-button:hover),
+      :has(#TabsToolbar-customization-target > toolbaritem:hover):where(:not(:has(#TabsToolbar-customization-target > toolbaritem:hover ~ :not(toolbaritem, #alltabs-button, [hidden])))),
+      :has(#TabsToolbar-customization-target > toolbaritem [open]),
+      :has(#TabsToolbar .private-browsing-indicator-button:hover)
+    ) #TabsToolbar-customization-target > toolbarbutton:where(:not(#alltabs-button, [hidden])):where(:has(~ toolbaritem:not([hidden]))):where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
       margin-inline-end: 0 !important;
     }
     :root:is(
@@ -3358,6 +3405,148 @@ html[id^="taskbartab"] #unified-extensions-button {
 
 
 /* ==========================================================================
+   BOOKMARK EDIT PANEL (the star panel, #editBookmarkPanel in browser.xhtml)
+
+   Text fields: the chrome input rule (global-shared.css) fills them from
+   --input-text-background-color -> --background-color-box, Nova's
+   violet-tinted dark (#2b2a33). The folder tree paints Field, the
+   compiled-in standin of the same tone. Both go to base like the
+   Speicherort menulist next to them; the focused field takes surface,
+   the urlbar model the Library fields use too.
+
+   Folder tree: a XUL <tree>, so ::-moz-tree-* pseudos that CANNOT read
+   CSS variables. Hardcoded on purpose, same as the LIBRARY block below:
+   #fabd2f = --uc-color-accent, #ffda85 = --uc-tab-hover-text, light
+   scheme #b57614 / #855d22. Native selection is SelectedItem (the
+   Windows accent, cyan here), hover a grey block. FoxOne popup model
+   instead: no block, amber text for the selection, light amber for
+   hover. Selected rules come after the hover rules so a hovered
+   selection stays amber.
+   ========================================================================== */
+:root:not([lwtheme]) #editBookmarkPanel input {
+  background-color: var(--uc-color-base) !important;
+}
+:root:not([lwtheme]) #editBookmarkPanel input:focus {
+  background-color: var(--uc-color-surface) !important;
+}
+:root:not([lwtheme]) #editBMPanel_folderTree {
+  background-color: var(--uc-color-base) !important;
+}
+
+/* Tag selector (the checkbox list behind the Schlagwörter expander), in
+   the star panel AND the Library details pane: one id, two documents,
+   so it sits here instead of inside the Library's @-moz-document block.
+   The list is a richlistbox, painted Field like the folder tree.
+   Selection follows the tree model: amber text, no block. The native
+   checkboxes render in the Windows accent colour – redrawn flat:
+   base/surface at rest, filled amber with a dark check when set. The
+   lwtheme guard is inert in the Library (that window never gets one). */
+:root:not([lwtheme]) #editBMPanel_tagsSelector {
+  background-color: var(--uc-color-base) !important;
+}
+:root:not([lwtheme]) #editBMPanel_tagsSelector richlistitem[selected] {
+  background-color: transparent !important;
+  color: var(--uc-color-accent) !important;
+  outline: none !important;
+}
+:root:not([lwtheme]) #editBMPanel_tagsSelector richlistitem[selected] checkbox {
+  color: inherit !important;
+}
+:root:not([lwtheme]) #editBMPanel_tagsSelector .checkbox-check {
+  appearance: none !important;
+  width: 16px !important;
+  height: 16px !important;
+  border: 1px solid var(--uc-color-hover) !important;
+  border-radius: 3px !important;
+  background-color: var(--uc-color-base) !important;
+}
+:root:not([lwtheme]) #editBMPanel_tagsSelector checkbox[checked] .checkbox-check {
+  background-color: var(--uc-color-accent) !important;
+  border-color: var(--uc-color-accent) !important;
+  background-image: url("chrome://global/skin/icons/check.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 12px;
+  -moz-context-properties: fill;
+  fill: var(--uc-color-base); /* base-coloured check on the accent fill */
+}
+
+#editBMPanel_folderTree > treechildren::-moz-tree-row(hover),
+#editBMPanel_folderTree > treechildren::-moz-tree-row(selected),
+#editBMPanel_folderTree > treechildren::-moz-tree-row(selected, focus) {
+  background-color: transparent !important;
+}
+/* Keyboard-cursor dashed ring – redundant next to the amber text. */
+#editBMPanel_folderTree > treechildren::-moz-tree-row(current),
+#editBMPanel_folderTree > treechildren::-moz-tree-row(current, focus) {
+  outline: none !important;
+}
+#editBMPanel_folderTree > treechildren::-moz-tree-cell-text(hover) {
+  color: #ffda85 !important;
+}
+#editBMPanel_folderTree > treechildren::-moz-tree-image(hover),
+#editBMPanel_folderTree > treechildren::-moz-tree-twisty(hover) {
+  fill: #ffda85 !important;
+}
+#editBMPanel_folderTree > treechildren::-moz-tree-cell-text(selected),
+#editBMPanel_folderTree > treechildren::-moz-tree-cell-text(selected, focus) {
+  color: #fabd2f !important;
+}
+#editBMPanel_folderTree > treechildren::-moz-tree-image(selected),
+#editBMPanel_folderTree > treechildren::-moz-tree-image(selected, focus),
+#editBMPanel_folderTree > treechildren::-moz-tree-twisty(selected),
+#editBMPanel_folderTree > treechildren::-moz-tree-twisty(selected, focus) {
+  fill: #fabd2f !important;
+}
+
+@media (prefers-color-scheme: light) {
+  #editBMPanel_folderTree > treechildren::-moz-tree-cell-text(hover) {
+    color: #855d22 !important;
+  }
+  #editBMPanel_folderTree > treechildren::-moz-tree-image(hover),
+  #editBMPanel_folderTree > treechildren::-moz-tree-twisty(hover) {
+    fill: #855d22 !important;
+  }
+  #editBMPanel_folderTree > treechildren::-moz-tree-cell-text(selected),
+  #editBMPanel_folderTree > treechildren::-moz-tree-cell-text(selected, focus) {
+    color: #b57614 !important;
+  }
+  #editBMPanel_folderTree > treechildren::-moz-tree-image(selected),
+  #editBMPanel_folderTree > treechildren::-moz-tree-image(selected, focus),
+  #editBMPanel_folderTree > treechildren::-moz-tree-twisty(selected),
+  #editBMPanel_folderTree > treechildren::-moz-tree-twisty(selected, focus) {
+    fill: #b57614 !important;
+  }
+}
+
+/* The same form as a dialog of its own (bookmarkProperties.xhtml: "Neues
+   Lesezeichen" / "Lesezeichen hinzufügen" from the Library or a context
+   menu). Folder tree and tag list are covered above by id; the window
+   itself paints -moz-Dialog, fields and secondary buttons the
+   violet-tinted dark. Base everywhere, focused field surface, button
+   hover as accent text (same treatment as the sanitize dialog). */
+@-moz-document url("chrome://browser/content/places/bookmarkProperties.xhtml") {
+  :root {
+    --button-background-color: var(--uc-color-base) !important;
+    --button-background-color-hover: transparent !important;
+    --button-background-color-active: transparent !important;
+    --button-text-color-hover: var(--uc-color-accent) !important;
+    --button-text-color-active: var(--uc-color-accent) !important;
+  }
+  :root,
+  dialog {
+    background-color: var(--uc-color-base) !important;
+  }
+  input {
+    background-color: var(--uc-color-base) !important;
+  }
+  input:focus {
+    background-color: var(--uc-color-surface) !important;
+  }
+}
+
+
+/* ==========================================================================
    LIBRARY ("Bibliothek", places.xhtml) – selection follows the FoxOne
    model: accent text instead of a background block (same as tabs, icons,
    urlbar results, add-ons list). Hover gets an accent frame, square
@@ -3561,39 +3750,13 @@ html[id^="taskbartab"] #unified-extensions-button {
 
   /* ------------------------------------------------------------------
      Tag selector (the checkbox list behind the Schlagwörter expander).
-     Selection follows the tree model: amber text, no block. The native
-     checkboxes render in the Windows accent colour – redrawn flat:
-     base/surface at rest, filled amber with a dark check when set.
+     Fill, selection and checkboxes live in BOOKMARK EDIT PANEL, shared
+     with the star panel. Only the frame is Library-specific: surface
+     hairline like the other fields here (the star panel keeps Nova's
+     field border next to its native-bordered inputs).
      ------------------------------------------------------------------ */
   #editBMPanel_tagsSelector {
-    background-color: var(--uc-color-base) !important;
     border: 1px solid var(--uc-color-surface) !important;
-  }
-  #editBMPanel_tagsSelector richlistitem[selected] {
-    background-color: transparent !important;
-    color: var(--uc-color-accent) !important;
-    outline: none !important;
-  }
-  #editBMPanel_tagsSelector richlistitem[selected] checkbox {
-    color: inherit !important;
-  }
-  #editBMPanel_tagsSelector .checkbox-check {
-    appearance: none !important;
-    width: 16px !important;
-    height: 16px !important;
-    border: 1px solid var(--uc-color-hover) !important;
-    border-radius: 3px !important;
-    background-color: var(--uc-color-base) !important;
-  }
-  #editBMPanel_tagsSelector checkbox[checked] .checkbox-check {
-    background-color: var(--uc-color-accent) !important;
-    border-color: var(--uc-color-accent) !important;
-    background-image: url("chrome://global/skin/icons/check.svg");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 12px;
-    -moz-context-properties: fill;
-    fill: var(--uc-color-base); /* base-coloured check on the accent fill */
   }
 
   /* ------------------------------------------------------------------
@@ -3714,7 +3877,8 @@ html[id^="taskbartab"] #unified-extensions-button {
   }
 
   /* Tabstrip extension-icon reveal */
-  #TabsToolbar-customization-target > toolbaritem { transition: none !important; }
+  #TabsToolbar-customization-target > toolbaritem,
+  #TabsToolbar-customization-target > toolbarbutton:where(:has(~ toolbaritem)) { transition: none !important; }
 
   /* Dynamic bookmarks bar – reveal and collapse snap, delays included. The
      bar still appears and disappears on hover, it just does not animate. */
