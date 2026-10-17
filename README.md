@@ -45,17 +45,14 @@ A Firefox theme for Windows 11: the real Mica backdrop behind a one-line browser
 
 ## about:config prefs
 
-| Pref                                                                         | Value        | Why                                                           |
-| ---------------------------------------------------------------------------- | ------------ | ------------------------------------------------------------- |
-| `toolkit.legacyUserProfileCustomizations.stylesheets`                        | `true`       | Needed. Without it Firefox ignores everything in `chrome` .   |
-| `widget.windows.mica`                                                        | `true`       | Needed. Turns on the Mica backdrop.                           |
-| `widget.windows.mica.toplevel-backdrop`                                      | `2` or `4`   | Optional. `2` = Mica, `4` = Mica Alt.                         |
-| `browser.tabs.allow_transparent_browser` ,                                   | `true` ,     | Optional. Lets blank tabs show Mica too. Flaky on laptops     |
-| `browser.display.background_color`                                           |              | witha                                                         |
-| (and `.dark` )                                                               | `transpa ren | discrete GPU.                                                 |
-|                                                                              | t`           |                                                               |
-| `browser.compactmode.show`                                                   | `true`       | Optional. Shows the Compact option under Customize ->         |
-|                                                                              |              | Density.                                                      |
+| Pref | Value | Why |
+| --- | --- | --- |
+| `toolkit.legacyUserProfileCustomizations.stylesheets` | `true` | Needed. Without it Firefox ignores everything in `chrome`. |
+| `widget.windows.mica` | `true` | Needed. Turns on the Mica backdrop. |
+| `widget.windows.mica.toplevel-backdrop` | `2` or `4` | Optional. `2` = Mica, `4` = Mica Alt. |
+| `browser.tabs.allow_transparent_browser` | `true` | Optional. Lets blank tabs show Mica too. Flaky on laptops with a discrete GPU. |
+| `browser.display.background_color` (and `.dark`) | `transparent` | Optional. Goes with the pref above. |
+| `browser.compactmode.show` | `true` | Optional. Shows the Compact option under Customize -> Density. |
 
 The dynamic bookmarks bar may also need the bookmarks toolbar set to "Always Show". Other FoxOne-style themes say so; I haven't confirmed it for this one yet.
 
@@ -63,34 +60,28 @@ The dynamic bookmarks bar may also need the bookmarks toolbar set to "Always Sho
 
 Everything you are meant to change is in `foxmica-config.css`. It is variables only. The file's own comments explain each one; this is the short version.
 
-| Setting                                      | What it does                                                                                                 |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `--uc-color-base` , `-surface` , `-accent` , | The palette (dark). The `--uc-light-*` set is used when Firefox runs light.                                  |
-| `-text` , `-hover`                           |                                                                                                              |
-| `--uc-rounded` , `--uc-border-radius`        | Rounded corners on or off, and how round.                                                                    |
-| `--ut-bar-height-compact / -normal / -touch` | Height of the one-line bar for each Firefox UI density.                                                      |
-| `--ut-bar-padding`                           | Space above and below the tabs and URL field inside the bar.                                                 |
-| `--ut-btn-inner-*` , `--ut-btn-outer`        | Toolbar button padding, which sets how far apart the icons sit.                                              |
-| `--ut-tab-radius` , `--ut-tab-top-gap` ,     | Tab corner radius, gap above tabs, font weight, title colour.                                                |
-| `--ut-tab-weight` , `--ut-tab-text`          |                                                                                                              |
-| `--ut-layer`                                 | The colour and see-through-ness of the layer (selected tab, bookmarks bar, sidebar). Lighter grey or lower   |
-|                                              | alpha = lighter tab.                                                                                         |
-| `--ut-strip`                                 | Optional tint for the top row. `transparent` = plain Mica.                                                   |
-| `--ut-tab-hover-bg` , `--ut-separator`       | Hover fill, and the thin lines between tabs (`transparent` = off).                                           |
-| `--ut-puzzle-color`                          | Colour of the extensions (puzzle) button icon.                                                               |
-| `--ut-bookmarks-bg` ,                        | The bookmarks bar: fill while floating, height, and floating (`0`) or in-flow (`1`).                         |
-| `--ut-bookmarks-height` ,                    |                                                                                                              |
-| `--ut-bookmarks-inflow`                      |                                                                                                              |
-| `--ut-drag-left`                             | Window-drag area left of the sidebar button when not maximized. `0` removes it.                              |
-| `--ut-hide-trust-label`                      | Hide the text next to the site-info icon ("Not secure"). Default: hidden.                                    |
-| `--ut-hide-pip-button`                       | Hide the picture-in-picture button in the URL bar (the video has its own). Default: hidden.                  |
-| `--ut-hide-disabled-nav`                     | Hide the Forward button alone while it has nowhere to go (`0` off, `1` on). FoxOne's own                     |
-|                                              | `--uc-hide-disabled-nav-buttons` hides Back as well.                                                         |
-| `--uc-autohide-nav-buttons` ,                | FoxOne's nav reveal: `0` always show, `1` hover and focus, `2` hover only. Mode `2` also gives               |
-|                                              | click-to-cancel.                                                                                             |
-| `--ut-hover-delay`                           | How long you hover before the nav buttons and the bookmarks bar reveal.                                      |
-| `--ut-hide-delay`                            | How long they wait before hiding again.                                                                      |
-| `--ut-findbar-left`                          | Put the floating find bar on the left (`1`) instead of the right (`0`).                                      |
+| Setting | What it does |
+| --- | --- |
+| `--uc-color-base`, `-surface`, `-accent`, `-text`, `-hover` | The palette (dark). The `--uc-light-*` set is used when Firefox runs light. |
+| `--uc-rounded`, `--uc-border-radius` | Rounded corners on or off, and how round. |
+| `--ut-bar-height-compact / -normal / -touch` | Height of the one-line bar for each Firefox UI density. |
+| `--ut-bar-padding` | Space above and below the tabs and URL field inside the bar. |
+| `--ut-btn-inner-*`, `--ut-btn-outer` | Toolbar button padding, which sets how far apart the icons sit. |
+| `--ut-tab-radius`, `--ut-tab-top-gap`, `--ut-tab-weight` | Tab corner radius, gap above tabs, font weight. |
+| `--ut-layer` | The colour and see-through-ness of the layer (selected tab, bookmarks bar, sidebar). Lighter grey or lower alpha = lighter tab. |
+| `--ut-puzzle-color` | Colour of the extensions (puzzle) button icon. |
+| `--ut-bookmarks-inflow` | The bookmarks bar floats over the page (`0`) or sits in the page flow (`1`). |
+| `--ut-drag-left` | Window-drag area left of the sidebar button when not maximized. `0` removes it. |
+| `--ut-hide-trust-label` | Hide the text next to the site-info icon ("Not secure"). Default: hidden. |
+| `--ut-hide-pip-button` | Hide the picture-in-picture button in the URL bar (the video has its own). Default: hidden. |
+| `--ut-hide-disabled-nav` | Hide the Forward button alone while it has nowhere to go (`0` off, `1` on). FoxOne's own `--uc-hide-disabled-nav-buttons` hides Back as well. |
+| `--uc-autohide-nav-buttons` | FoxOne's nav reveal: `0` always show, `1` hover and focus, `2` hover only. Mode `2` also gives click-to-cancel. |
+| `--ut-hover-delay` | How long you hover before the nav buttons and the bookmarks bar reveal. |
+| `--ut-hide-delay` | How long they wait before hiding again. |
+| `--ut-findbar-left` | Put the floating find bar on the left (`1`) instead of the right (`0`). |
+| `--uc-status-panel-spacing` | Gap from the window edge for the status text and the floating find bar (`0` = corner). |
+
+A few more values are not in the config because they follow from the ones above: `--ut-strip` (a tint for the top row, plain Mica by default), `--ut-tab-hover-bg`, `--ut-separator`, `--ut-bookmarks-bg` and `--ut-bookmarks-height`. They sit in the "LAYER VALUES" block at the top of `foxmica-overrides.css` if you want to change one.
 
 Further down the file are FoxOne's own settings with the values chosen here (URL bar width, tab widths, and so on). FoxOne's [customisation guide](https://firnschnee.github.io/FoxOne/customisation.html) documents those.
 

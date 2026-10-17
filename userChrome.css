@@ -3,7 +3,7 @@
    2. your settings (palette, shape, bar height, layers, FoxOne toggles)
    3. tab style (also works on stock Firefox: drop 1, 2 and 4 to try it)
    4. FoxOne-only overrides: Mica, dropdown, bar-height fixes, bookmarks bar */
-@import url("userChrome-foxone.css") screen;
+@import url("foxone-mica.css") screen;
 @import url("foxmica-config.css") screen;
 @import url("foxmica-tabs.css") screen;
 @import url("foxmica-overrides.css") screen;
