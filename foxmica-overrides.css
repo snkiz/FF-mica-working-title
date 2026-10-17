@@ -413,31 +413,6 @@ notification-message {
   }
 }
 
-/* 7d. Downloads button pinned like the puzzle button. FoxOne 3.8.4 already
-   clears the hamburger AND the puzzle for extension items in the tab row, but
-   only matches <toolbaritem>; #downloads-button is a plain <toolbarbutton>, so
-   it was left to follow the tabs. Same mechanism as FoxOne's puzzle rule:
-   position:fixed, anchored to the window controls, one button-width further
-   left than the puzzle. :not([hidden]) matters: Firefox hides the button until
-   the first download with that attribute, and display:flex would override it.
-   The tab strip already reserves one extra button of room
-   (--uc-toolbar-button-width), so nothing else moves. */
-@container style(--ut-pin-downloads: 1) {
-  @media not (-moz-platform: macos) {
-    :root:not([customizing]):not(:has(#tabbrowser-tabs[orient="vertical"])) #downloads-button:not([hidden]) {
-      position: fixed !important;
-      right: calc(anchor(--uc-winbtns left, var(--uc-window-buttons-width)) + var(--uc-extensions-button-width) * (1 + var(--uc-extensions-button-right))) !important;
-      top: 0 !important;
-      height: var(--ut-bar-height, 44px) !important;
-      margin: 0 !important;
-      z-index: 1000 !important;
-      display: flex !important;
-      align-items: center !important;
-    }
-  }
-}
-
-
 /* 7e. Clicking into the URL text cancels the nav reveal (FoxMica-only; --uc-autohide-nav-buttons: 2).
    FoxOne reveals the nav buttons while the pointer is anywhere on the bar, so a click into the text, where
    you are about to type, meets buttons sliding in on the left and pushing the text over. Once the URL bar
@@ -484,23 +459,27 @@ notification-message {
 }
 
 /* ==========================================================================
-   EXPERIMENT (delete this whole block to undo it): NAV HIDE DELAY
-   FoxOne's nav buttons reveal after --uc-autohide-nav-delay but hide at once.
-   This waits --ut-nav-hide-delay before hiding them, so a quick slip off the
-   bar doesn't snap them away. It matches only the hidden state: FoxOne's
-   hover rule is more specific, so the reveal keeps its own timing.
+   DELAYS: one pair of settings for everything that reveals and hides.
+   --ut-hover-delay (450ms) and --ut-hide-delay (50ms), set in foxmica-config.css, drive the navigation buttons and
+   the bookmarks bar. FoxOne has its own variable for each of them; they are pointed at the pair here, so there is
+   one place to change them.
+
+   FoxOne's nav buttons reveal after the hover delay but hide at once. The rule below gives them the hide delay too,
+   so a quick slip off the bar doesn't snap them away. It matches only the hidden state: FoxOne's hover rule is more
+   specific, so the reveal keeps its own timing. Delete that rule to go back to hiding at once.
    ========================================================================== */
 
 :root {
-  --ut-nav-hide-delay: 50ms;
+  --uc-autohide-nav-delay: var(--ut-hover-delay, 450ms);
+  --uc-dynamic-bookmarks-hover-delay: var(--ut-hover-delay, 450ms);
+  --uc-dynamic-bookmarks-hide-delay: var(--ut-hide-delay, 50ms);
 }
 
 @container style(--uc-autohide-nav-buttons: 1), style(--uc-autohide-nav-buttons: 2) {
   #nav-bar :is(#back-button, #forward-button, #reload-button, #stop-reload-button, #ipprotection-button) {
-    transition: all 0.2s ease var(--ut-nav-hide-delay) !important;
+    transition: all 0.2s ease var(--ut-hide-delay, 50ms) !important;
   }
 }
-
 
 /* ==========================================================================
    FIND BAR: SHARED EDGE GAP + WHICH SIDE

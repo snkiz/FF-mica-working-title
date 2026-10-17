@@ -88,8 +88,9 @@ Everything you are meant to change is in `foxmica-config.css`. It is variables o
 |                                              | `--uc-hide-disabled-nav-buttons` hides Back as well.                                                         |
 | `--uc-autohide-nav-buttons` ,                | FoxOne's nav reveal: `0` always show, `1` hover and focus, `2` hover only. Mode `2` also gives               |
 |                                              | click-to-cancel.                                                                                             |
-| `--uc-autohide-nav-delay`                    | The delay is how long you hover first.                                                                       |
-| `--ut-pin-downloads`                         | Pin the Downloads button at the right edge (`1`) or leave it in the tab row (`0`).                           |
+| `--ut-hover-delay`                           | How long you hover before the nav buttons and the bookmarks bar reveal.                                      |
+| `--ut-hide-delay`                            | How long they wait before hiding again.                                                                      |
+| `--ut-findbar-left`                          | Put the floating find bar on the left (`1`) instead of the right (`0`).                                      |
 
 Further down the file are FoxOne's own settings with the values chosen here (URL bar width, tab widths, and so on). FoxOne's [customisation guide](https://firnschnee.github.io/FoxOne/customisation.html) documents those.
 

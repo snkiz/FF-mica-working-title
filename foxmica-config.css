@@ -85,14 +85,18 @@
   /* ---- NAV ---- */
   --uc-autohide-nav-buttons: 2;     /* Navigation buttons – auto-hide with hover reveal (0 = always show, 1 = reveal with
                                     hover and focus, 2 = reveal with hover and click to cancel reveal.) */  
-  --uc-autohide-nav-delay: 450ms;   /* Navigation buttons – delay before hover reveals them (with auto-hide 1 or 2),
-                                    so a quick pass over the bar doesn't shift the URL bar. Leaving and keyboard focus
-                                    stay immediate (0ms = instant) */  
   --uc-hide-disabled-nav-buttons: 1;/* Navigation buttons – hide Back/Forward while there's nowhere to go,
                                     instead of dimming them (1 = hide, 0 = dim) */
   --ut-hide-disabled-nav: 0;        /* Hide the disabled Forward button only (no forward history; old Firefox behaviour),
                                     even while the nav buttons are revealed by hover or focus. 0 = off, 1 = Forward only */
 
+  /* ---- DELAYS ---- */
+  --ut-hover-delay: 450ms;          /* How long the pointer rests on the bar before the navigation buttons and the
+                                    bookmarks bar reveal, so a quick pass over it doesn't shift the URL bar
+                                    (0ms = instant). */
+  --ut-hide-delay: 50ms;            /* How long they wait before hiding again: the grace period for travelling from the
+                                    URL bar down onto the bookmarks or across to the nav buttons. Keyboard focus
+                                    reveals at once. */
   /* ---- URL BAR ---- */
   /* URL Bar width (min applied normally, max on focus). The px ceiling caps growth on ultrawide/4K, where bare vw 
   scales to absurd widths (fonxone/issue #6). Caps engage from ~1800px CSS-px viewport; below that the vw value wins. */  
@@ -170,9 +174,6 @@
                                         tab shows no page yet, (1 = show on fresh tabs, 0 = hover only).
                                         Ignored while --uc-dynamic-bookmarks is 0. */
   
-  --uc-dynamic-bookmarks-hover-delay: 450ms;    /* Delay before the URL-bar hover reveals the bar, */
-  --uc-dynamic-bookmarks-hide-delay: 50ms;      /* And before it hides again. The hide delay is the grace period for
-                                                travelling from the URL bar down onto the bookmarks. */
 
   /* ========================================================================
      ADVANCED (leave alone unless you know why)
