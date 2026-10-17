@@ -1,7 +1,7 @@
 /* ==========================================================================
    FOXONE OVERRIDES – Mica (Windows 11 translucency) + fixes that only make
    sense on FoxOne 3.8.4. Load AFTER the FoxOne file and after
-   foxone-config.css. Colours and sizes come from foxone-config.css.
+   foxmica-config.css. Colours and sizes come from foxmica-config.css.
 
    Sections:  1 Mica   2 Layers (strip / bookmarks bar / sidebar)
               3 URL dropdown   4 Bar height (FoxOne's fixed 44px)
@@ -451,5 +451,23 @@ notification-message {
     margin-inline: 0 !important;
     overflow: hidden !important;
     pointer-events: none !important;
+  }
+}
+
+/* ==========================================================================
+   EXPERIMENT (delete this whole block to undo it): NAV HIDE DELAY
+   FoxOne's nav buttons reveal after --uc-autohide-nav-delay but hide at once.
+   This waits --ut-nav-hide-delay before hiding them, so a quick slip off the
+   bar doesn't snap them away. It matches only the hidden state: FoxOne's
+   hover rule is more specific, so the reveal keeps its own timing.
+   ========================================================================== */
+
+:root {
+  --ut-nav-hide-delay: 50ms;
+}
+
+@container style(--uc-autohide-nav-buttons: 1), style(--uc-autohide-nav-buttons: 2) {
+  #nav-bar :is(#back-button, #forward-button, #reload-button, #stop-reload-button, #ipprotection-button) {
+    transition: all 0.2s ease var(--ut-nav-hide-delay) !important;
   }
 }

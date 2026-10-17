@@ -5,7 +5,7 @@
   and shape you pick here reach the browser UI and the about: pages / new tab alike (no more
   keeping two copies in sync). It loads AFTER FoxOne, so everything here wins over FoxOne's own
   defaults. Colours in FoxOne's own groups below are what FoxOne reads; the --ut-* group is read
-  by userChrome-tab-style.css and userChrome-foxone-overrides.css.
+  by foxmica-tabs.css and foxmica-overrides.css.
 *==============================================================================================*/
 
 :root {
@@ -35,7 +35,7 @@
   --uc-border-radius: 6px;     /* radius for everything --uc-rounded can round */
 
   /* ========================================================================
-     3. BAR, TABS AND LAYERS  (userChrome-tab-style / -foxone-overrides)
+     3. BAR, TABS AND LAYERS  (foxmica-tabs / foxmica-overrides)
      ======================================================================== */
 
   /* Height of the whole one-line bar (tabs, URL bar, hamburger, puzzle button)

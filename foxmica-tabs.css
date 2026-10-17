@@ -4,8 +4,8 @@
    Works on stock Firefox AND on FoxOne: it touches only tabs and the height of
    the tab row / nav bar, and reads none of FoxOne's variables. Every knob is a
    --ut-* variable with a built-in fallback, so the file also works with no
-   config at all (set them in foxone-config.css, or in any :root block).
-   Transparency / Mica is NOT done here; see userChrome-foxone-overrides.css.
+   config at all (set them in foxmica-config.css, or in any :root block).
+   Transparency / Mica is NOT done here; see foxmica-overrides.css.
    On stock Firefox the selected tab is simply a darker (dark scheme) or whiter
    (light scheme) sheet over the toolbar colour.
 

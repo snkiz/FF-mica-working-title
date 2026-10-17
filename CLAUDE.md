@@ -33,9 +33,9 @@ tabs. Repo: https://github.com/snkiz/FoxMica (public, MIT). Local: Documents\Git
 Load order is set in `userChrome.css` and it matters (later wins ties):
 
 1. `userChrome-foxone.css`: FoxOne exactly as released. **Never edit it.** Fixes go in the overrides.
-2. `foxone-config.css`: the one settings file (variables only). Shared by userChrome and userContent.
-3. `userChrome-tab-style.css`: the Explorer-style tabs and bar height. Meant to work on stock Firefox too.
-4. `userChrome-foxone-overrides.css`: Mica, layers, URL dropdown fix, bar-height fixes, bookmarks bar.
+2. `foxmica-config.css`: the one settings file (variables only). Shared by userChrome and userContent.
+3. `foxmica-tabs.css`: the Explorer-style tabs and bar height. Meant to work on stock Firefox too.
+4. `foxmica-overrides.css`: Mica, layers, URL dropdown fix, bar-height fixes, bookmarks bar.
 5. `userContent.css`: FoxOne's about: page styling with our edits, imports the config.
 
 `userChrome.css` also has an optional, switched-off UI font block (the maintainer uses Shantell Sans).
@@ -77,7 +77,7 @@ Load order is set in `userChrome.css` and it matters (later wins ties):
   `.tab-background` gets a `background` shorthand with `background-clip: border-area`
   (for Nova's gradient border). We remove the border, so the fill is clipped to
   nothing. Fix added: `background-clip: border-box !important` on our selected-tab
-  rule in `userChrome-tab-style.css`. **Confirmed working, same day.**
+  rule in `foxmica-tabs.css`. **Confirmed working, same day.**
 - Separators (25) came back with the same fix.
 
 ## Decisions (and why)

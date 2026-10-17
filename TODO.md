@@ -10,7 +10,7 @@ where they disagree.
 ## Now
 
 - **td24. Modal dialogs: background is back but black** [#4] (Nova on). Fixed the missing
-  background 2026-10-04 by scoping section 1 of userChrome-foxone-overrides.css to
+  background 2026-10-04 by scoping section 1 of foxmica-overrides.css to
   `#main-window` (it had made every chrome document transparent, dialogs included).
   Left to do: dialogs should use the theme palette, not black. Readable for now.
   Item td22 (the "make Firefox your default browser" bar) is the same dialog, so it gets fixed with this one.
@@ -31,11 +31,11 @@ where they disagree.
   Maybe hide it when the sidebar is open.
 - td28. [#13] Nova on: one animated built-in theme left the tab bar transparent. Fine with
   Nova off. Only one theme seen so far; check a few others before chasing it.
-- td31. [#20] Fix the comment on the static bookmarks bar in foxone-config.css: it says the static bar uses the
+- td31. [#20] Fix the comment on the static bookmarks bar in foxmica-config.css: it says the static bar uses the
   translucent layer, but so far only Customize mode does. (Static on the layer is still the plan.)
 - td34. Density moved: Nightly has dropped `browser.compactmode.show` entirely; the Customize -> Density switch
   now redirects to about:settings (Appearance). Not looked into yet. Check what ESR does, then update the README's
-  about:config table (the `browser.compactmode.show` row) and the comment in foxone-config.css (about line 53).
+  about:config table (the `browser.compactmode.show` row) and the comment in foxmica-config.css (about line 53).
 - td35. Reduced motion: check FoxMica (and FoxOne's reveals) with Windows' "Animation effects" off, which Firefox
   reports as `prefers-reduced-motion: reduce`. The hover reveals, tab and URL-bar transitions should go instant or
   near-instant. Raised on FoxOne #62.
@@ -71,7 +71,16 @@ where they disagree.
 - td8. [#24] Stock-plus mode: turn off the one-line bar but keep the other goodies. Needs
   every feature switchable, and testing each feature off.
 - td12. [#22] Backport to ESR 153. Check the Nova pref name there. Test Nova on and off.
+- td39. [#22] ESR 153: the selected tab's text shows the dark accent colour instead of white. Release 160 is fine, so
+  something changed between 153 and 157. Lead, not checked: FoxOne sets `--tab-text-color-selected` to the accent (about
+  line 634) and FoxOne's own rules use `--tab-selected-textcolor`; foxmica-tabs.css only overrides the first, so 153 may
+  read the other name. Compare the tab text variables on 153 and 160 before changing anything.
 - td13. [#27] Tab-drag test against upstream's fix (FoxOne 3.8.5, about line 2746).
+- td38. New-tab "+" and other movable buttons: leave placement to the user. FoxOne reserves a fixed width for the "+"
+  (`--uc-newtab-width`, userChrome-foxone.css about line 1085, a subtraction from the tab strip's max-width), so a
+  button dragged elsewhere can overlap its neighbours (FoxOne PR #65 fixes one case). Investigate how the row is laid
+  out (tabs, "+", extensions) before deciding: can the tab strip take the leftover room instead of a hard-coded width?
+  Touch user-placed buttons as little as possible. Decide whether it belongs in td8 or is a note for FoxOne.
 - td6, td7, td21. [#25] Theme-aware tint like WinUI (Mica grey tinted by accent/wallpaper),
   theme picker support, inherit Windows system colours. Do these together.
 - td30. Palette readability [#8]: pick palette ratios so every text/background pair stays

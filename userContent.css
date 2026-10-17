@@ -6,8 +6,8 @@
 *==============================================================================================*/
 
 /* Palette, rounding and radius come from the shared config, so userChrome and
-   userContent can never drift apart. Edit foxone-config.css, not this file. */
-@import url("foxone-config.css");
+   userContent can never drift apart. Edit foxmica-config.css, not this file. */
+@import url("foxmica-config.css");
 
 
 /* ==========================================================================
@@ -21,7 +21,7 @@
    * auto = hands off: pages keep full control of their own scrollbars */
   --uc-content-scrollbar: thin;
 
-  /* --uc-rounded and --uc-border-radius now come from foxone-config.css. */
+  /* --uc-rounded and --uc-border-radius now come from foxmica-config.css. */
 }
 
 /* Derived: the radius every in-content surface reads. Zero at the default
@@ -64,7 +64,7 @@
 
 
 /* ==========================================================================
-   NEW TAB / HOME - palette colours from foxone-config.css (dark mode only)
+   NEW TAB / HOME - palette colours from foxmica-config.css (dark mode only)
    ========================================================================== */
 
 
@@ -79,7 +79,7 @@
 
 
 /* ==========================================================================
-   PALETTE - comes from foxone-config.css (dark set, light swap, tab hover).
+   PALETTE - comes from foxmica-config.css (dark set, light swap, tab hover).
    Only the neutral control hairline is local to the about: pages.
    ========================================================================== */
 
