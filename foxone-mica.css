@@ -3595,8 +3595,9 @@ html[id^="taskbartab"] #unified-extensions-button {
    LAYER VALUES for the Mica rules below: the strip, the hover and separator
    fills, and the bookmarks bar fill and height. --ut-layer (the sheet over
    the strip) is a setting in foxmica-config.css; everything here only reads
-   it. It is not defined here on purpose: this file loads after the config,
-   so a second definition would silently win over the value in the config.
+   it. It is not defined here on purpose: the config is the one place to set
+   it, and a second copy here would only be a default that the config, which
+   loads later, silently overrides.
    foxmica-tabs.css has plainer fallbacks for these, for stock Firefox.
    ========================================================================== */
 :root {
@@ -3621,8 +3622,10 @@ html[id^="taskbartab"] #unified-extensions-button {
 
 /* ==========================================================================
    FOXONE OVERRIDES – Mica (Windows 11 translucency) + fixes that only make
-   sense on FoxOne 3.8.4. Load AFTER the FoxOne file and after
-   foxmica-config.css. Colours and sizes come from foxmica-config.css.
+   sense on FoxOne. This block and the ones after it are added to the end of
+   the built file (foxone-mica.css), so they come after all of FoxOne's own
+   rules. foxmica-config.css loads after them, which is fine: it only sets
+   variables. Colours and sizes come from foxmica-config.css.
 
    Sections:  1 Mica   2 Layers (strip / bookmarks bar / sidebar)
               3 URL dropdown   4 Bar height (FoxOne's fixed 44px)
