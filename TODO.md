@@ -72,6 +72,10 @@ where they disagree.
   that most of FoxOne's traffic comes from the store, and he approved the idea on #30, so this is worth doing well.
 - td8. [#24] Stock-plus mode: turn off the one-line bar but keep the other goodies. Needs
   every feature switchable, and testing each feature off.
+  macOS lead (from Firn, unverified, nobody here has a Mac): the closest thing to Mica is the older vibrancy
+  blur, `widget.macos.titlebar-blend-mode.behind-window` in about:config. Liquid-fox and zvuc's
+  firefox-macos-native-tabbar build their glass look on it. FoxMica could swap that pref for the Mica one and
+  keep its transparency layer. Needs: a Mac tester, and a check that the pref still works on current releases.
 - td12. [#22] Backport to ESR 153. Check the Nova pref name there. Test Nova on and off.
 - td39. [#22] ESR 153: the selected tab's text shows the dark accent colour instead of white. Release 160 is fine, so
   something changed between 153 and 157. Lead, not checked: FoxOne sets `--tab-text-color-selected` to the accent (about
