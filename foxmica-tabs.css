@@ -1,18 +1,31 @@
 /* ==========================================================================
-   TAB STYLE – WinUI / Windows 11 Explorer-style tabs + compact bar height.
+   FOXMICA TABS - WinUI / Windows 11 Explorer-style tabs + one bar height.
 
-   Works on stock Firefox AND on FoxOne: it touches only tabs and the height of
-   the tab row / nav bar, and reads none of FoxOne's variables. Every knob is a
-   --ut-* variable with a built-in fallback, so the file also works with no
-   config at all (set them in foxmica-config.css, or in any :root block).
-   Transparency / Mica is NOT done here; see foxmica-overrides.css.
-   On stock Firefox the selected tab is simply a darker (dark scheme) or whiter
-   (light scheme) sheet over the toolbar colour.
+   Standalone: works on stock Firefox AND on FoxOne, and needs nothing else.
+   It touches only the tabs and the height of the tab row / nav bar, and
+   reads none of FoxOne's variables. Every setting is a --ut-* variable with
+   its default built in, so with no config at all you get the look as shipped.
+   To change one, set it in foxmica-config.css (or any :root block): a value
+   set anywhere beats the default here, whatever the load order.
+   Transparency / Mica is NOT done here; see foxmica-overrides.css. On stock
+   Firefox the selected tab is a darker (dark scheme) or whiter (light scheme)
+   sheet over the toolbar colour.
+
+   Settings read by this file, with their defaults:
+     --ut-tab-radius 6px        top corners of a tab
+     --ut-tab-top-gap 2px       gap above the tabs
+     --ut-tab-weight 500        tab title weight
+     --ut-tab-text              tab title colour (default: the toolbar text colour)
+     --ut-bar-padding 2px       space above and below the tabs and the URL field
+     --ut-bar-height-compact 30px / -normal 38px / -touch 48px
+     --ut-btn-inner-compact 2px / -normal 4px / -touch 8px
+     --ut-btn-outer 2px         (compact density always uses 1px)
+   Look values (no need to touch; the Mica block sets richer ones):
+     --ut-layer, --ut-tab-hover-bg, --ut-separator
 
    Load it after your base theme. Selectors start with :root so they also win
    against !important rules of equal weight in the base theme.
    ========================================================================== */
-
 /* ---- Tab shape: top-only rounding, filled selected tab, flat inactive ---- */
 
 :root .tab-background {
@@ -91,28 +104,47 @@
   background: transparent;
 }
 
+/* ---- Density ---------------------------------------------------------------
+   Firefox puts uidensity="compact" or "touch" on the root element; normal has
+   no attribute. These pick which of the three sets becomes the live
+   --ut-bar-height / --ut-btn-inner that everything below (and the Mica block)
+   is built on. */
+
+:root {
+  --ut-bar-height: var(--ut-bar-height-normal, 38px);
+  --ut-btn-inner: var(--ut-btn-inner-normal, 4px);
+}
+:root[uidensity="compact"] {
+  --ut-bar-height: var(--ut-bar-height-compact, 30px);
+  --ut-btn-inner: var(--ut-btn-inner-compact, 2px);
+  --ut-btn-outer: 1px;
+}
+:root[uidensity="touch"] {
+  --ut-bar-height: var(--ut-bar-height-touch, 48px);
+  --ut-btn-inner: var(--ut-btn-inner-touch, 8px);
+}
+
 /* ---- Bar height ----------------------------------------------------------
-   One bar height, --ut-bar-height, which the config sets per Firefox UI
-   density (compact / normal / touch). Without the config it falls back to
-   40px and does not react to density. --ut-bar-padding (2px) is the space
-   above and below the tabs and the URL field, so both are
-   (bar - 2 x padding) tall. On stock Firefox this shortens both rows (tab row
-   and nav bar); on FoxOne it is the one shared row. */
+   One bar height, --ut-bar-height, set by the Density section above from the
+   compact / normal / touch values. --ut-bar-padding (2px) is the space above
+   and below the tabs and the URL field, so both are (bar - 2 x padding) tall.
+   On stock Firefox this shortens both rows (tab row and nav bar); on FoxOne
+   it is the one shared row. */
 
 :root:root,
 #TabsToolbar,
 #tabbrowser-tabs {
   --tab-block-margin: var(--ut-bar-padding, 2px) !important;
-  --tab-min-height: calc(var(--ut-bar-height, 40px) - 2 * var(--ut-bar-padding, 2px)) !important;
+  --tab-min-height: calc(var(--ut-bar-height, 38px) - 2 * var(--ut-bar-padding, 2px)) !important;
 }
 
 :root:root,
 #nav-bar,
 #urlbar-container,
 #urlbar {
-  --urlbar-height: calc(var(--ut-bar-height, 40px) - 2 * var(--ut-bar-padding, 2px)) !important;
-  --urlbar-toolbar-height: var(--ut-bar-height, 40px) !important;
-  --urlbar-container-height: var(--ut-bar-height, 40px) !important;
+  --urlbar-height: calc(var(--ut-bar-height, 38px) - 2 * var(--ut-bar-padding, 2px)) !important;
+  --urlbar-toolbar-height: var(--ut-bar-height, 38px) !important;
+  --urlbar-container-height: var(--ut-bar-height, 38px) !important;
 }
 
 :root #TabsToolbar,
@@ -121,8 +153,8 @@
 :root #tabbrowser-tabs,
 :root #tabbrowser-arrowscrollbox,
 :root #nav-bar {
-  min-height: var(--ut-bar-height, 40px) !important;
-  max-height: var(--ut-bar-height, 40px) !important;
+  min-height: var(--ut-bar-height, 38px) !important;
+  max-height: var(--ut-bar-height, 38px) !important;
 }
 
 /* Toolbar button padding from the config (--ut-btn-inner / --ut-btn-outer,

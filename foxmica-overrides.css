@@ -1,4 +1,33 @@
 /* ==========================================================================
+   LAYER VALUES for the Mica rules below: the strip, the hover and separator
+   fills, and the bookmarks bar fill and height. --ut-layer (the sheet over
+   the strip) is a setting in foxmica-config.css; everything here only reads
+   it. It is not defined here on purpose: this file loads after the config,
+   so a second definition would silently win over the value in the config.
+   foxmica-tabs.css has plainer fallbacks for these, for stock Firefox.
+   ========================================================================== */
+:root {
+  /* Two layers, like Explorer. The top row (tab strip + URL bar) is the STRIP: plain Mica, optionally tinted.
+     The selected tab, the bookmarks bar and the sidebar are the LAYER (--ut-layer) on top of it. */
+  --ut-strip: transparent;
+
+  --ut-tab-hover-bg: light-dark(rgb(255 255 255 / 30%), rgb(58 58 58 / 30%));   /* Half the layer */
+
+  --ut-separator: light-dark(rgb(0 0 0 / 22%), rgb(255 255 255 / 25%));         /* Transparent = off */
+
+  /* Bookmarks bar fill while it floats over the page. Windows paints Mica only where there is no page, so a floating
+     bar cannot be translucent and needs a solid colour. --uc-color-base is the same colour the about: pages use, so
+     the bar matches them (and FoxOne's own default). In customize mode it is the translucent layer instead.
+     (Planned: the static bar too.) */
+  --ut-bookmarks-bg: var(--uc-color-base);
+
+  /* Height of the bookmarks bar when shown. Same as the bar by default, so a bookmark's icon sits in the same amount
+     of room as a toolbar button. The bar's own 6px top and bottom padding is removed to get there. */
+  --ut-bookmarks-height: var(--ut-bar-height);
+}
+
+
+/* ==========================================================================
    FOXONE OVERRIDES – Mica (Windows 11 translucency) + fixes that only make
    sense on FoxOne 3.8.4. Load AFTER the FoxOne file and after
    foxmica-config.css. Colours and sizes come from foxmica-config.css.
@@ -470,4 +499,29 @@ notification-message {
   #nav-bar :is(#back-button, #forward-button, #reload-button, #stop-reload-button, #ipprotection-button) {
     transition: all 0.2s ease var(--ut-nav-hide-delay) !important;
   }
+}
+
+
+/* ==========================================================================
+   FIND BAR: SHARED EDGE GAP + WHICH SIDE
+   Two settings in foxmica-config.css:
+     --uc-status-panel-spacing   gap from the window edge, for the status text AND the find bar
+     --ut-findbar-left           0 = find bar on the right (FoxOne's default), 1 = on the left
+
+   FoxOne sets the find bar's gap with its own --findbar-top / --findbar-right (8px) and pins the bar right with
+   "margin-left: auto". Both are repointed here so there is one setting to change.
+   ========================================================================== */
+
+:root {
+  --findbar-top: var(--uc-status-panel-spacing);
+  --findbar-right: var(--uc-status-panel-spacing);
+}
+
+/* FoxOne gives the bar left + right offsets, a fixed width and margin-left: auto, so the auto margin soaks up the
+   free space and the bar lands on the right. Here margin-left is the free space times (1 - left), and margin-right
+   takes whatever is left over: left = 0 gives the same result as FoxOne, left = 1 puts the bar on the left.
+   (A percentage margin is measured against the width of the containing block, the same box the offsets use.) */
+findbar {
+  margin-left: calc((100% - var(--findbar-width-use) - 2 * var(--findbar-right)) * (1 - var(--ut-findbar-left, 0))) !important;
+  margin-right: auto !important;
 }
