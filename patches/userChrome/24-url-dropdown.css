@@ -1,0 +1,28 @@
+/* ==========================================================================
+   3. URL DROPDOWN
+   FF157 dropped the breakout box: the results are a popover painted by two
+   halves (.urlbar-background behind the field, .urlbarView-background behind
+   the rows), both filled from --toolbar-field-background-color. The old Mica
+   override made that variable transparent, so the whole dropdown turned
+   see-through. Both halves get the solid base colour here instead. The
+   legacy id and the Nova class are both covered, as FoxOne does.
+   ========================================================================== */
+
+#urlbar[open] > #urlbar-background,
+#urlbar[open] > .urlbar-background,
+#urlbar[popover-open] > .urlbar-background,
+#urlbar .urlbarView-background {
+  background: var(--uc-color-base) !important;
+}
+
+#urlbar .urlbarView-background {
+  box-shadow: 0 8px 24px rgb(0 0 0 / 35%) !important;
+}
+
+/* The rows ride on top of the painted halves and need no fill of their own */
+#urlbar[open] > .urlbarView,
+#urlbar[open] .urlbarView-body-inner {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}

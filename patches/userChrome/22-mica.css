@@ -1,0 +1,132 @@
+/* ==========================================================================
+   FOXONE OVERRIDES – Mica (Windows 11 translucency) + fixes that only make
+   sense on FoxOne. This block and the ones after it are added to the end of
+   the built file (foxone-mica.css), so they come after all of FoxOne's own
+   rules. foxmica-config.css loads after them, which is fine: it only sets
+   variables. Colours and sizes come from foxmica-config.css.
+
+   Sections:  1 Mica   2 Layers (strip / bookmarks bar / sidebar)
+              3 URL dropdown   4 Bar height (FoxOne's fixed 44px)
+              5 Bookmarks bar   6 Small fixes
+   Needs widget.windows.mica = true. Delete section 1 and 2 to go back to
+   FoxOne's solid look; sections 3-6 are independent of Mica.
+   Selectors are doubled (:root:root) because FoxOne paints with
+   ":root:not([lwtheme]) #navigator-toolbox { ... !important }", which outranks
+   a bare selector.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. MICA – translucent toolbar / frame
+   ========================================================================== */
+@media (-moz-platform: windows) {
+
+  /* Main browser window only. userChrome.css also styles every chrome
+     dialog document (alerts, confirm and permission prompts), and a bare
+     :root here made their own -moz-Dialog background transparent too. */
+  :root:root#main-window,
+  :root:root #toolbar-menubar,
+  :root:root #titlebar,
+  :root:root #TabsToolbar,
+  :root:root #navigator-toolbox,
+  :root:root #navigator-toolbox-background,
+  :root:root #nav-bar,
+  :root:root #tabbrowser-tabbox,
+  :root:root .chrome-block {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
+  :root:root {
+    --lwt-accent-color: transparent !important;
+    --lwt-accent-color-inactive: transparent !important;
+    --toolbar-bgcolor: transparent !important;
+    --toolbar-background-color: transparent !important;
+    --toolbox-background-color: transparent !important;
+    --chrome-block-background: transparent !important;
+    --tabpanel-background-color: transparent !important;
+    --toolbar-field-border-color: transparent !important;
+    /* --toolbar-field-background-color is deliberately NOT touched: the URL
+       field is made see-through directly below, so the dropdown and the
+       sidebar search fields keep their solid base colour. */
+  }
+
+  /* URL field: Mica at rest, a faint tint while focused */
+  #urlbar:not([open]) > #urlbar-background,
+  #urlbar:not([open]) > .urlbar-background {
+    background: transparent !important;
+  }
+  #urlbar[focused]:not([open]) > #urlbar-background,
+  #urlbar[focused]:not([open]) > .urlbar-background {
+    background: color-mix(in srgb, var(--uc-color-base) 25%, transparent) !important;
+  }
+
+  /* Menus and panels stay solid: text over Mica is unreadable */
+  menupopup,
+  panel,
+  .panel-arrowcontent {
+    background-color: var(--uc-color-base) !important;
+  }
+
+  /* about:blank / new empty tabs: let Mica through instead of a flat sheet.
+     Needs browser.tabs.allow_transparent_browser = true and a transparent
+     browser.display.background_color(.dark). Real pages paint over this. */
+  #main-window #browser,
+  #appcontent,
+  #tabbrowser-tabbox,
+  #tabbrowser-tabpanels,
+  .browserSidebarContainer,
+  .browserContainer,
+  .browserStack,
+  browser[type="content"],
+  browser[type="content"] > .browserStack {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+
+/* ==========================================================================
+   2. LAYERS – the strip is the toolbox, the layer is the selected tab, the
+      bookmarks bar and the sidebar. Same variables, same alpha, same Mica
+      underneath, so they come out as one colour.
+      - toolbox:   --ut-strip
+      - selected tab, bookmarks bar: --ut-layer on top of the toolbox
+      - sidebar:   outside the toolbox, so it gets layer + strip stacked
+      Nested sidebar boxes are cleared so nothing stacks twice.
+   ========================================================================== */
+
+  :root:root #navigator-toolbox {
+    background: var(--ut-strip, transparent) !important;
+    background-color: var(--ut-strip, transparent) !important;
+    background-image: none !important;
+  }
+
+  :root:root #PersonalToolbar {
+    background: var(--ut-layer) !important;
+    background-color: var(--ut-layer) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  :root:root #sidebar-main,
+  :root:root #sidebar-box {
+    background-color: transparent !important;
+    background-image:
+      linear-gradient(var(--ut-layer), var(--ut-layer)),
+      linear-gradient(var(--ut-strip, transparent), var(--ut-strip, transparent)) !important;
+  }
+
+  :root:root sidebar-main,
+  :root:root #sidebar,
+  :root:root #sidebar-header {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  :root:root {
+    --sidebar-background-color: transparent !important;
+  }
+}

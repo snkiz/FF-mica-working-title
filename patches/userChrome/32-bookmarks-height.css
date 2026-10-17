@@ -1,0 +1,43 @@
+/* ==========================================================================
+   5d. BOOKMARKS BAR HEIGHT
+   FoxOne gives the bar 6px of padding top and bottom, on top of whatever
+   padding each bookmark carries, so a bar with one bookmark came out much
+   taller than the bar row above it. This takes the bar's block padding to
+   zero and gives each item exactly --ut-bookmarks-height (the bar height by
+   default), so the icon has the same room as a toolbar button. Inline
+   padding is untouched. The reveal rules below are copies of FoxOne's own
+   selectors, because its revealed state sets `max-height: 4em` and
+   `padding-block: 6px` with !important; loaded later, same weight, they win.
+   ========================================================================== */
+
+:root:root #PersonalToolbar {
+  padding-block: 0 !important;
+}
+
+:root #PersonalToolbar .bookmark-item {
+  height: var(--ut-bookmarks-height, var(--ut-bar-height, 40px)) !important;
+  min-height: 0 !important;
+  margin-block: 0 !important;
+  padding-block: 0 !important;
+}
+
+@container style(--uc-dynamic-bookmarks: 1) {
+  #navigator-toolbox:not(:has(#urlbar[open])) {
+    &:has(#urlbar:hover) #PersonalToolbar,
+    & #PersonalToolbar:is(:hover, :has(toolbarbutton[open])) {
+      max-height: var(--ut-bookmarks-height, var(--ut-bar-height, 40px)) !important;
+      padding-block: 0 !important;
+    }
+  }
+
+  @container style(--uc-dynamic-bookmarks-newtab: 1) {
+    #navigator-toolbox:not(:has(#urlbar[open])):has(
+      #urlbar-input-container[pageproxystate="invalid"],
+      .urlbar-input-container[pageproxystate="invalid"]
+    ):has(#urlbar-input:placeholder-shown, .urlbar-input:placeholder-shown)
+      #PersonalToolbar {
+      max-height: var(--ut-bookmarks-height, var(--ut-bar-height, 40px)) !important;
+      padding-block: 0 !important;
+    }
+  }
+}

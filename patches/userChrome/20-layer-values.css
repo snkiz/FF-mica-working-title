@@ -1,0 +1,28 @@
+/* ==========================================================================
+   LAYER VALUES for the Mica rules below: the strip, the hover and separator
+   fills, and the bookmarks bar fill and height. --ut-layer (the sheet over
+   the strip) is a setting in foxmica-config.css; everything here only reads
+   it. It is not defined here on purpose: the config is the one place to set
+   it, and a second copy here would only be a default that the config, which
+   loads later, silently overrides.
+   foxmica-tabs.css has plainer fallbacks for these, for stock Firefox.
+   ========================================================================== */
+:root {
+  /* Two layers, like Explorer. The top row (tab strip + URL bar) is the STRIP: plain Mica, optionally tinted.
+     The selected tab, the bookmarks bar and the sidebar are the LAYER (--ut-layer) on top of it. */
+  --ut-strip: transparent;
+
+  --ut-tab-hover-bg: light-dark(rgb(255 255 255 / 30%), rgb(58 58 58 / 30%));   /* Half the layer */
+
+  --ut-separator: light-dark(rgb(0 0 0 / 22%), rgb(255 255 255 / 25%));         /* Transparent = off */
+
+  /* Bookmarks bar fill while it floats over the page. Windows paints Mica only where there is no page, so a floating
+     bar cannot be translucent and needs a solid colour. --uc-color-base is the same colour the about: pages use, so
+     the bar matches them (and FoxOne's own default). In customize mode it is the translucent layer instead.
+     (Planned: the static bar too.) */
+  --ut-bookmarks-bg: var(--uc-color-base);
+
+  /* Height of the bookmarks bar when shown. Same as the bar by default, so a bookmark's icon sits in the same amount
+     of room as a toolbar button. The bar's own 6px top and bottom padding is removed to get there. */
+  --ut-bookmarks-height: var(--ut-bar-height);
+}

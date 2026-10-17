@@ -1,0 +1,23 @@
+/* ==========================================================================
+   FIND BAR: SHARED EDGE GAP + WHICH SIDE
+   Two settings in foxmica-config.css:
+     --uc-status-panel-spacing   gap from the window edge, for the status text AND the find bar
+     --ut-findbar-left           0 = find bar on the right (FoxOne's default), 1 = on the left
+
+   FoxOne sets the find bar's gap with its own --findbar-top / --findbar-right (8px) and pins the bar right with
+   "margin-left: auto". Both are repointed here so there is one setting to change.
+   ========================================================================== */
+
+:root {
+  --findbar-top: var(--uc-status-panel-spacing);
+  --findbar-right: var(--uc-status-panel-spacing);
+}
+
+/* FoxOne gives the bar left + right offsets, a fixed width and margin-left: auto, so the auto margin soaks up the
+   free space and the bar lands on the right. Here margin-left is the free space times (1 - left), and margin-right
+   takes whatever is left over: left = 0 gives the same result as FoxOne, left = 1 puts the bar on the left.
+   (A percentage margin is measured against the width of the containing block, the same box the offsets use.) */
+findbar {
+  margin-left: calc((100% - var(--findbar-width-use) - 2 * var(--findbar-right)) * (1 - var(--ut-findbar-left, 0))) !important;
+  margin-right: auto !important;
+}

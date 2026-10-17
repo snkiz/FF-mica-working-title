@@ -1,0 +1,20 @@
+/* ==========================================================================
+   5b. FLOATING SURFACES THAT INHERIT THE TRANSPARENT TOOLBAR VARIABLES
+   (found by comparing with Wintego's override 11). Section 1 makes
+   --toolbar-bgcolor transparent on :root. FoxOne's find bar floats over the
+   page and takes its fill from that variable, so it turned invisible; the
+   notification bars sit over the page and inherit the same variables. Mica
+   never reaches past the page, so anything floating over content needs a
+   fill of its own. Scoped to the elements, so the toolbar stays transparent.
+   ========================================================================== */
+
+findbar,
+.findbar-container,
+notificationbox,
+.notificationbox-stack,
+notification-message {
+  --toolbar-bgcolor: var(--uc-color-base) !important;
+  --toolbar-background-color: var(--uc-color-base) !important;
+  background-color: var(--uc-color-base) !important;
+  background-image: none !important;
+}

@@ -1,0 +1,61 @@
+/* ==========================================================================
+   7. WINDOW GRAB AREA, URL-BAR CLUTTER, NAV REVEAL, PUZZLE CLEARANCE
+   ========================================================================== */
+
+/* 7a. Grab area. The sidebar button sat flush in the window corner when not
+   maximized, leaving nothing to drag the window by. Stock Firefox reserves a
+   spacer there; FoxOne dropped it. Zero when maximized or fullscreen. */
+@media (-moz-platform: windows) {
+  :root:not([sizemode="maximized"]):not([inFullscreen]) #nav-bar {
+    padding-inline-start: var(--ut-drag-left, 12px) !important;
+  }
+}
+
+/* 7a+. Sidebar button click area (#2). Firefox gives the first nav-bar button extra start padding on purpose
+   ("make that space click the first toolbarbutton", browser-shared.css), so a click in the corner hits it. Not
+   maximized, that padding ate the grab area above, and the button's hover started well left of its icon. Give it
+   the same padding as every other button. Maximized and fullscreen keep Firefox's corner target. */
+:root:not([sizemode="maximized"]):not([inFullscreen])
+  #nav-bar-customization-target > :is(toolbarbutton, toolbaritem):first-child {
+  padding-inline-start: var(--toolbarbutton-outer-padding) !important;
+}
+
+/* 7b. Site-info label (Nova). The trust icon in front of the URL bar carries a text label, "Not secure" on
+   plain http pages. The struck icon says the same, and the label makes the collapsed bar wrap onto two lines
+   on hover. The container keeps its own aria-label, so this is visual only. FoxMica-only. */
+@container style(--ut-hide-trust-label: 1) {
+  #urlbar #trust-icon-container #trust-label {
+    display: none !important;
+  }
+}
+
+/* 7c. Picture-in-picture button. FoxOne leaves it in the URL bar for as long as a video plays, and the video
+   has the same button on it. FoxMica-only. */
+@container style(--ut-hide-pip-button: 1) {
+  #urlbar #picture-in-picture-button {
+    display: none !important;
+  }
+}
+
+/* 7e. Clicking into the URL text cancels the nav reveal (FoxMica-only; --uc-autohide-nav-buttons: 2).
+   FoxOne reveals the nav buttons while the pointer is anywhere on the bar, so a click into the text, where
+   you are about to type, meets buttons sliding in on the left and pushing the text over. Once the URL bar
+   is focused the buttons collapse, or never open if the reveal delay hasn't elapsed yet, and the bar takes
+   the room. Clicking out (or Esc) hands the hover reveal back. Mode 1 reveals on focus by design, so it is
+   left alone. Same collapse as FoxOne's own star rule: width and min-width keep the reveal's revert and
+   follow max-width down. No delay on this one, the collapse should answer the click. #nav-bar and #urlbar
+   in the selector put it above the hover reveal; it ties FoxOne's star rule and wins on source order. */
+@container style(--uc-autohide-nav-buttons: 2) {
+  :where(:root:not([customizing])) #nav-bar:has(#urlbar[focused]) :is(
+    #back-button,
+    #forward-button,
+    #reload-button,
+    #stop-reload-button,
+    #ipprotection-button
+  ) {
+    opacity: 0 !important;
+    max-width: 0 !important;
+    padding: 0 !important;
+    transition: all 0.2s ease !important;
+  }
+}

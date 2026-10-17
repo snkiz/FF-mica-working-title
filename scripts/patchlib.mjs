@@ -128,12 +128,20 @@ async function listDir(dir) {
 export async function build(target) {
   const problems = [];
   let text;
-  let version;
+  let version; // the FoxOne release in vendor/
+  let ours; // FoxMica's own version, from the VERSION file in the repo root
   try {
     text = await readText(target.vendor);
     version = (await readText("vendor/VERSION")).trim();
+    ours = (await readText("VERSION")).trim();
   } catch (e) {
-    return { text: "", problems: [`cannot read ${target.vendor} or vendor/VERSION: ${e.message}`], applied: 0, appended: 0, other: [] };
+    return {
+      text: "",
+      problems: [`cannot read ${target.vendor}, vendor/VERSION or VERSION: ${e.message}`],
+      applied: 0,
+      appended: 0,
+      other: [],
+    };
   }
 
   const files = await listDir(target.patchDir);
@@ -159,7 +167,7 @@ export async function build(target) {
 
   const header =
     `/* BUILT FILE - do not edit by hand.\n` +
-    `   Made by scripts/assemble.mjs from vendor/${basename(target.vendor)} (FoxOne ${version}) plus ${target.patchDir}/.\n` +
-    `   Change the patches, then rebuild. */\n`;
+    `   FoxMica ${ours}: FoxOne ${version} (vendor/${basename(target.vendor)}) plus ${target.patchDir}/.\n` +
+    `   Made by scripts/assemble.mjs. Change the patches, then rebuild. */\n`;
   return { text: header + text, problems, applied: edits.length, appended: blocks.length, other };
 }

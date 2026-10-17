@@ -1,0 +1,20 @@
+/* ==========================================================================
+   4. BAR HEIGHT – FoxOne assumes a 44px row in three places. With a shorter
+      bar those assumptions pull the dropdown box off the row, so they follow
+      --ut-bar-height instead. (Same selectors as FoxOne, loaded later.)
+   ========================================================================== */
+
+/* Dropdown box pulled back flush to the row: (field height - row height) / 2 */
+#urlbar[breakout-extend] > .urlbar-background {
+  top: calc((var(--urlbar-height) - var(--ut-bar-height, 44px)) / 2) !important;
+  bottom: calc((var(--urlbar-height) - var(--ut-bar-height, 44px)) / 2) !important;
+}
+#urlbar[popover-open] > .urlbar-background {
+  top: calc((var(--urlbar-height) - var(--ut-bar-height, 44px)) / 2) !important;
+}
+
+/* Hamburger and puzzle button are pinned at a fixed 44px */
+:root #PanelUI-button,
+:root #unified-extensions-button {
+  height: var(--ut-bar-height, 44px) !important;
+}

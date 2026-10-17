@@ -1,0 +1,22 @@
+/* ==========================================================================
+   DELAYS: one pair of settings for everything that reveals and hides.
+   --ut-hover-delay (450ms) and --ut-hide-delay (50ms), set in foxmica-config.css, drive the navigation buttons and
+   the bookmarks bar. FoxOne has its own variable for each of them; they are pointed at the pair here, so there is
+   one place to change them.
+
+   FoxOne's nav buttons reveal after the hover delay but hide at once. The rule below gives them the hide delay too,
+   so a quick slip off the bar doesn't snap them away. It matches only the hidden state: FoxOne's hover rule is more
+   specific, so the reveal keeps its own timing. Delete that rule to go back to hiding at once.
+   ========================================================================== */
+
+:root {
+  --uc-autohide-nav-delay: var(--ut-hover-delay, 450ms);
+  --uc-dynamic-bookmarks-hover-delay: var(--ut-hover-delay, 450ms);
+  --uc-dynamic-bookmarks-hide-delay: var(--ut-hide-delay, 50ms);
+}
+
+@container style(--uc-autohide-nav-buttons: 1), style(--uc-autohide-nav-buttons: 2) {
+  #nav-bar :is(#back-button, #forward-button, #reload-button, #stop-reload-button, #ipprotection-button) {
+    transition: all 0.2s ease var(--ut-hide-delay, 50ms) !important;
+  }
+}

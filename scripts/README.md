@@ -14,6 +14,10 @@ FoxMica is built on FoxOne, and I don't want to hand-edit FoxOne's files and los
   - `userContent.css` is `vendor/userContent.css` plus `patches/userContent/`.
 - Everything else in the root (`userChrome.css`, `foxmica-config.css`, `foxmica-tabs.css`) is written by hand.
 
+The header of each built file names FoxMica's own version (the one line in the `VERSION` file in the repo root) and
+the FoxOne release in `vendor/VERSION`. Changing either one makes the built files out of date, so after bumping
+`VERSION` for a release, run `node scripts/assemble.mjs` and commit the rebuilt files with it.
+
 To change a built file, change a patch, then rebuild. A hand edit to a built file is lost on the next build, and
 `check.mjs` will tell you about it.
 

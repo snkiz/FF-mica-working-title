@@ -1,0 +1,52 @@
+/* ==========================================================================
+   5. BOOKMARKS BAR (with --uc-dynamic-bookmarks: 1)
+   Overlay mode (--ut-bookmarks-inflow: 0, default): FoxOne's own floating
+   bar. It never moves the page, so nothing can flash. Over page pixels it
+   cannot be translucent, so it takes a solid colour (--ut-bookmarks-bg, the same
+   as the about: pages).
+   In-flow mode (--ut-bookmarks-inflow: 1): Wintego's version. The bar stays
+   in the toolbox flow so it shows Mica like the rest, but the page is pushed
+   down on reveal (height animated, 2px sliver kept when collapsed).
+   Static bar (--uc-dynamic-bookmarks: 0): plain translucent layer, section 2.
+   ========================================================================== */
+
+@container style(--uc-dynamic-bookmarks: 1) and style(--ut-bookmarks-inflow: 0) {
+  /* Only while it really floats over the page. In customize mode and in the
+     static bar the palette items are present and section 2's translucent
+     layer applies instead. Solid, in the same colour as the about: pages. */
+  :root:root #PersonalToolbar:not(:has(toolbarpaletteitem)) {
+    background-color: var(--ut-bookmarks-bg, var(--uc-color-base)) !important;
+    background-image: none !important;
+  }
+}
+
+@container style(--uc-dynamic-bookmarks: 1) and style(--ut-bookmarks-inflow: 1) {
+
+  /* Collapsed */
+  #PersonalToolbar:not(:has(toolbarpaletteitem)) {
+    position: static !important;
+    top: auto !important;
+    transform: none !important;
+    overflow: hidden !important;
+    max-height: 2px !important;
+    padding-block: 0 !important;
+    opacity: 0 !important;
+    transition:
+      max-height 220ms ease-out var(--uc-dynamic-bookmarks-hide-delay),
+      padding-block 220ms ease-out var(--uc-dynamic-bookmarks-hide-delay),
+      opacity 150ms ease-out var(--uc-dynamic-bookmarks-hide-delay) !important;
+  }
+
+  /* Revealed: hover anywhere in the top row, or on the bar / an open folder.
+     Never while the URL-bar results list is open. */
+  #navigator-toolbox:not(:has(#urlbar[open])):hover #PersonalToolbar:not(:has(toolbarpaletteitem)),
+  #navigator-toolbox:not(:has(#urlbar[open])) #PersonalToolbar:is(:hover, :has(toolbarbutton[open])) {
+    max-height: 4em !important;
+    padding-block: 6px !important;
+    opacity: 1 !important;
+    transition-delay:
+      var(--uc-dynamic-bookmarks-hover-delay),
+      var(--uc-dynamic-bookmarks-hover-delay),
+      var(--uc-dynamic-bookmarks-hover-delay) !important;
+  }
+}
