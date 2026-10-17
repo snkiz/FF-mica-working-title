@@ -7,7 +7,7 @@
    its default built in, so with no config at all you get the look as shipped.
    To change one, set it in foxmica-config.css (or any :root block): a value
    set anywhere beats the default here, whatever the load order.
-   Transparency / Mica is NOT done here; see foxmica-overrides.css. On stock
+   Transparency / Mica is NOT done here; see patches/userChrome/22-mica.css. On stock
    Firefox the selected tab is a darker (dark scheme) or whiter (light scheme)
    sheet over the toolbar colour.
 

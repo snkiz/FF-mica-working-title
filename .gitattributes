@@ -10,8 +10,13 @@
 
 # Left out of release downloads ("Source code" zip on a GitHub release).
 # They stay in the repo; users only need the CSS, README and LICENSE.
+# vendor/, patches/ and scripts/ are how foxone-mica.css and userContent.css get built; the built files are what ship.
 CLAUDE.md       export-ignore
 TODO.md         export-ignore
+VERSION         export-ignore
 assets/         export-ignore
+patches/        export-ignore
+scripts/        export-ignore
+vendor/         export-ignore
 .gitattributes  export-ignore
 .gitignore      export-ignore

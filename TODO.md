@@ -10,7 +10,7 @@ where they disagree.
 ## Now
 
 - **td24. Modal dialogs: background is back but black** [#4] (Nova on). Fixed the missing
-  background 2026-10-04 by scoping section 1 of foxmica-overrides.css to
+  background 2026-10-04 by scoping section 1 of the Mica block (patches/userChrome/22-mica.css) to
   `#main-window` (it had made every chrome document transparent, dialogs included).
   Left to do: dialogs should use the theme palette, not black. Readable for now.
   Item td22 (the "make Firefox your default browser" bar) is the same dialog, so it gets fixed with this one.
@@ -25,8 +25,9 @@ where they disagree.
 ## First bug-fix pass
 
 - td18. Selection contrast on about: pages [#7] (optional separate variable).
-- td4. Sidebar button click target [#2]: fix in place, needs testing (override 7a+). Cause: Firefox pads the first
-  nav-bar button on purpose so a corner click hits it (browser-shared.css); not maximized, that ate our grab area.
+- td4. Sidebar button click target [#2]: fix in place, needs testing (override 7a+, in
+  patches/userChrome/38-grab-and-nav.css). Cause: Firefox pads the first nav-bar button on purpose so a corner click
+  hits it (browser-shared.css); not maximized, that ate our grab area.
 - td2. Sidebar spacer: [#3] stop bookmarks/tools covering the minimized sidebar button.
   Maybe hide it when the sidebar is open.
 - td28. [#13] Nova on: one animated built-in theme left the tab bar transparent. Fine with
@@ -42,8 +43,9 @@ where they disagree.
 - td36. In-flow bookmarks bar (`--ut-bookmarks-inflow: 1`), seen 2026-10-14:
   - Over-grows on reveal, then snaps to size when the pointer enters the bar. Cause: section 5's in-flow reveal
     (hover on the top row) still uses FoxOne's `max-height: 4em` + 6px padding; 5d only fixes the "pointer on the
-    bar" case. Fix: give the in-flow reveal `--ut-bookmarks-height` and zero padding. Oddity: it didn't show with
-    the generic icon width at 24px (was 26px, bar at 30px); re-check after the fix.
+    bar" case (28-bookmarks-bar.css and 32-bookmarks-height.css in patches/userChrome). Fix: give the in-flow
+    reveal `--ut-bookmarks-height` and zero padding. Oddity: it didn't show with the generic icon width at 24px
+    (was 26px, bar at 30px); re-check after the fix.
   - 1-2px gap under the active tab while the bar is collapsed: the bar's deliberate 2px sliver (opacity 0), from
     Wintego's version. Reason not written down.
   - The bar pushes the sidebar down with the page. Idea: negative top margin on the sidebar while the bar is open,
@@ -77,7 +79,7 @@ where they disagree.
   read the other name. Compare the tab text variables on 153 and 160 before changing anything.
 - td13. [#27] Tab-drag test against upstream's fix (FoxOne 3.8.5, about line 2746).
 - td38. New-tab "+" and other movable buttons: leave placement to the user. FoxOne reserves a fixed width for the "+"
-  (`--uc-newtab-width`, userChrome-foxone.css about line 1085, a subtraction from the tab strip's max-width), so a
+  (`--uc-newtab-width`, vendor/userChrome.css about line 1085, a subtraction from the tab strip's max-width), so a
   button dragged elsewhere can overlap its neighbours (FoxOne PR #65 fixes one case). Investigate how the row is laid
   out (tabs, "+", extensions) before deciding: can the tab strip take the leftover room instead of a hard-coded width?
   Touch user-placed buttons as little as possible. Decide whether it belongs in td8 or is a note for FoxOne.
@@ -98,8 +100,10 @@ where they disagree.
   extension for "New Tab to the Left" (no add-on found that does left; extensions can add items but
   not place them at the top).
 - [#31] Vertical tabs are untested. Firn notes vertical tabs change `--tabstrip-min-height` (bar-height overrides).
-- [#21] Refactor: condense the files, trim the very long comments, move rarely used
-  settings to an advanced section.
+- [#21] Refactor: done for 0.8 as five files (loader, built foxone-mica.css, config, tabs, built userContent.css), with
+  FoxOne untouched in vendor/, our changes in patches/ and the tooling in scripts/ (scripts/README.md). The config has an
+  easy and an advanced section. Still open from the original idea: trim the very long comments. The mode switch for
+  stock-plus is td8.
 
 ## Maybe, probably never
 

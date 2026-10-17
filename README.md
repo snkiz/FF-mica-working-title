@@ -33,12 +33,11 @@ A Firefox theme for Windows 11: the real Mica backdrop behind a one-line browser
 1. Close Firefox completely.
 2. Open your profile folder (`about:support`, the Profile Folder row).
 3. Create a folder named `chrome` there if it doesn't exist.
-4. Copy these **six files** into `chrome`. They load each other by name, so all six must be there:
+4. Copy these **five files** into `chrome`. They load each other by name, so all five must be there:
    - `userChrome.css`
-   - `userChrome-foxone.css`
+   - `foxone-mica.css`
    - `foxmica-config.css`
    - `foxmica-tabs.css`
-   - `foxmica-overrides.css`
    - `userContent.css`
 5. Set the prefs below in `about:config`.
 6. Start Firefox.
@@ -81,7 +80,7 @@ Everything you are meant to change is in `foxmica-config.css`. It is variables o
 | `--ut-findbar-left` | Put the floating find bar on the left (`1`) instead of the right (`0`). |
 | `--uc-status-panel-spacing` | Gap from the window edge for the status text and the floating find bar (`0` = corner). |
 
-A few more values are not in the config because they follow from the ones above: `--ut-strip` (a tint for the top row, plain Mica by default), `--ut-tab-hover-bg`, `--ut-separator`, `--ut-bookmarks-bg` and `--ut-bookmarks-height`. They sit in the "LAYER VALUES" block at the top of `foxmica-overrides.css` if you want to change one.
+A few more values are not in the config because they follow from the ones above: `--ut-strip` (a tint for the top row, plain Mica by default), `--ut-tab-hover-bg`, `--ut-separator`, `--ut-bookmarks-bg` and `--ut-bookmarks-height`. They sit in the "LAYER VALUES" block in `patches/userChrome/20-layer-values.css`. Change one there, then run `node scripts/assemble.mjs` (see "Building from source" below), because `foxone-mica.css` is a built file.
 
 Further down the file are FoxOne's own settings with the values chosen here (URL bar width, tab widths, and so on). FoxOne's [customisation guide](https://firnschnee.github.io/FoxOne/customisation.html) documents those.
 
@@ -116,6 +115,22 @@ Further down the file are FoxOne's own settings with the values chosen here (URL
 - Hovering Mica areas sometimes flickered during development on a laptop with NVIDIA and integrated graphics. It went away after reboots and driver updates, so it is probably a driver problem, but this isn't proven.
 - Not tested yet: turning each feature off to check the theme degrades cleanly, other Firefox versions, and non-Windows systems. Vertical mode has not been worked on as yet.
 
+## Building from source
+
+You don't need this to use the theme: the five files above are all that goes in your profile. This is for changing
+FoxMica itself.
+
+`foxone-mica.css` and `userContent.css` are **built files**. They start with a header saying so; don't edit them by hand.
+FoxOne's own files sit untouched in `vendor/`, every FoxMica change to them is a small file in `patches/`, and
+`scripts/` (Node, nothing to install) puts them together:
+
+- `node scripts/assemble.mjs` rebuilds both files from `vendor/` and `patches/`.
+- `node scripts/check.mjs` checks that `vendor/` is the real FoxOne release, that every patch still applies, and that
+  the built files are up to date. Add `--offline` to skip the download.
+- `node scripts/pull-foxone.mjs <tag>` fetches a new FoxOne release into `vendor/`.
+
+The patch format and the rest are in [scripts/README.md](scripts/README.md).
+
 ## Contributing
 
 Bug reports and ideas are welcome: please open an issue.
@@ -128,8 +143,8 @@ Windows scale settings are very welcome, see [#23](https://github.com/snkiz/FoxM
 
 ## Credits
 
-- [FoxOne](https://github.com/Firnschnee/FoxOne) by Firnschnee (MIT). `userChrome-foxone.css` is FoxOne 3.9.4 exactly as released; `userContent.css` is FoxOne's with a few edits. FoxOne in turn credits [LittleFox](https://github.com/biglavis/LittleFox) and [Cascade](https://github.com/andreasgrafen/cascade).
-- The Mica rules in `foxmica-overrides.css` are derived from [Wintego's Firefox-transparent-theme](https://github.com/Wintego/Firefox-transparent-theme).
+- [FoxOne](https://github.com/Firnschnee/FoxOne) by Firnschnee (MIT). `foxone-mica.css` and `userContent.css` are built from FoxOne 3.9.4, kept exactly as released in `vendor/`, plus FoxMica's changes in `patches/`. FoxOne in turn credits [LittleFox](https://github.com/biglavis/LittleFox) and [Cascade](https://github.com/andreasgrafen/cascade).
+- The Mica rules in `patches/userChrome/22-mica.css` are derived from [Wintego's Firefox-transparent-theme](https://github.com/Wintego/Firefox-transparent-theme).
 - The look was matched by eye against Windows 11 Explorer and the MicaBar theme of Windhawk's [Windows 11 File Explorer Styler](https://windhawk.net/mods/windows-11-file-explorer-styler) mod (Windhawk is by [m417z](https://github.com/m417z)). No code from that project was used.
 - [@C-O-D](https://github.com/C-O-D) for the catch that put the finishing polish on the URL-bar icons ([FoxOne#59](https://github.com/Firnschnee/FoxOne/issues/59)). First outsider.
 - Tab style: written by snkiz, with help from Claude (Anthropic).

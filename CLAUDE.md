@@ -32,18 +32,37 @@ tabs. Repo: https://github.com/snkiz/FoxMica (public, MIT). Local: Documents\Git
 
 Load order is set in `userChrome.css` and it matters (later wins ties):
 
-1. `userChrome-foxone.css`: FoxOne exactly as released. **Never edit it.** Fixes go in the overrides.
+1. `foxone-mica.css`: **built file, never edit it.** FoxOne's `userChrome.css` as released (`vendor/`), with FoxMica's
+   changes applied from `patches/userChrome/`: FoxOne's settings block cut down to the settings FoxMica doesn't set,
+   then the Mica, layers, URL dropdown, bar-height and bookmarks-bar rules, in filename order.
 2. `foxmica-config.css`: the one settings file (variables only). Shared by userChrome and userContent.
 3. `foxmica-tabs.css`: the Explorer-style tabs and bar height. Meant to work on stock Firefox too.
-4. `foxmica-overrides.css`: Mica, layers, URL dropdown fix, bar-height fixes, bookmarks bar.
-5. `userContent.css`: FoxOne's about: page styling with our edits, imports the config.
+4. `userContent.css`: **built file, never edit it.** FoxOne's about: page styling (`vendor/userContent.css`) plus
+   `patches/userContent/`. It imports the config.
 
-`userChrome.css` also has an optional, switched-off UI font block (the maintainer uses Shantell Sans).
+`userChrome.css` is the loader (the `@import` lines). It also has an optional, switched-off UI font block (the
+maintainer uses Shantell Sans).
+
+### Built files and the scripts
+
+`vendor/` is FoxOne untouched (`vendor/VERSION` = the release), `patches/<target>/` is every FoxMica change to it
+(`.patch` = find-and-replace hunks, `.css` = blocks added to the end, both in filename order), and `VERSION` in the
+root is FoxMica's own version (`0.8-dev` until a release). Details and the patch format: `scripts/README.md`.
+
+- To change a built file, change a patch, then `node scripts/assemble.mjs`. A hand edit to a built file is lost on the
+  next build, and `node scripts/check.mjs` reports it with the first line that differs.
+- Update FoxOne: `node scripts/pull-foxone.mjs <tag>`, then assemble. A patch that no longer applies stops the build
+  and says which hunk and line.
+- Before every commit that touches CSS: `node scripts/check.mjs --offline`. Before a release: bump `VERSION`, assemble,
+  `node scripts/check.mjs` (online, also checks `vendor/` against the real release), commit the rebuilt files.
 
 ## Where things stand (update this section at the end of every session)
 
-**Last updated:** 2026-10-12
+**Last updated:** 2026-10-17
 
+- **Five-file refactor done (#21, for 0.8; `VERSION` is `0.8-dev`).** `foxone-mica.css` and `userContent.css` are built
+  from `vendor/` plus `patches/`; `foxmica-overrides.css` is gone (folded into `patches/userChrome/*.css`). Left to do:
+  the mode switch for a portable Mica block (td8, stock-plus), then ESR 153 (#22) and the store submission (#30).
 - **Released 0.7 "Better together"** on FoxOne 3.9.1 (merge tracked in #33; branch `3.9.1-upstream-pull`, rebased
   on 3.9.1). Earlier: 0.5 "Warts and all". Tags have no "v". Fixes go out as point releases until 1.0. A release is
   pinned to its tag: push first, then publish. Release zip leaves out dev files via `export-ignore` in .gitattributes.
@@ -82,7 +101,8 @@ Load order is set in `userChrome.css` and it matters (later wins ties):
 
 ## Decisions (and why)
 
-- FoxOne stays unmodified so it can be updated by dropping in a new release.
+- FoxOne stays unmodified in `vendor/` so it can be updated by pulling a new release; our changes are patches on top.
+  The built files carry a header saying so, and `check.mjs` catches hand edits.
 - One config file for chrome and content so the palettes can't drift apart.
 - Two layers like Explorer: plain Mica strip on top; selected tab, bookmarks bar
   and sidebar share one layer (`--ut-layer`).
@@ -93,8 +113,8 @@ Load order is set in `userChrome.css` and it matters (later wins ties):
   (they have the overflow). Intended; don't "fix" it. The before-the-tabs trap was fixed upstream in FoxOne 3.9.4
   (#62, our fix, accepted as #63), which also fixed the Customize overrun (#32).
 - Download button is not pinned. The overflow chevron stays where Firefox puts it.
-- Long term: condense the six files. Pull upstream, patch it, output something leaner.
-  Every feature must be switchable on its own (needed for "stock-plus" mode and
+- Condensed to five files (done, #21): pull upstream, patch it, build something leaner.
+  Every feature must still be switchable on its own (needed for "stock-plus" mode and
   for testing each feature off). Upstream can take or leave any of it.
 
 ## Testing setup
@@ -104,7 +124,8 @@ Load order is set in `userChrome.css` and it matters (later wins ties):
 - Browser Toolbox: `devtools.chrome.enabled` + `devtools.debugger.remote-enabled`,
   then Ctrl+Alt+Shift+I.
 - Laptop is NVIDIA Optimus. Mica flicker has been driver trouble before; rule that
-  out before blaming CSS.
+  out before blaming CSS. A flash on every hover (2026-10-17) went away after restarting
+  Explorer (the Windows desktop shell), so try that too.
 
 ## Public repo
 

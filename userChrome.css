@@ -1,12 +1,10 @@
 /* Order matters: @imports must come first, and later ones win ties.
-   1. FoxOne itself, untouched
+   1. FoxOne with FoxMica's changes built in: Mica, layers, URL dropdown, bar-height fixes, bookmarks bar
    2. your settings (palette, shape, bar height, layers, FoxOne toggles)
-   3. tab style (also works on stock Firefox: drop 1, 2 and 4 to try it)
-   4. FoxOne-only overrides: Mica, dropdown, bar-height fixes, bookmarks bar */
+   3. tab style (also works on stock Firefox: drop 1 and 2 to try it) */
 @import url("foxone-mica.css") screen;
 @import url("foxmica-config.css") screen;
 @import url("foxmica-tabs.css") screen;
-@import url("foxmica-overrides.css") screen;
 
 /* ==========================================================================
    OPTIONAL: your own font for the browser interface. OFF by default.
