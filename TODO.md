@@ -82,11 +82,6 @@ where they disagree.
   line 634) and FoxOne's own rules use `--tab-selected-textcolor`; foxmica-tabs.css only overrides the first, so 153 may
   read the other name. Compare the tab text variables on 153 and 160 before changing anything.
 - td13. [#27] Tab-drag test against upstream's fix (FoxOne 3.8.5, about line 2746).
-- td38. New-tab "+" and other movable buttons: leave placement to the user. FoxOne reserves a fixed width for the "+"
-  (`--uc-newtab-width`, vendor/userChrome.css about line 1085, a subtraction from the tab strip's max-width), so a
-  button dragged elsewhere can overlap its neighbours (FoxOne PR #65 fixes one case). Investigate how the row is laid
-  out (tabs, "+", extensions) before deciding: can the tab strip take the leftover room instead of a hard-coded width?
-  Touch user-placed buttons as little as possible. Decide whether it belongs in td8 or is a note for FoxOne.
 - td6, td7, td21. [#25] Theme-aware tint like WinUI (Mica grey tinted by accent/wallpaper),
   theme picker support, inherit Windows system colours. Do these together.
 - td30. Palette readability [#8]: pick palette ratios so every text/background pair stays
@@ -130,6 +125,8 @@ where they disagree.
   a tab's mute button no longer stretches the URL bar and eats the click; it now widens only with focus in the
   nav-bar. Only change needed on our side: the strip patch's FIND text, for one new comment line (#67). The
   row-height variable we asked for (#57) is upstream. Checked in the dev profile, nothing off.
+- td38. New-tab "+" and other movable buttons: fixed upstream in FoxOne 3.9.6 (Firn rewrote the fix to cover all
+  the buttons, after FoxOne PR #65 fixed one case). No issue of ours, nothing to do on our side.
 - Pulled FoxOne 3.9.4 "Icons where you put them" (2026-10-13, branch Pull-3.9.4-to-0.7.1, for 0.7.1). Our #62 fix
   landed upstream as #63 (Firn added `[hidden]` for FF158's Smart Window buttons). Closes #32: Customize-mode overrun.
   Tested FoxOne and FoxMica on 3.9.4 in all three Firefox versions.
