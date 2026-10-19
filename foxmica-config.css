@@ -118,6 +118,9 @@
   --ut-tab-radius: 6px;             /* Top corners of tabs. 8px is WinUI's, but Firefox renders it rounder */
   --ut-tab-top-gap: 2px;            /* Gap above the tabs; they run flush to the bottom of the bar */
   --ut-tab-weight: 500;
+  --ut-tab-pinstripe: 1;            /* The 1px edge around the selected tab (no bottom edge): 1 = show, 0 = hide */
+  /* --ut-tab-pinstripe-color: white; */   /* Colour of that edge on Firefox's own themes (default, light, dark). Left
+                                    unset it is the accent colour. Other themes use their own tab line colour. */
 
   /* The layer: the sheet drawn over the Mica strip for the selected tab, the bookmarks bar and the sidebar, the way
   Explorer layers its panes. It is a mid-grey at about 60% alpha, NOT black: that pulls whatever is behind it toward
@@ -173,6 +176,9 @@
   --uc-dynamic-bookmarks-newtab: 1;     /* Bookmarks bar on fresh tabs – keep the dynamic bar revealed while the active
                                         tab shows no page yet, (1 = show on fresh tabs, 0 = hover only).
                                         Ignored while --uc-dynamic-bookmarks is 0. */
+  /* --ut-bookmarks-bg: light-dark(rgb(247 247 247 / 85%), rgb(96 96 96 / 78%));   Colour of the floating bookmarks
+                                        bar (overlay mode). The last number is how solid it is; lower lets the page
+                                        show through more. These values are the built-in default. */
   
 
   /* ========================================================================

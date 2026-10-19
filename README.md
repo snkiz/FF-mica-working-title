@@ -2,7 +2,7 @@
 
 A Firefox theme for Windows 11: the real Mica backdrop behind a one-line browser UI (tabs and URL bar in one row), with Explorer-style tabs. Built on [FoxOne](https://github.com/Firnschnee/FoxOne) by Firnschnee.
 
-> **Work in progress.** Tested only on Firefox Nightly 160 on Windows 11, with the Nova redesign on (the default) and off. Other versions have not been tried yet.
+> **Work in progress.** Tested mainly on Firefox Nightly 160 on Windows 11, with the Nova redesign on (the default) and off. ESR 153 works but is not supported yet, and has one known bug (see Known issues). Other versions have not been tried.
 
 ![FoxMica on Firefox Nightly, Windows 11](assets/Screenshot-main.png)
 
@@ -42,18 +42,20 @@ A Firefox theme for Windows 11: the real Mica backdrop behind a one-line browser
 5. Set the prefs below in `about:config`.
 6. Start Firefox.
 
+Want regular Firefox with some of the extras instead? See "Stock plus" below.
+
 ## about:config prefs
 
 | Pref | Value | Why |
 | --- | --- | --- |
 | `toolkit.legacyUserProfileCustomizations.stylesheets` | `true` | Needed. Without it Firefox ignores everything in `chrome`. |
 | `widget.windows.mica` | `true` | Needed. Turns on the Mica backdrop. |
-| `widget.windows.mica.toplevel-backdrop` | `2` or `4` | Optional. `2` = Mica, `4` = Mica Alt. |
+| `widget.windows.mica.toplevel-backdrop` | `4` or `2` | Optional, and being re-checked: `widget.windows.mica` alone may be enough. `4` = Mica Alt, `2` = Mica. On Nightly 160 `2` turned the tab strip black here. |
 | `browser.tabs.allow_transparent_browser` | `true` | Optional. Lets blank tabs show Mica too. Flaky on laptops with a discrete GPU. |
 | `browser.display.background_color` (and `.dark`) | `transparent` | Optional. Goes with the pref above. |
-| `browser.compactmode.show` | `true` | Optional. Shows the Compact option under Customize -> Density. |
+| `browser.compactmode.show` | `true` | Older Firefox only. Shows the Compact option under Customize -> Density. Nightly has dropped it; density is under about:settings now. |
 
-The dynamic bookmarks bar may also need the bookmarks toolbar set to "Always Show". Other FoxOne-style themes say so; I haven't confirmed it for this one yet.
+The floating bookmarks bar needs the bookmarks toolbar set to "Always Show". The other options hand the bar back to Firefox, so there is nothing for the theme to reveal.
 
 ## Settings
 
@@ -67,9 +69,12 @@ Everything you are meant to change is in `foxmica-config.css`. It is variables o
 | `--ut-bar-padding` | Space above and below the tabs and URL field inside the bar. |
 | `--ut-btn-inner-*`, `--ut-btn-outer` | Toolbar button padding, which sets how far apart the icons sit. |
 | `--ut-tab-radius`, `--ut-tab-top-gap`, `--ut-tab-weight` | Tab corner radius, gap above tabs, font weight. |
+| `--ut-tab-pinstripe` | The thin edge around the selected tab: `1` shows it, `0` hides it. |
+| `--ut-tab-pinstripe-color` | Colour of that edge on Firefox's own themes (commented example in `foxmica-config.css`). Default is the accent colour. |
 | `--ut-layer` | The colour and see-through-ness of the layer (selected tab, bookmarks bar, sidebar). Lighter grey or lower alpha = lighter tab. |
 | `--ut-puzzle-color` | Colour of the extensions (puzzle) button icon. |
 | `--ut-bookmarks-inflow` | The bookmarks bar floats over the page (`0`) or sits in the page flow (`1`). |
+| `--ut-bookmarks-bg` | Colour of the floating bookmarks bar (commented example in `foxmica-config.css`). The last number is its opacity: lower lets the page show through more. |
 | `--ut-drag-left` | Window-drag area left of the sidebar button when not maximized. `0` removes it. |
 | `--ut-hide-trust-label` | Hide the text next to the site-info icon ("Not secure"). Default: hidden. |
 | `--ut-hide-pip-button` | Hide the picture-in-picture button in the URL bar (the video has its own). Default: hidden. |
@@ -80,9 +85,31 @@ Everything you are meant to change is in `foxmica-config.css`. It is variables o
 | `--ut-findbar-left` | Put the floating find bar on the left (`1`) instead of the right (`0`). |
 | `--uc-status-panel-spacing` | Gap from the window edge for the status text and the floating find bar (`0` = corner). |
 
-A few more values are not in the config because they follow from the ones above: `--ut-strip` (a tint for the top row, plain Mica by default), `--ut-tab-hover-bg`, `--ut-separator`, `--ut-bookmarks-bg` and `--ut-bookmarks-height`. They sit in the "LAYER VALUES" block in `patches/userChrome/20-layer-values.css`. Change one there, then run `node scripts/assemble.mjs` (see "Building from source" below), because `foxone-mica.css` is a built file.
+A few more values are not in the config because they follow from the ones above: `--ut-strip` (a tint for the top row, plain Mica by default), `--ut-tab-hover-bg`, `--ut-separator` and `--ut-bookmarks-height`. They sit in the "LAYER VALUES" block in `patches/userChrome/20-layer-values.css`. Change one there, then run `node scripts/assemble.mjs` (see "Building from source" below), because `foxone-mica.css` is a built file.
 
 Further down the file are FoxOne's own settings with the values chosen here (URL bar width, tab widths, and so on). FoxOne's [customisation guide](https://firnschnee.github.io/FoxOne/customisation.html) documents those.
+
+## Stock plus: regular Firefox with the extras
+
+If you like some of the extras but want Firefox's own layout, use `foxmica-plus.css` instead of the full theme. It needs no FoxOne and no Mica, and it works on stock Firefox together with `foxmica-tabs.css`. In `userChrome.css`, turn off the Mode 1 imports and turn on Mode 2 (the comments in the file say how). Only three files go in `chrome`: `userChrome.css`, `foxmica-plus.css` and `foxmica-tabs.css`.
+
+The settings are in the block at the top of `foxmica-plus.css`, one numbered section per feature. Set a feature to `0`, or delete its section, to switch it off. If you edit the block, keep a copy: a newer `foxmica-plus.css` will overwrite your edits.
+
+| Feature | Setting |
+| --- | --- |
+| Puzzle (extensions) button colour | `--ut-puzzle-color` |
+| Hide Forward while it has nowhere to go | `--ut-hide-disabled-nav` |
+| Window drag area beside the tabs | `--ut-drag-left`, `--ut-drag-right` |
+| Rounded-rectangle URL bar instead of the pill | `--ut-urlbar-radius` |
+| Tab widths | `--uc-active-tab-width`, `--uc-inactive-tab-width`, `--uc-tab-min-width` |
+| Lighter selected tab and hover fill | `--ut-layer`, `--ut-tab-hover-bg` |
+| URL bar icons reveal on hover (shield and star) | `--ut-urlbar-icons` |
+| Hide the "Not secure" label | `--ut-hide-trust-label` |
+| Hide the picture-in-picture button | `--ut-hide-pip-button` |
+| Floating bookmarks bar that reveals on URL bar hover | `--ut-dynamic-bookmarks`, `--ut-dynamic-bookmarks-newtab`, `--ut-bookmarks-bg`, `--ut-hover-delay`, `--ut-hide-delay` |
+| Pinned extensions next to the puzzle tuck away until you hover it | `--ut-hide-extensions` |
+
+The tabs file has its own few settings, described next to the imports in `userChrome.css`. **Tabs only:** turn on Mode 3 there to use just `foxmica-tabs.css` on regular Firefox or on another theme.
 
 ## Your own UI font (optional)
 
@@ -110,6 +137,7 @@ Further down the file are FoxOne's own settings with the values chosen here (URL
 
 - Customize mode: pinned extensions overrun the hamburger and puzzle ([#32](https://github.com/snkiz/FoxMica/issues/32)).
 - Vertical tabs are untested ([#31](https://github.com/snkiz/FoxMica/issues/31)).
+- Firefox ESR 153: the selected tab's text shows the dark accent colour instead of white. Firefox 160 is fine ([#22](https://github.com/snkiz/FoxMica/issues/22)).
 
 - The floating bookmarks bar only reveals when the pointer is over the URL bar, not the whole top row. That is how FoxOne works.
 - Hovering Mica areas sometimes flickered during development on a laptop with NVIDIA and integrated graphics. It went away after reboots and driver updates, so it is probably a driver problem, but this isn't proven.
@@ -144,6 +172,7 @@ Windows scale settings are very welcome, see [#23](https://github.com/snkiz/FoxM
 ## Credits
 
 - [FoxOne](https://github.com/Firnschnee/FoxOne) by Firnschnee (MIT). `foxone-mica.css` and `userContent.css` are built from FoxOne 3.9.7, kept exactly as released in `vendor/`, plus FoxMica's changes in `patches/`. FoxOne in turn credits [LittleFox](https://github.com/biglavis/LittleFox) and [Cascade](https://github.com/andreasgrafen/cascade).
+- `foxmica-plus.css` adapts FoxOne's floating bookmarks bar mechanism (which FoxOne took from [LittleFox](https://github.com/biglavis/LittleFox)) and its "unbroken run" pattern for tucking away pinned extensions, rewritten for stock Firefox.
 - The Mica rules in `patches/userChrome/22-mica.css` are derived from [Wintego's Firefox-transparent-theme](https://github.com/Wintego/Firefox-transparent-theme).
 - The look was matched by eye against Windows 11 Explorer and the MicaBar theme of Windhawk's [Windows 11 File Explorer Styler](https://windhawk.net/mods/windows-11-file-explorer-styler) mod (Windhawk is by [m417z](https://github.com/m417z)). No code from that project was used.
 - [@C-O-D](https://github.com/C-O-D) for the catch that put the finishing polish on the URL-bar icons ([FoxOne#59](https://github.com/Firnschnee/FoxOne/issues/59)). First outsider.

@@ -1,5 +1,5 @@
 /* BUILT FILE - do not edit by hand.
-   FoxMica 0.8: FoxOne 3.9.7 (vendor/userChrome.css) plus patches/userChrome/.
+   FoxMica 0.9: FoxOne 3.9.7 (vendor/userChrome.css) plus patches/userChrome/.
    Made by scripts/assemble.mjs. Change the patches, then rebuild. */
 /*==============================================================================================*
 
@@ -3971,8 +3971,8 @@ html[id^="taskbartab"] #unified-extensions-button {
    5. BOOKMARKS BAR (with --uc-dynamic-bookmarks: 1)
    Overlay mode (--ut-bookmarks-inflow: 0, default): FoxOne's own floating
    bar. It never moves the page, so nothing can flash. Over page pixels it
-   cannot be translucent, so it takes a solid colour (--ut-bookmarks-bg, the same
-   as the about: pages).
+   cannot show Mica, so it takes its own colour (--ut-bookmarks-bg): a grey at
+   about 80% opacity, so the page shows faintly through and icons stay legible.
    In-flow mode (--ut-bookmarks-inflow: 1): Wintego's version. The bar stays
    in the toolbox flow so it shows Mica like the rest, but the page is pushed
    down on reveal (height animated, 2px sliver kept when collapsed).
@@ -3982,9 +3982,9 @@ html[id^="taskbartab"] #unified-extensions-button {
 @container style(--uc-dynamic-bookmarks: 1) and style(--ut-bookmarks-inflow: 0) {
   /* Only while it really floats over the page. In customize mode and in the
      static bar the palette items are present and section 2's translucent
-     layer applies instead. Solid, in the same colour as the about: pages. */
+     layer applies instead. */
   :root:root #PersonalToolbar:not(:has(toolbarpaletteitem)) {
-    background-color: var(--ut-bookmarks-bg, var(--uc-color-base)) !important;
+    background-color: var(--ut-bookmarks-bg, light-dark(rgb(247 247 247 / 85%), rgb(96 96 96 / 78%))) !important;
     background-image: none !important;
   }
 }
@@ -4104,6 +4104,23 @@ notification-message {
 :root #unified-extensions-button:hover .toolbarbutton-icon {
   color: color-mix(in srgb, var(--ut-puzzle-color, var(--uc-color-hover)) 65%, white) !important;
   fill: color-mix(in srgb, var(--ut-puzzle-color, var(--uc-color-hover)) 65%, white) !important;
+}
+
+/* ==========================================================================
+   SELECTED TAB EDGE on Firefox's own themes (default, light, dark)
+   Nova draws the selected tab as two background layers: a gradient clipped to the 1px border, and the fill inside it.
+   FoxOne clears the gradient (its active tab is marked by text colour alone), which leaves one layer that is still
+   clipped to the border, so the fill vanishes. Firefox's themes also leave --tab-border-color-selected transparent,
+   because the gradient does that job. So: no gradient, the fill drawn over the whole tab, and a plain edge in
+   FoxOne's accent colour (the same one the other themes' edge and the tab text use). --ut-tab-pinstripe-color
+   in foxmica-config.css overrides the colour; the on/off switch (--ut-tab-pinstripe) is read in foxmica-tabs.css.
+   Not done in foxmica-tabs.css, so stock Firefox keeps Nova's own gradient edge.
+   ========================================================================== */
+:root:root:root[theme-in-app] .tabbrowser-tab[selected]:not([multiselected]) .tab-background {
+  background-image: none !important;
+  background-clip: border-box !important;
+  outline: none !important;
+  border-color: var(--ut-tab-pinstripe-color, var(--uc-color-accent)) !important;
 }
 
 /* ==========================================================================

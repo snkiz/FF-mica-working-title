@@ -1,0 +1,16 @@
+/* ==========================================================================
+   SELECTED TAB EDGE on Firefox's own themes (default, light, dark)
+   Nova draws the selected tab as two background layers: a gradient clipped to the 1px border, and the fill inside it.
+   FoxOne clears the gradient (its active tab is marked by text colour alone), which leaves one layer that is still
+   clipped to the border, so the fill vanishes. Firefox's themes also leave --tab-border-color-selected transparent,
+   because the gradient does that job. So: no gradient, the fill drawn over the whole tab, and a plain edge in
+   FoxOne's accent colour (the same one the other themes' edge and the tab text use). --ut-tab-pinstripe-color
+   in foxmica-config.css overrides the colour; the on/off switch (--ut-tab-pinstripe) is read in foxmica-tabs.css.
+   Not done in foxmica-tabs.css, so stock Firefox keeps Nova's own gradient edge.
+   ========================================================================== */
+:root:root:root[theme-in-app] .tabbrowser-tab[selected]:not([multiselected]) .tab-background {
+  background-image: none !important;
+  background-clip: border-box !important;
+  outline: none !important;
+  border-color: var(--ut-tab-pinstripe-color, var(--uc-color-accent)) !important;
+}
