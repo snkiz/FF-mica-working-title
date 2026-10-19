@@ -20,7 +20,15 @@ where they disagree.
 
 ## Next time
 
-- Nothing queued.
+- **td40. FoxOne accent does not follow dynamic themes.** Seen 2026-10-18 while doing the selected-tab edge: with
+  FoxOne, every theme (store themes too) gets FoxOne's accent on the tab edge, tab text and puzzle piece, not the
+  theme's own colour. FoxOne's comment on that block says it is deliberate ("always applied, including under a
+  dynamic theme"), but FoxOne is meant to have adaptive theme support, so check whether the accent itself should
+  follow the theme (FoxOne's docs and issues) before calling it a bug. Our edge (patches/userChrome/35) uses
+  `--uc-color-accent`, so it follows whatever FoxOne does.
+- README: fix the "tested on" line and re-check the about:config table (is `widget.windows.mica.toplevel-backdrop` 2
+  or 4 still wanted? In the dev profile, 2 made the tab strip black). Add `--ut-tab-pinstripe` and
+  `--ut-tab-pinstripe-color` to the settings table. Next release.
 
 ## First bug-fix pass
 
@@ -57,6 +65,8 @@ where they disagree.
   edge when the sidebar is hidden, so the bar goes full width. May need the bar switched from absolute to fixed
   (anchor rules). Jumps rather than slides; fine for a bar that only shows on hover. Experiment first, test profile.
 
+- Pre-1.0 test pass (2026-10-18): go through every open issue and every TODO feature, drop the ones that are obsolete, and turn the rest into one testing list (it will be a big one). Includes: re-check the about:config prefs table, starting with whether widget.windows.mica alone is enough (README says the 	oplevel-backdrop row is being re-checked); each stock-plus feature switched off; ESR 153 stays unsupported until td39 is fixed. 0.9 is tagged on FoxOne 3.9.7 (what was tested); for 1.0, pull whatever FoxOne release is current then (3.9.8 was out on 2026-10-18) with `node scripts/pull-foxone.mjs <tag>`, rebuild, and re-test.
+
 ## After launch
 
 - **PWAs for Firefox theme** (has a milestone): at least a theme that runs on top of the addon's
@@ -72,18 +82,22 @@ where they disagree.
   that most of FoxOne's traffic comes from the store, and he approved the idea on #30, so this is worth doing well.
 - td8. [#24] Stock-plus mode: turn off the one-line bar but keep the other goodies. Needs
   every feature switchable, and testing each feature off.
+  2026-10-18: decided on a standalone `foxmica-plus.css` (not a mode switch in the built file). Done: puzzle colour,
+  hide disabled nav (Forward only by default), grab area, URL bar radius, tab widths (needs tuning), tab fill (needs tuning), URL bar icons, trust label, PiP, floating bookmarks bar, tucked-away extensions. Feature list done (2026-10-18). Left: userChrome.css import lines
+  per mode, README section, test each feature off, decide on packaging (extra zips by script).
   macOS lead (from Firn, unverified, nobody here has a Mac): the closest thing to Mica is the older vibrancy
   blur, `widget.macos.titlebar-blend-mode.behind-window` in about:config. Liquid-fox and zvuc's
   firefox-macos-native-tabbar build their glass look on it. FoxMica could swap that pref for the Mica one and
   keep its transparency layer. Needs: a Mac tester, and a check that the pref still works on current releases.
 - td12. [#22] Backport to ESR 153. Check the Nova pref name there. Test Nova on and off.
+  Preliminary testing was done for 0.8 (the 0.8 release notes list it as incomplete); td39 is the known regression.
 - td39. [#22] ESR 153: the selected tab's text shows the dark accent colour instead of white. Release 160 is fine, so
   something changed between 153 and 157. Lead, not checked: FoxOne sets `--tab-text-color-selected` to the accent (about
   line 634) and FoxOne's own rules use `--tab-selected-textcolor`; foxmica-tabs.css only overrides the first, so 153 may
   read the other name. Compare the tab text variables on 153 and 160 before changing anything.
 - td13. [#27] Tab-drag test against upstream's fix (FoxOne 3.8.5, about line 2746).
 - td6, td7, td21. [#25] Theme-aware tint like WinUI (Mica grey tinted by accent/wallpaper),
-  theme picker support, inherit Windows system colours. Do these together.
+  theme picker support, inherit Windows system colours. Do these together. Also: a pinstripe in the accent colour for the built-in default/light/dark themes in plus mode belongs to #26 (five-colour palette), after 1.0: CSS cannot tell built-ins from store themes, so it needs the palette feature (inherit the Windows or store theme palette, then a custom override is almost free).
 - td30. Palette readability [#8]: pick palette ratios so every text/background pair stays
   readable (4.5:1 for text, 3:1 for icons and large text), whatever colours are
   chosen. Found while drafting td18 (selected text is about 1.8:1). Ties in with td6, td7, td21.
@@ -120,6 +134,9 @@ where they disagree.
 
 ## Done
 
+- Released 0.8 "Brick by Brick" (2026-10-17): the five-file refactor (#21), FoxOne 3.9.7, `--ut-findbar-left`, unified
+  hover delays (450/50 ms), the settings gathered in `foxmica-config.css`, preliminary ESR 153 testing. Release notes
+  draft: Notes-n-Tools\issue-drafts\draft-release-foxmica-0.8.md.
 - Pulled FoxOne 3.9.7 "Mute on the first click" (2026-10-17), skipping 3.9.5 and 3.9.6 in one step. 3.9.5: more
   Nova fixes. 3.9.6: the new-tab button rewrite that accounts for all the movable buttons (td38). 3.9.7: clicking
   a tab's mute button no longer stretches the URL bar and eats the click; it now widens only with focus in the
@@ -151,8 +168,16 @@ where they disagree.
   40vw/548px expanded; active tab 108-192px, inactive 48-66px, tab minimum 48px.
 - One shared config file for chrome and content [#16, closed]. Offered on FoxOne #50 (closed there).
   Firn finds controlling the whole theme from 5 colours ambitious. Our answer is #8 (palette readability).
+- Tabs reworked on Nova's own tab layers (2026-10-18, not released yet): foxmica-tabs.css no longer removes the tab
+  border, so stock Firefox keeps Nova's gradient edge around the selected tab, with the Explorer-style fill inside
+  and no bottom edge. New switch `--ut-tab-pinstripe` (1 or 0). Other themes' outline is swapped for the same 1px
+  border. On FoxOne, Firefox's own themes (default, light, dark) get the fix in patches/userChrome/35: FoxOne clears
+  Nova's gradient, which left the fill clipped to the border, and a user stylesheet cannot use the `border-area`
+  clip Nova uses, so the edge is a plain border in FoxOne's accent (`--ut-tab-pinstripe-color` overrides it).
+  Found along the way: `widget.windows.mica.toplevel-backdrop` = 2 in a profile makes the tab strip black (a pref,
+  not CSS). The old td26 fix (background-clip in foxmica-tabs.css) is gone.
 - td26. Tab fill/corners with Nova on [#11, closed]: fixed 2026-10-04 (background-clip on the
-  selected tab). td25. Separators came back with it.
+  selected tab; replaced 2026-10-18, see above). td25. Separators came back with it.
 - td27. Outline only on the last tab: explained by td26. Nova changed how Firefox draws tabs; no fix needed.
 
 - td15. userContent.css rebased on 3.8.5.

@@ -47,7 +47,7 @@ maintainer uses Shantell Sans).
 
 `vendor/` is FoxOne untouched (`vendor/VERSION` = the release), `patches/<target>/` is every FoxMica change to it
 (`.patch` = find-and-replace hunks, `.css` = blocks added to the end, both in filename order), and `VERSION` in the
-root is FoxMica's own version (`0.8-dev` until a release). Details and the patch format: `scripts/README.md`.
+root is FoxMica's own version (`0.8`, released 2026-10-17). Details and the patch format: `scripts/README.md`.
 
 - To change a built file, change a patch, then `node scripts/assemble.mjs`. A hand edit to a built file is lost on the
   next build, and `node scripts/check.mjs` reports it with the first line that differs.
@@ -58,11 +58,25 @@ root is FoxMica's own version (`0.8-dev` until a release). Details and the patch
 
 ## Where things stand (update this section at the end of every session)
 
-**Last updated:** 2026-10-17
+**Last updated:** 2026-10-18
 
-- **Five-file refactor done (#21, for 0.8; `VERSION` is `0.8-dev`).** `foxone-mica.css` and `userContent.css` are built
-  from `vendor/` plus `patches/`; `foxmica-overrides.css` is gone (folded into `patches/userChrome/*.css`). Left to do:
-  the mode switch for a portable Mica block (td8, stock-plus), then ESR 153 (#22) and the store submission (#30).
+- **Released 0.8 "Brick by Brick" (2026-10-17)** on FoxOne 3.9.7; `VERSION` is `0.8`. Five-file refactor done (#21):
+  `foxone-mica.css` and `userContent.css` are built from `vendor/` plus `patches/`; `foxmica-overrides.css` is gone
+  (folded into `patches/userChrome/*.css`). Left to do: the mode switch for a portable Mica block (td8, stock-plus),
+  finishing ESR 153 (#22; preliminary testing done, td39 open) and the store submission (#30).
+- **Unreleased, after 0.8 (2026-10-18): tabs rebuilt on Nova's tab layers.** `foxmica-tabs.css` keeps the tab border
+  (stock Firefox gets Nova's gradient edge, no bottom edge, Explorer fill inside) with the switch `--ut-tab-pinstripe`.
+  FoxOne-only part is `patches/userChrome/35-selected-tab-edge.css` (Firefox's own themes: plain edge in FoxOne's
+  accent, `--ut-tab-pinstripe-color` overrides). `foxmica-config.css` holds both settings. Lessons: a user stylesheet
+  can't use Nova's `border-area` clip; Firefox only rereads userChrome at startup; `widget.windows.mica.toplevel-backdrop`
+  = 2 makes the strip black. Open: td40 (FoxOne accent vs dynamic themes), README fixes next release, light-system
+  dark bar on the default theme (suspected to be Corey's registry tweaks and/or Windhawk; he will test Windhawk in a
+  sandbox). Stock-plus (td8) is under way as a standalone `foxmica-plus.css` (settings block at the top, one numbered
+  section per feature, used with foxmica-tabs.css and instead of the full theme). Done and tested on stock: 1 puzzle
+  colour, 2 hide disabled Back/Forward (default Forward only), 3 window grab area, 4 URL bar radius, 5 tab widths (needs tuning), 6 tab fill (needs tuning), 7 URL bar icons (star/shield reveal), 8 trust label hidden, 9 PiP button hidden, 10 floating bookmarks bar (stock 16px bar, translucent grey `--ut-bookmarks-bg`, about 78% opacity), 11 tucked-away extensions (the unbroken run beside the puzzle collapses to no width, reveals on puzzle hover; the spacers resize unevenly, a flexible-spacer limit). The feature list is complete; the shield permission icon is untested. FoxMica's own floating bookmarks bar now uses the same translucent default (was solid).
+  Packaging idea: one release, files first; separate zips (full, plus, tabs-only) can be built by a script later.
+  Gotcha: a `*/` inside a header comment ends it early and silently kills the next rule.
+  Road to 1.0 (Corey, 2026-10-18): the only blockers are finishing stock-plus (td8) and the ESR 153 tab-text bug (td39). Then a lot of testing (some old bugs may be obsolete now), then the FirefoxCSS Store submission (#30). The five-colour palette (#26, including an accent pinstripe for built-in themes) is after 1.0. 0.9 stays on FoxOne 3.9.7 (tested); 1.0 pulls the current FoxOne (3.9.8 was out 2026-10-18).
 - **Released 0.7 "Better together"** on FoxOne 3.9.1 (merge tracked in #33; branch `3.9.1-upstream-pull`, rebased
   on 3.9.1). Earlier: 0.5 "Warts and all". Tags have no "v". Fixes go out as point releases until 1.0. A release is
   pinned to its tag: push first, then publish. Release zip leaves out dev files via `export-ignore` in .gitattributes.
@@ -71,7 +85,8 @@ root is FoxMica's own version (`0.8-dev` until a release). Details and the patch
   landed in 3.8.8. FoxMica keeps click-to-cancel (override 7e), Forward-only hiding, and the trust-label and PiP
   switches.
 - Issues #1-#34 are on GitHub. `TODO.md` maps items to issue numbers. Items are `tdN`, issues are `#N`; never a bare number.
-- Built and hand-tested on Nightly 160 with Nova on (the default) and off. Proton/old look is a dead end.
+- Built and hand-tested on Nightly 160 with Nova on (the default) and off; ESR 153 tested preliminarily for 0.8.
+  Proton/old look is a dead end.
 - Daily browser is ESR 140. Plan: get Nightly right, then move to ESR 153 (has the Nova switch) and backport (#22).
 - Nightly has dropped `browser.compactmode.show`; density is now set in about:settings (td34).
 
@@ -106,7 +121,7 @@ root is FoxMica's own version (`0.8-dev` until a release). Details and the patch
 - One config file for chrome and content so the palettes can't drift apart.
 - Two layers like Explorer: plain Mica strip on top; selected tab, bookmarks bar
   and sidebar share one layer (`--ut-layer`).
-- Floating bookmarks bar is solid (Mica can't paint over page pixels). Wintego's
+- Floating bookmarks bar is a translucent grey (`--ut-bookmarks-bg`, about 78-85% opaque; Mica can't paint over page pixels, so it is a fixed colour, not Mica). Wintego's
   in-flow bar was dropped because it pushes the page down.
 - Pinned extensions: placement is the switch. Only the unbroken run of extensions beside the hamburger hides behind
   the hamburger hover; anywhere else (nav-bar, or before the tabs) they always show. Firefox's own tools never hide
