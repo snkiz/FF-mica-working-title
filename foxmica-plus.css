@@ -1,0 +1,427 @@
+/* ==========================================================================
+   FOXMICA PLUS - a few comfort features for stock Firefox, without FoxOne.
+
+   Standalone: works on stock Firefox and needs nothing else. It is the small
+   sibling of the full FoxMica theme (foxone-mica.css), which has all of this
+   and much more. Use this file OR the full theme, not both.
+
+   Load it from userChrome.css, with the tabs file if you like:
+       @import url("foxmica-plus.css") screen;
+       @import url("foxmica-tabs.css") screen;
+
+   SETTINGS are in the block just below. Edit them here. (A newer copy of this
+   file replaces your edits, so note your values down before updating.)
+
+   FEATURES are the numbered sections after the settings. To switch one off,
+   delete the section or turn it into a comment (a comment starts with a slash
+   and a star, and ends with a star and a slash; a comment cannot contain
+   another one, so remove any comment inside the section first).
+   ========================================================================== */
+
+:root {
+  /* 1. PUZZLE BUTTON COLOUR: the colour of the extensions (puzzle) button.
+        Any CSS colour: a name, #rrggbb, or AccentColor (your Windows accent colour). */
+  --ut-puzzle-color: AccentColor;
+
+  /* 2. HIDE DISABLED NAVIGATION: a Back or Forward button with nowhere to go is hidden instead of greyed out.
+        0 = leave both as Firefox draws them, 1 = hide Forward only (the old Firefox behaviour), 2 = hide both. */
+  --ut-hide-disabled-nav: 1;
+
+  /* 3. WINDOW GRAB AREA: the space in the tab bar you drag the window by, before and after the tabs.
+        Firefox makes both 40px. Smaller gives the tabs more room; 0 removes one (keep some, it is
+        how you move the window). The left one is already gone while the window is maximized. */
+  --ut-drag-left: 12px;
+  --ut-drag-right: 20px;
+
+  /* 4. URL BAR SHAPE: corner radius of the URL bar and its dropdown. Firefox's is a full pill.
+        0 = square corners. Same top-corner radius as the tabs by default (6px). */
+  --ut-urlbar-radius: 6px;
+
+  /* 5. TAB WIDTHS: the widest the selected tab and the other tabs may grow, and the narrowest any tab may shrink
+        before the strip scrolls. The other tabs cap lower than the selected one, so as tabs pile up the one you are
+        on stays readable. Firefox's own tabs all share one size (up to 225px, down to 76px). Same names as the
+        full FoxMica theme, whose defaults are tighter because its tabs share one row with the URL bar. */
+  --uc-active-tab-width: clamp(120px, 30vw, 250px);
+  --uc-inactive-tab-width: clamp(76px, 15vw, 150px);
+  --uc-tab-min-width: 76px;
+
+  /* 6. TAB FILL: the sheet drawn on the selected tab, and the lighter hint on a tab you hover. They are read by
+        foxmica-tabs.css, so load that too. A colour with some transparency (the last number in "/ 12%") lets the
+        bar show through. Raise the percentage for a stronger tab, lower it for a fainter one. The left value of
+        light-dark() is for light mode, the right one for dark mode. */
+  --ut-layer: light-dark(rgb(255 255 255 / 55%), rgb(255 255 255 / 12%));
+  --ut-tab-hover-bg: light-dark(rgb(255 255 255 / 30%), rgb(255 255 255 / 6%));
+
+  /* 7. URL BAR ICONS: the small icons inside the URL bar (reader view, translations, add-on icons, and the
+        permissions icon) stay out of the way until you rest on the bookmark star, or on the shield for permissions.
+        0 = leave them as Firefox draws them, 1 = reveal them from the star and the shield. */
+  --ut-urlbar-icons: 1;
+
+  /* 8. TRUST LABEL: the text beside the shield, such as "Not secure" on plain http pages. The struck-through
+        shield says the same. 1 = hide the text, 0 = leave it. (The icon stays; it still says what it says.) */
+  --ut-hide-trust-label: 1;
+
+  /* 9. PICTURE-IN-PICTURE BUTTON: the one in the URL bar while a video plays. The video has the same button
+        on it. 1 = hide it from the URL bar, 0 = leave it. */
+  --ut-hide-pip-button: 1;
+
+  /* 10. BOOKMARKS BAR: float it out of the page layout so it costs no height, and reveal it when you rest on
+         the URL bar. 1 = floating bar, 0 = Firefox's own bar. It only does anything with the bookmarks toolbar set
+         to "Always show" (under "Never show" there is nothing to reveal). */
+  --ut-dynamic-bookmarks: 1;
+  --ut-dynamic-bookmarks-newtab: 1;   /* 1 = also keep it showing on a fresh tab (new tab, home), 0 = hover only */
+  --ut-bookmarks-bg: light-dark(rgb(247 247 247 / 85%), rgb(96 96 96 / 78%));   /* colour of the floating bar. The
+                                         last number is how solid it is: lower lets the page show through more. */
+  --ut-hover-delay: 450ms;            /* how long you rest on the URL bar before the bar slides out */
+  --ut-hide-delay: 50ms;              /* how long it lingers after you leave, so a slip does not snap it away */
+
+  /* 11. TUCKED-AWAY EXTENSIONS: pinned extension icons that sit in an unbroken run against the end of the bar
+         (the puzzle button, the menu) slide away until you rest on the puzzle button. They give their space back, so
+         the bar shifts a little when they show. Icons anywhere else, and Firefox's own buttons, always show. 1 = on, 0 = off. */
+  --ut-hide-extensions: 1;
+}
+
+
+/* ==========================================================================
+   1. PUZZLE BUTTON COLOUR
+   The icon is an SVG drawn from the button's colour through context-fill, so
+   both `color` and `fill` are set, on the button and on its icon. Hover
+   brightens it toward white so the button still reacts.
+   ========================================================================== */
+:root #unified-extensions-button,
+:root #unified-extensions-button .toolbarbutton-icon {
+  color: var(--ut-puzzle-color) !important;
+  fill: var(--ut-puzzle-color) !important;
+}
+
+:root #unified-extensions-button:hover,
+:root #unified-extensions-button:hover .toolbarbutton-icon {
+  color: color-mix(in srgb, var(--ut-puzzle-color) 65%, white) !important;
+  fill: color-mix(in srgb, var(--ut-puzzle-color) 65%, white) !important;
+}
+
+
+/* ==========================================================================
+   2. HIDE DISABLED NAVIGATION
+   A disabled Back or Forward button collapses to nothing instead of sitting
+   there greyed out, and comes back the moment it has somewhere to go. Not
+   applied in Customize mode, where every button must stay reachable.
+   Mode 1 hides Forward only, mode 2 hides Back as well.
+   ========================================================================== */
+@container style(--ut-hide-disabled-nav: 1) {
+  :root:not([customizing]) #nav-bar #forward-button[disabled] {
+    opacity: 0 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    padding: 0 !important;
+    margin-inline: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+  }
+}
+
+@container style(--ut-hide-disabled-nav: 2) {
+  :root:not([customizing]) #nav-bar :is(#back-button, #forward-button)[disabled] {
+    opacity: 0 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    padding: 0 !important;
+    margin-inline: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+  }
+}
+
+
+/* ==========================================================================
+   3. WINDOW GRAB AREA
+   Firefox puts a 40px spacer before and after the tabs in the tab bar, empty
+   space to drag the window by. Shrink them so the tabs get the room. Firefox
+   hides the left one itself while the window is maximized or fullscreen.
+   ========================================================================== */
+.titlebar-spacer[type="pre-tabs"] {
+  width: var(--ut-drag-left, 12px) !important;
+}
+
+.titlebar-spacer[type="post-tabs"] {
+  width: var(--ut-drag-right, 20px) !important;
+}
+
+
+/* ==========================================================================
+   4. URL BAR SHAPE
+   Nova draws the URL bar as a pill: its corner radius is half the bar height.
+   Two tokens carry it, one for the bar and one for the dropdown under it, and
+   the inner shapes (rows, highlights) are worked out from them. They are set
+   on the elements that define them, so the pill cannot win back.
+   ========================================================================== */
+:root,
+#urlbar,
+#urlbar-container,
+#searchbar {
+  --urlbar-border-radius: var(--ut-urlbar-radius, 6px) !important;
+  --urlbarview-border-radius: var(--ut-urlbar-radius, 6px) !important;
+}
+
+
+/* ==========================================================================
+   5. TAB WIDTHS
+   The selected tab and the other tabs get their own widest size. Pinned tabs
+   and tabs in a collapsed group keep Firefox's sizing.
+   ========================================================================== */
+.tabbrowser-tab[selected][fadein]:not([pinned]):not(tab-group[collapsed] .tabbrowser-tab) {
+  max-width: var(--uc-active-tab-width) !important;
+}
+
+.tabbrowser-tab[fadein]:not([selected]):not([pinned]):not(tab-group[collapsed] .tabbrowser-tab) {
+  max-width: var(--uc-inactive-tab-width) !important;
+}
+
+.tabbrowser-tab[fadein]:not([pinned]):not(tab-group[collapsed] .tabbrowser-tab) {
+  min-width: var(--uc-tab-min-width) !important;
+}
+
+
+/* ==========================================================================
+   7. URL BAR ICONS
+   The extra page icons (reader view, translations, taskbar tab, add-on icons)
+   sit collapsed to nothing, and open when the pointer rests on the bookmark
+   star: they live in the same container, so the pointer stays on it while it
+   travels onto them. A 0.3s delay on the way in filters out passing over the
+   star; closing is immediate. Keyboard: focusing the star opens them at once.
+   The permissions icon works the same way from the shield. Active camera,
+   microphone, location and sharing icons stay visible. The pause lengths are
+   not settings; change the 0.3s below if you want another.
+   ========================================================================== */
+@container style(--ut-urlbar-icons: 1) {
+  #urlbar #page-action-buttons :is(
+    #reader-mode-button,
+    #taskbar-tabs-button,
+    #translations-button,
+    .urlbar-addon-page-action
+  ) {
+    max-width: 0 !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    transition: max-width 0.2s ease, opacity 0.2s ease, padding 0.2s ease, margin 0.2s ease !important;
+  }
+
+  #urlbar #page-action-buttons:is(:hover, :focus-within) :is(
+    #reader-mode-button,
+    #taskbar-tabs-button,
+    #translations-button,
+    .urlbar-addon-page-action
+  ) {
+    max-width: 40px !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    padding: revert !important;
+    margin: revert !important;
+  }
+
+  #urlbar #page-action-buttons:hover:not(:focus-within) :is(
+    #reader-mode-button,
+    #taskbar-tabs-button,
+    #translations-button,
+    .urlbar-addon-page-action
+  ) {
+    transition-delay: 0.3s !important;
+  }
+
+  #urlbar #identity-box #identity-permission-box:where(:not(
+    [hasSharingIcon],
+    [hasPermissions]:not(:has(.blocked-permission-icon))
+  )) {
+    max-width: 0 !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    margin-inline: 0 !important;
+    padding-inline: 0 !important;
+    transition: max-width 0.2s ease, opacity 0.2s ease, margin-inline 0.2s ease, padding-inline 0.2s ease !important;
+  }
+
+  #urlbar #trust-icon-container:is(:hover, :focus-visible) ~ #identity-box #identity-permission-box,
+  #urlbar #identity-box:is(:hover, :focus-within) #identity-permission-box {
+    max-width: 200px !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    margin-inline: revert !important;
+    padding-inline: revert !important;
+  }
+
+  #urlbar #trust-icon-container:hover:not(:focus-visible) ~ #identity-box #identity-permission-box {
+    transition-delay: 0.3s !important;
+  }
+}
+
+
+/* ==========================================================================
+   8. TRUST LABEL
+   The shield in front of the URL bar carries a text label, "Not secure" on
+   plain http pages. The struck icon says the same, so the text is redundant.
+   The icon keeps its own accessible label; this is visual only.
+   ========================================================================== */
+@container style(--ut-hide-trust-label: 1) {
+  #urlbar #trust-icon-container #trust-label {
+    display: none !important;
+  }
+}
+
+
+/* ==========================================================================
+   9. PICTURE-IN-PICTURE BUTTON
+   Firefox keeps this button in the URL bar for as long as a video plays, and
+   the video has the same button on it.
+   ========================================================================== */
+@container style(--ut-hide-pip-button: 1) {
+  #urlbar #picture-in-picture-button {
+    display: none !important;
+  }
+}
+
+
+/* ==========================================================================
+   10. BOOKMARKS BAR
+   The bar leaves the page layout and hangs below the toolbar as an overlay,
+   so it costs no height, then fades in when you rest on the URL bar. Its own
+   height and padding stay Firefox's. Mechanism adapted from LittleFox
+   (github.com/biglavis/LittleFox, MIT), by way of FoxOne. Three details are
+   there because each one is a trap:
+   - max-height shrinks with a delayed step, after the fade, so the bar keeps
+     its hit box while fading out and then collapses to an unhoverable strip.
+     Without that, the invisible bar still eats clicks at the top of the page.
+   - Customize mode drops the overlay (a floating drop target is unusable).
+   - An open bookmarks folder keeps the bar up, so it does not collapse out
+     from under its own menu.
+   ========================================================================== */
+@container style(--ut-dynamic-bookmarks: 1) {
+
+  /* Firefox clips everything inside the toolbox, and the overlay sits just
+     outside it, so the clip would erase the bar. Lifted on the toolbox only. */
+  #navigator-toolbox {
+    position: relative !important;
+    z-index: 9999 !important;
+    overflow: visible !important;
+  }
+
+  /* F11 fullscreen: Firefox collapses every toolbar without
+     fullscreentoolbar="true". Hand visibility back so the reveal can work.
+     Fullscreen video stays excluded, where the bar must not resurface. */
+  :root[inFullscreen]:not([inDOMFullscreen]) #PersonalToolbar {
+    visibility: visible !important;
+  }
+
+  /* Travelling from the URL bar down onto the revealed bar would make
+     fullscreen's autohide collapse both. While the bar is hovered, or one of
+     its folders is open, pin the toolbox down. */
+  :root[inFullscreen]:not([inDOMFullscreen])
+    #navigator-toolbox:has(#PersonalToolbar:is(:hover, :has(toolbarbutton[open]))) {
+    margin-top: 0 !important;
+  }
+
+  /* Resting state: out of the flow, transparent, zero height. The padding goes
+     too (max-height caps only the content), on the same delayed step as
+     max-height, so the box keeps its height for the whole fade-out. */
+  #PersonalToolbar:not(:has(toolbarpaletteitem)) {
+    position: absolute !important;
+    top: 100% !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    transform-origin: top;
+    transform: scaleY(0.96) translateY(-4px) !important;
+    max-height: 0 !important;
+    padding-block: 0 !important;
+    background-color: var(--ut-bookmarks-bg, light-dark(rgb(247 247 247 / 85%), rgb(96 96 96 / 78%))) !important;
+    transition:
+      opacity 100ms ease-out var(--ut-hide-delay, 50ms),
+      transform 100ms ease-out var(--ut-hide-delay, 50ms),
+      max-height 0s step-end calc(100ms + var(--ut-hide-delay, 50ms)),
+      padding-block 0s step-end calc(100ms + var(--ut-hide-delay, 50ms)) !important;
+  }
+
+  /* Reveal, but not while the results list is open: the panel and the bar
+     would occupy the same strip. */
+  #navigator-toolbox:not(:has(#urlbar[open])) {
+    &:has(#urlbar:hover) #PersonalToolbar,
+    & #PersonalToolbar:is(:hover, :has(toolbarbutton[open])) {
+      opacity: 1 !important;
+      transform: scaleY(1) translateY(0) !important;
+      max-height: 4em !important;
+      padding-block: revert !important;
+    }
+    /* Resting on the URL bar waits out the delay. Resting on the bar itself,
+       the bridge the pointer travels down, opens it at once. */
+    &:has(#urlbar:hover) #PersonalToolbar {
+      transition-delay: var(--ut-hover-delay, 450ms), var(--ut-hover-delay, 450ms), 0s, 0s !important;
+    }
+    & #PersonalToolbar:is(:hover, :has(toolbarbutton[open])) {
+      transition-delay: 0s, 0s, 0s, 0s !important;
+    }
+  }
+
+  /* Results list opened: drop the grace period and collapse the hit box
+     right after the fade. */
+  #navigator-toolbox:has(#urlbar[open]) #PersonalToolbar {
+    transition-delay: 0s, 0s, 100ms, 100ms !important;
+  }
+
+  /* Fresh tabs: while the selected tab shows no page (new tab, home, blank)
+     the URL bar is empty and its proxy state is "invalid", so keep the bar
+     showing with no hover and no delay. The empty-field check tells a fresh
+     tab from an abandoned edit on a normal page. */
+  @container style(--ut-dynamic-bookmarks-newtab: 1) {
+    #navigator-toolbox:not(:has(#urlbar[open])):has(
+      #urlbar-input-container[pageproxystate="invalid"],
+      .urlbar-input-container[pageproxystate="invalid"]
+    ):has(#urlbar-input:placeholder-shown, .urlbar-input:placeholder-shown)
+      #PersonalToolbar {
+      opacity: 1 !important;
+      transform: scaleY(1) translateY(0) !important;
+      max-height: 4em !important;
+      padding-block: revert !important;
+      transition-delay: 0s, 0s, 0s, 0s !important;
+    }
+  }
+}
+
+/* ==========================================================================
+   11. TUCKED-AWAY EXTENSIONS
+   An extension icon counts as tucked away when everything after it in the bar
+   is another extension icon, the puzzle button or the menu: an unbroken run
+   against the end. Extension widgets have ids ending in -browser-action; that
+   keeps the URL bar, the search box and Firefox's own buttons out of it.
+   They collapse to no width while hidden, so the space is given back to the
+   bar (the spacers soak it up) and slides out again on reveal. Resting on
+   the puzzle button, on any extension icon, or having an extension popup open
+   shows them all. 60px is the room allowed per icon.
+   ========================================================================== */
+
+@container style(--ut-hide-extensions: 1) {
+  #nav-bar-customization-target > toolbaritem[id$="-browser-action"]:where(
+    :not(:has(~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, #PanelUI-menu-button, [hidden])))
+  ) {
+    opacity: 0;
+    max-width: 0;
+    overflow: hidden;
+    transition:
+      opacity 120ms ease-out var(--ut-hide-delay, 50ms),
+      max-width 150ms ease-out var(--ut-hide-delay, 50ms);
+  }
+
+  :root:root #nav-bar:is(
+    :has(#unified-extensions-button:is(:hover, [open])),
+    :has(toolbaritem[id$="-browser-action"]:hover),
+    :has(toolbaritem[id$="-browser-action"] [open])
+  ) #nav-bar-customization-target > toolbaritem[id$="-browser-action"] {
+    opacity: 1 !important;
+    max-width: 60px !important;
+    transition-delay: 0s !important;
+  }
+}

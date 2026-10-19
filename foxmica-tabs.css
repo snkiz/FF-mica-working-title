@@ -15,6 +15,7 @@
      --ut-tab-radius 6px        top corners of a tab
      --ut-tab-top-gap 2px       gap above the tabs
      --ut-tab-weight 500        tab title weight
+     --ut-tab-pinstripe 1       the 1px edge around the selected tab (no bottom edge): 1 shows it, 0 hides it
      --ut-tab-text              tab title colour (default: the toolbar text colour)
      --ut-bar-padding 2px       space above and below the tabs and the URL field
      --ut-bar-height-compact 30px / -normal 38px / -touch 48px
@@ -29,17 +30,18 @@
 /* ---- Tab shape: top-only rounding, filled selected tab, flat inactive ---- */
 
 :root .tab-background {
-  border: none !important;
   border-radius: var(--ut-tab-radius, 6px) var(--ut-tab-radius, 6px) 0 0 !important;
   margin-block: var(--ut-tab-top-gap, 2px) 0 !important;
   margin-inline: 0 !important;
+  /* The pinstripe is Nova's 1px edge around the selected tab. --ut-tab-pinstripe: 1 shows it, 0 hides it.
+     It has no bottom edge: the tab joins the bar below it, like an Explorer tab. */
+  border-width: calc(var(--ut-tab-pinstripe, 1) * 1px) calc(var(--ut-tab-pinstripe, 1) * 1px) 0 !important;
 }
 
 /* Inactive: no fill, no border, no outline, no shadow, just the strip */
 :root .tabbrowser-tab:not([selected], [multiselected]) .tab-background {
   background-color: transparent !important;
   background-image: none !important;
-  border: none !important;
   outline: none !important;
   box-shadow: none !important;
 }
@@ -48,13 +50,16 @@
   background-color: var(--ut-tab-hover-bg, light-dark(rgb(255 255 255 / 30%), rgb(0 0 0 / 12%))) !important;
 }
 
-:root .tabbrowser-tab:is([selected], [multiselected]) .tab-background {
+:root:root:root .tabbrowser-tab:is([selected], [multiselected]) .tab-background {
   background-color: var(--ut-layer, light-dark(rgb(255 255 255 / 55%), rgb(0 0 0 / 25%))) !important;
-  /* Nova (browser.nova.enabled) paints the selected tab with a "background"
-     shorthand whose clip is "border-area" (for its gradient border). With our
-     border removed, that clips the fill to nothing, so the tab looked unfilled.
-     Paint over the whole tab instead. Harmless with Nova off. */
-  background-clip: border-box !important;
+}
+
+/* Themes other than Firefox's own default, light and dark draw the selected tab's edge as an outline, and an outline
+   can't skip one side. Swap it for the 1px border Nova gives every tab, which has no bottom edge (set above). Firefox's
+   own themes are left alone: Nova draws their edge itself (a gradient), and the switch above works on it as it is. */
+:root:not([theme-in-app]) .tabbrowser-tab[selected]:not([multiselected]) .tab-background {
+  outline: none !important;
+  border-color: var(--tab-border-color-selected) !important;
 }
 
 /* No extra gap between tabs */
@@ -73,12 +78,12 @@
 
 :root .tabbrowser-tab[selected],
 :root .tabbrowser-tab:not([selected]):hover {
-  color: var(--ut-tab-text, var(--toolbar-color, CanvasText)) !important;
+  color: var(--ut-tab-text, var(--toolbar-text-color, var(--toolbar-color, CanvasText))) !important;
 }
 
 :root:root {
-  --tab-text-color-selected: var(--ut-tab-text, var(--toolbar-color, CanvasText)) !important;
-  --tab-text-color-hover: var(--ut-tab-text, var(--toolbar-color, CanvasText)) !important;
+  --tab-text-color-selected: var(--ut-tab-text, var(--toolbar-text-color, var(--toolbar-color, CanvasText))) !important;
+  --tab-text-color-hover: var(--ut-tab-text, var(--toolbar-text-color, var(--toolbar-color, CanvasText))) !important;
 }
 
 /* ---- Separators ----------------------------------------------------------
