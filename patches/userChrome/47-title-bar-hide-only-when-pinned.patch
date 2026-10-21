@@ -1,0 +1,14 @@
+# Why: with the puzzle unpinned there would be two drawers, one in the title bar and one beside the puzzle, opened
+# from places you can only reach one of. The title bar only needs the drawer while the puzzle is pinned in the
+# corner, so its hide and reveal rules also require --uc-extensions-button-right: 1. Unpinned, title-bar icons
+# always show; the drawer is the one beside the puzzle (48-unpinned-puzzle-drawer.css). The margin rules that
+# keep icons clear of the burger are outside this query and still apply.
+<<<<<<< FIND
+@container style(--uc-hide-extension-icons: 1) {
+  #TabsToolbar-customization-target > toolbaritem:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
+    max-width: 0 !important;
+=======
+@container style(--uc-hide-extension-icons: 1) and style(--uc-extensions-button-right: 1) {
+  #TabsToolbar-customization-target > toolbaritem:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
+    max-width: 0 !important;
+>>>>>>> REPLACE
