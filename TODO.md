@@ -65,7 +65,7 @@ where they disagree.
   edge when the sidebar is hidden, so the bar goes full width. May need the bar switched from absolute to fixed
   (anchor rules). Jumps rather than slides; fine for a bar that only shows on hover. Experiment first, test profile.
 
-- Pre-1.0 test pass (2026-10-18): go through every open issue and every TODO feature, drop the ones that are obsolete, and turn the rest into one testing list (it will be a big one). Includes: re-check the about:config prefs table, starting with whether widget.windows.mica alone is enough (README says the 	oplevel-backdrop row is being re-checked); each stock-plus feature switched off; ESR 153 stays unsupported until td39 is fixed. 0.9 is tagged on FoxOne 3.9.7 (what was tested); for 1.0, pull whatever FoxOne release is current then (3.9.8 was out on 2026-10-18) with `node scripts/pull-foxone.mjs <tag>`, rebuild, and re-test.
+- Pre-1.0 test pass (2026-10-18): go through every open issue and every TODO feature, drop the ones that are obsolete, and turn the rest into one testing list (it will be a big one). Includes: re-check the about:config prefs table, starting with whether widget.windows.mica alone is enough (README says the 	oplevel-backdrop row is being re-checked); each stock-plus feature switched off; ESR 153 stays unsupported until td39 is fixed. 0.9 is tagged on FoxOne 3.9.7 (what was tested); for 1.0, pull whatever FoxOne release is current then (3.9.8 was out on 2026-10-18) with `node scripts/pull-foxone.mjs <tag>`, rebuild, and re-test. Also test how the theme behaves with Firefox's built-in pin to taskbar feature (Windows), in every mode of regular Firefox (PWA windows disable the button, so nothing to test there).
 
 ## After launch
 
