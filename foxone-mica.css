@@ -1,9 +1,9 @@
 /* BUILT FILE - do not edit by hand.
-   FoxMica 0.9: FoxOne 3.9.7 (vendor/userChrome.css) plus patches/userChrome/.
+   FoxMica 0.9: FoxOne 3.9.9 (vendor/userChrome.css) plus patches/userChrome/.
    Made by scripts/assemble.mjs. Change the patches, then rebuild. */
 /*==============================================================================================*
 
-  FoxOne 3.9.7 – A minimalistic one-line Firefox theme
+  FoxOne 3.9.9 – A minimalistic one-line Firefox theme
   Based on Cascade (https://github.com/andreasgrafen/cascade)
   Floating Find Bar and dynamic Bookmarks Bar by LittleFox
   (https://github.com/biglavis/LittleFox)
@@ -942,16 +942,19 @@ sidebar-main,
                   - var(--uc-extensions-button-width) * var(--uc-extensions-button-right)) !important;
 }
 
-/* Widen only for focus inside the nav-bar. The toolbox-wide :focus-within
+/* Widen only while the results view is open. The toolbox-wide :focus-within
    from Cascade also fired when a tab's audio button took focus on mousedown,
-   so the tab strip shrank under the cursor and the click missed. (#68) */
-#navigator-toolbox:has(#nav-bar:focus-within) #nav-bar {
+   so the tab strip shrank under the cursor and the click missed. Keying on
+   the open view instead of focus also keeps a fresh new tab narrow until you
+   type, so opening a bookmark from it moves no tabs.
+   (#68, suggested by nickj2014) */
+#navigator-toolbox:has(.urlbarView:popover-open) #nav-bar {
   width: var(--uc-urlbar-max-width);
   &.browser-titlebar {
     width: 100%;
   }
 }
-#navigator-toolbox:has(#nav-bar:focus-within) #titlebar {
+#navigator-toolbox:has(.urlbarView:popover-open) #titlebar {
   width: calc(100vw - var(--uc-urlbar-max-width) - 1px);
 }
 
@@ -1434,6 +1437,27 @@ sidebar-main,
   --toolbarbutton-icon-fill: var(--uc-color-accent) !important;
 }
 
+/* Extension buttons in a toolbar: their icons are bitmaps, so the fill
+   model above can't recolour them and they gave either Nova's grey block
+   (in #TabsToolbar, which the #nav-bar rules miss) or no feedback at all
+   (in #nav-bar). A ring on the badge stack instead, native radius, same
+   two-step pair as everywhere: tab title hover colour on hover, accent
+   while pressed or while the popup is open. Inset shadow, so nothing
+   shifts. The panel rows are .subviewbutton and stay out. */
+.unified-extensions-item .unified-extensions-item-action-button.toolbarbutton-1 {
+  --toolbarbutton-background-color-hover: transparent !important;
+  --toolbarbutton-background-color-active: transparent !important;
+}
+.unified-extensions-item .unified-extensions-item-action-button.toolbarbutton-1:is(:hover, :active, [open]) > .toolbarbutton-badge-stack {
+  background-color: transparent !important;
+}
+.unified-extensions-item .unified-extensions-item-action-button.toolbarbutton-1:hover > .toolbarbutton-badge-stack {
+  box-shadow: inset 0 0 0 1px var(--uc-tab-hover-text) !important;
+}
+.unified-extensions-item .unified-extensions-item-action-button.toolbarbutton-1:is(:active, [open]) > .toolbarbutton-badge-stack {
+  box-shadow: inset 0 0 0 1px var(--tab-selected-textcolor, #fabd2f) !important;
+}
+
 /* urlbar action icons: shield, site-settings, page actions, reader,
    translations. They paint via fill directly; the bookmark star is excluded
    so its native state colour survives, and the icon background is dropped so
@@ -1665,18 +1689,32 @@ sidebar-main {
      per state on its own – so the hover/press tokens below recolour the
      icon to the accent, no background needed. */
   --toolbarbutton-icon-fill: currentColor !important;
-  --button-text-color-hover: var(--uc-color-accent) !important;
-  --button-text-color-ghost-hover: var(--uc-color-accent) !important;
+
+  /* Same two-step pair as the toolbar: tab title hover colour on hover,
+     accent while pressed and for the open panel's button. Icon (text
+     colour) and ring (border colour) move together. */
+  --button-text-color-hover: var(--uc-tab-hover-text) !important;
+  --button-text-color-ghost-hover: var(--uc-tab-hover-text) !important;
   --button-text-color-active: var(--uc-color-accent) !important;
   --button-text-color-ghost-active: var(--uc-color-accent) !important;
+  --button-border-color-hover: var(--uc-tab-hover-text) !important;
+  --button-border-color-ghost-hover: var(--uc-tab-hover-text) !important;
+  --button-border-color-active: var(--uc-color-accent) !important;
+  --button-border-color-ghost-active: var(--uc-color-accent) !important;
 
-  /* Rest + selected stay FoxOne text. Without these the selected (non-ghost,
-     aria-pressed) button keeps --button-text-color-selected, which is meant
-     as text ON a filled accent surface and resolves dark – on the now
-     transparent background the icon went dark too. */
-  --button-text-color: var(--uc-color-text) !important;
+  /* Idle buttons are type "icon ghost": FoxOne text, no ring. The open
+     panel's button (and the overflow button while its menu is up) drops
+     the ghost and becomes plain "icon", so the plain rest and selected
+     tokens only ever paint the open state: accent. The -selected text
+     token is meant as text ON a filled accent surface and resolves dark,
+     on the transparent background the icon went dark too, hence the
+     explicit value. Nova draws the ring from the plain border token in
+     white. */
+  --button-text-color: var(--uc-color-accent) !important;
+  --button-text-color-selected: var(--uc-color-accent) !important;
+  --button-border-color: var(--uc-color-accent) !important;
+  --button-border-color-selected: var(--uc-color-accent) !important;
   --button-text-color-ghost: var(--uc-color-text) !important;
-  --button-text-color-selected: var(--uc-color-text) !important;
   --button-text-color-ghost-selected: var(--uc-color-text) !important;
 }
 
@@ -1698,6 +1736,14 @@ sidebar-main {
     background-color: #1f1f1f !important;
   }
 
+  /* Field radius: same global tokens as the about: pages in userContent
+     (moz-input-text reads them without a :host re-declaration, so :root
+     reaches the shadow input). Nova rounds them to a pill. */
+  :root {
+    --input-search-border-radius: var(--uc-radius-surface, 0) !important;
+    --input-text-border-radius: var(--uc-radius-surface, 0) !important;
+  }
+
   /* Selected row (bookmarks, history, synced/open tabs) – native paints
      --button-background-color-primary, which resolves to the OS accent
      (cyan block). Selection follows the FoxOne model instead: no
@@ -1710,6 +1756,23 @@ sidebar-main {
     color: #fabd2f !important;
   }
 
+  /* Hover – accent frame, no fill, same as the Library rows. Native fills
+     the rows (tab-list/bookmark-list CSS) with
+     --button-background-color-ghost-hover and the device/date headers
+     (moz-card's shadow summary, also the bookmark-list folders) with
+     --card-header-background-color-hover, a solid block under Nova.
+     Styled on the elements directly, same shadow-piercing route as above.
+     Inset shadow instead of a border, so the row doesn't grow. :active
+     included, a click must not flash the block back in. */
+  sidebar-tab-row:not([selected]):is(:hover, :active),
+  sidebar-bookmark-row:not([selected]):is(:hover, :active),
+  details > summary:is(:hover, :active),
+  .bookmark-folder-label:is(:hover, :active) {
+    background-color: transparent !important;
+    box-shadow: inset 0 0 0 1px #fabd2f !important;
+    border-radius: var(--uc-radius-surface, 0) !important;
+  }
+
   /* Light scheme: the same two literals from the light palette. Field
      #f9f5d7 is Gruvbox Light's hard-contrast ground, a shade off base like
      #1f1f1f is in dark; #b57614 = --uc-light-color-accent. */
@@ -1720,6 +1783,12 @@ sidebar-main {
     sidebar-tab-row[selected],
     sidebar-bookmark-row[selected] {
       color: #b57614 !important;
+    }
+    sidebar-tab-row:not([selected]):is(:hover, :active),
+    sidebar-bookmark-row:not([selected]):is(:hover, :active),
+    details > summary:is(:hover, :active),
+    .bookmark-folder-label:is(:hover, :active) {
+      box-shadow: inset 0 0 0 1px #b57614 !important;
     }
   }
 }
@@ -1735,6 +1804,11 @@ sidebar-main {
 @-moz-document url("chrome://browser/content/places/bookmarksSidebar.xhtml") {
   input[type="search"] {
     background-color: #1f1f1f !important;
+  }
+  /* Field radius, same tokens as the sidebar/ block above. */
+  :root {
+    --input-search-border-radius: var(--uc-radius-surface, 0) !important;
+    --input-text-border-radius: var(--uc-radius-surface, 0) !important;
   }
 
   treechildren::-moz-tree-row(selected),
@@ -1753,9 +1827,24 @@ sidebar-main {
     fill: #fabd2f !important;
   }
 
+  /* Keyboard-cursor ring off and hover as an accent frame, both copied
+     from the Library block (native hover is a grey block). */
+  treechildren::-moz-tree-row(current),
+  treechildren::-moz-tree-row(current, focus) {
+    border: none !important;
+    outline: none !important;
+  }
+  treechildren::-moz-tree-row(hover) {
+    background-color: transparent !important;
+    border: 1px solid #fabd2f !important;
+  }
+
   @media (prefers-color-scheme: light) {
     input[type="search"] {
       background-color: #f9f5d7 !important;
+    }
+    treechildren::-moz-tree-row(hover) {
+      border-color: #b57614 !important;
     }
     treechildren::-moz-tree-cell-text(selected),
     treechildren::-moz-tree-cell-text(selected, focus) {
@@ -2444,7 +2533,7 @@ sidebar-main {
    the icons open while the pointer travels from the hamburger onto them. It
    must target the toolbaritems specifically, not the customization-target,
    which spans the whole tab strip and would reveal on any tab hover. (#13) */
-@container style(--uc-hide-extension-icons: 1) {
+@container style(--uc-hide-extension-icons: 1) and style(--uc-extensions-button-right: 1) {
   #TabsToolbar-customization-target > toolbaritem:where(:not(:has(~ :not(toolbaritem, #alltabs-button, [hidden])))) {
     max-width: 0 !important;
     opacity: 0 !important;
@@ -4086,27 +4175,6 @@ notification-message {
 }
 
 /* ==========================================================================
-   5c. PUZZLE ICON COLOUR
-   Paints the extensions button with --ut-puzzle-color (config). The icon is an
-   SVG drawn from the button's colour through context-fill, so both `color`
-   and `fill` are set, on the button and on its icon. Hover brightens it
-   toward white so the button still reacts. Unverified against Nova's exact
-   markup: if the icon stays white, send a screenshot.
-   ========================================================================== */
-
-:root #unified-extensions-button,
-:root #unified-extensions-button .toolbarbutton-icon {
-  color: var(--ut-puzzle-color, var(--uc-color-hover)) !important;
-  fill: var(--ut-puzzle-color, var(--uc-color-hover)) !important;
-}
-
-:root #unified-extensions-button:hover,
-:root #unified-extensions-button:hover .toolbarbutton-icon {
-  color: color-mix(in srgb, var(--ut-puzzle-color, var(--uc-color-hover)) 65%, white) !important;
-  fill: color-mix(in srgb, var(--ut-puzzle-color, var(--uc-color-hover)) 65%, white) !important;
-}
-
-/* ==========================================================================
    SELECTED TAB EDGE on Firefox's own themes (default, light, dark)
    Nova draws the selected tab as two background layers: a gradient clipped to the 1px border, and the fill inside it.
    FoxOne clears the gradient (its active tab is marked by text colour alone), which leaves one layer that is still
@@ -4271,4 +4339,160 @@ notification-message {
 findbar {
   margin-left: calc((100% - var(--findbar-width-use) - 2 * var(--findbar-right)) * (1 - var(--ut-findbar-left, 0))) !important;
   margin-right: auto !important;
+}
+
+/* FIND BAR BELOW THE FLOATING BOOKMARKS BAR
+   The floating bookmarks bar drops over the top of the page when it opens (and stays up on a fresh tab), and it
+   covered the find bar, which sits at the same top edge. So while the bookmarks bar floats (--uc-dynamic-bookmarks
+   is 1 and --ut-bookmarks-inflow is 0) the find bar starts below it: the bar's height plus the usual edge gap. A bar
+   that sits in the layout already pushes the page down, so nothing moves then. The gap stays when the bookmarks
+   bar is hidden: the find bar can't tell when it is open. */
+@container style(--uc-dynamic-bookmarks: 1) and style(--ut-bookmarks-inflow: 0) {
+  findbar {
+    top: calc(var(--ut-bookmarks-height, var(--ut-bar-height, 38px)) + var(--findbar-top)) !important;
+  }
+}
+
+/* ==========================================================================
+   7. STOCK TAB POSITION – the one-line bar switched off (--ut-one-line: 0)
+   FoxOne's one-line layout puts the URL bar and the tabs in one row. This puts Firefox's own
+   two rows back: tabs on top, nav bar below, and the burger and puzzle in the nav bar's flow again. The vertical-tabs
+   rules in FoxOne (the block after ONE-LINE LAYOUT, and the puzzle's own vertical rule) are the template. The
+   URL-bar collapse is part of the one-line layout (the nav bar's width), so it goes with it.
+   The two bars are the same height by design (--ut-bar-height, foxmica-tabs.css), so --uc-row-height needs nothing.
+   The reserved widths are zeroed on the toolbox, not :root, because a style query on :root has no ancestor
+   container to ask (same trick as --uc-hide-window-buttons). The hover reveal of the pinned extensions keeps
+   working: it is keyed on :root:has(#PanelUI-button:hover), wherever the burger sits.
+   Switch: --ut-one-line: 0 turns it on (micaplus-config.css sets it). Unset or 1 = FoxOne's one-line bar.
+   ========================================================================== */
+@container style(--ut-one-line: 0) {
+
+  /* Rows back: tabs, then nav bar. FoxOne's base order is tabs 2, nav bar 3; the one-line layout moved the nav bar
+     to 1, so it goes back to 3 here (0 put it above the tabs). Its width and hover transition were the one-line
+     layout's too. */
+  #navigator-toolbox {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    /* The burger and the puzzle are no longer fixed over the tab strip, so nothing is reserved for them. */
+    --uc-hamburger-width: 0px;
+    --uc-extensions-button-width: 0px;
+  }
+  #nav-bar,
+  #navigator-toolbox:has(#nav-bar:focus-within) #nav-bar {
+    order: 3;
+    width: auto !important;
+    transition: none !important;
+  }
+  #titlebar,
+  #navigator-toolbox:has(#nav-bar:focus-within) #titlebar {
+    width: auto !important;
+    transition: none !important;
+  }
+  #TabsToolbar {
+    width: 100%;
+  }
+
+  /* The strip's max-width only existed to leave room for the fixed buttons. */
+  #tabbrowser-tabs:not([orient="vertical"]) {
+    max-width: none !important;
+  }
+
+  /* Burger and puzzle back in the nav bar's flow, as the vertical-tabs rules do. */
+  :root #PanelUI-button,
+  :root #unified-extensions-button {
+    position: static !important;
+    height: auto !important;
+  }
+  /* The nav bar is the selected tab's sheet: same fill (--ut-layer) as the selected tab and the bookmarks bar, so
+     the tab runs into it the way Explorer's does. The tab strip above stays the plain strip. */
+  :root:root #nav-bar {
+    background: var(--ut-layer) !important;
+    background-color: var(--ut-layer) !important;
+  }
+  /* The URL field on that sheet: a little lighter, like Explorer's address bar. (In the one-line bar it sits on the
+     plain strip and stays see-through.) A touch lighter again while it has focus. The open dropdown keeps FoxOne's
+     solid fill. --ut-urlbar-fill and --ut-urlbar-fill-focus can be set in the config to tune it. */
+  :root:root #urlbar:not([open]) > #urlbar-background,
+  :root:root #urlbar:not([open]) > .urlbar-background {
+    background: var(--ut-urlbar-fill, light-dark(rgb(255 255 255 / 45%), rgb(255 255 255 / 7%))) !important;
+  }
+  :root:root #urlbar[focused]:not([open]) > #urlbar-background,
+  :root:root #urlbar[focused]:not([open]) > .urlbar-background {
+    background: var(--ut-urlbar-fill-focus, light-dark(rgb(255 255 255 / 65%), rgb(255 255 255 / 11%))) !important;
+  }
+  /* The URL field is rounded on all four corners here. FoxOne squares the top because in the one-line bar the field
+     sits flush against the row; on its own row it is a field on a sheet. Same radius setting (--uc-rounded). The
+     open dropdown keeps FoxOne's shape. The id twice outranks FoxOne's `#urlbar #urlbar-background`. */
+  :root:root #urlbar:not([open]) > #urlbar-background,
+  :root:root #urlbar:not([open]) > .urlbar-background {
+    border-radius: var(--uc-radius-surface) !important;
+  }
+
+  /* Grab area on the left, back on the tab bar. In the one-line bar the nav bar is at the window's left edge, so
+     FoxMica (38-grab-and-nav.css) pads it by --ut-drag-left. Here the nav bar is the second row, so the padding
+     goes and the tab bar's own pre-tabs spacer (which FoxOne hides) comes back at the same width. Firefox hides
+     that spacer by itself when maximized, but FoxOne's display rule would override it, so it is gated here. */
+  @media (-moz-platform: windows) {
+    :root:not([sizemode="maximized"]):not([inFullscreen]) #nav-bar {
+      padding-inline-start: 0 !important;
+    }
+    :root:not([sizemode="maximized"]):not([inFullscreen]) .titlebar-spacer[type="pre-tabs"] {
+      display: flex !important;
+      width: var(--ut-drag-left, 12px) !important;
+    }
+  }
+
+  /* The puzzle's Firefox 153 one-pixel correction that the pinned rule zeroed. */
+  :root #unified-extensions-button {
+    margin-top: 2px !important;
+  }
+}
+
+/* ==========================================================================
+   8. UNPINNED PUZZLE – the extension drawer follows the puzzle button
+   Meant to go to FoxOne. Only applies when the puzzle is NOT pinned to the corner
+   (--uc-extensions-button-right: 0) and the icons hide (--uc-hide-extension-icons: 1). With the puzzle pinned
+   nothing here applies, and the burger anchors, the reserved space and the title-bar rules behave as before.
+   Today, with the puzzle unpinned, the title-bar icons still hide but only the burger or an icon opens them.
+   47-title-bar-hide-only-when-pinned.patch turns that off, so unpinned there is one drawer, this one.
+   The drawer is the unbroken run of extension icons touching the puzzle button on its left: an icon is in it when
+   everything between that icon and the puzzle is another extension icon. What lies after the puzzle (toward the
+   corner) does not matter, so a spacer or a Firefox tool there no longer breaks it, and a Firefox tool between the
+   icons and the puzzle ends the run. The run tucks away and slides out when the pointer rests on the puzzle, on one
+   of its icons, or while an extension popup is open. Icons on the other side of the puzzle are not part of it.
+   Not covered: a left/right switch for which side of the puzzle the drawer opens on.
+   ========================================================================== */
+@container style(--uc-extensions-button-right: 0) {
+  @container style(--uc-hide-extension-icons: 1) {
+
+    /* In the run: an extension icon before the puzzle, with only extension icons (or hidden items) between. */
+    #nav-bar-customization-target > toolbaritem[id$="-browser-action"]:where(
+      :has(~ #unified-extensions-button):not(
+        :has(~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, [hidden]) ~ #unified-extensions-button)
+      )
+    ) {
+      max-width: 0 !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      padding-inline: 0 !important;
+      overflow: hidden !important;
+      transition: max-width 0.2s ease, opacity 0.2s ease, padding-inline 0.2s ease !important;
+    }
+    :root:root #nav-bar:is(
+      :has(#unified-extensions-button:is(:hover, [open])),
+      :has(#nav-bar-customization-target > toolbaritem[id$="-browser-action"]:hover:has(~ #unified-extensions-button):not(
+        :has(~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, [hidden]) ~ #unified-extensions-button))),
+      :has(#nav-bar-customization-target > toolbaritem[id$="-browser-action"]:has(~ #unified-extensions-button):not(
+        :has(~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, [hidden]) ~ #unified-extensions-button)) [open])
+    ) #nav-bar-customization-target > toolbaritem[id$="-browser-action"]:where(
+      :has(~ #unified-extensions-button):not(
+        :has(~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, [hidden]) ~ #unified-extensions-button)
+      )
+    ) {
+      max-width: 60px !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      padding-inline: revert !important;
+    }
+  }
 }

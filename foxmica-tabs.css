@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FOXMICA TABS - WinUI / Windows 11 Explorer-style tabs + one bar height.
+   FOXMICA TABS - WinUI / Windows 11 Explorer-style tabs OEM drop-in replacement.
 
    Standalone: works on stock Firefox AND on FoxOne, and needs nothing else.
    It touches only the tabs and the height of the tab row / nav bar, and
@@ -12,10 +12,15 @@
    sheet over the toolbar colour.
 
    Settings read by this file, with their defaults:
+      --ut-puzzle-color          colour of the puzzle (extensions) button. Just a bit of flare, change it if
+                                 you don't like it. Any colour works. AccentColor is your Windows accent colour
+                                 (the default here); currentColor gives Firefox's plain look.
      --ut-tab-radius 6px        top corners of a tab
      --ut-tab-top-gap 2px       gap above the tabs
      --ut-tab-weight 500        tab title weight
-     --ut-tab-pinstripe 1       the 1px edge around the selected tab (no bottom edge): 1 shows it, 0 hides it
+     --ut-tab-pinstripe 1       the 1px edge around the selected tab (no bottom edge): 1 shows it, 0 hides it.
+                                On here, with this file alone (tabs only), like Nova. The configs (foxmica-config.css,
+                                micaplus-config.css) turn it off.
      --ut-tab-text              tab title colour (default: the toolbar text colour)
      --ut-bar-padding 2px       space above and below the tabs and the URL field
      --ut-bar-height-compact 30px / -normal 38px / -touch 48px
@@ -162,6 +167,15 @@
   max-height: var(--ut-bar-height, 38px) !important;
 }
 
+/* PWA windows (PWAsForFirefox): while the page is in scope the addon hides everything in the nav bar and sets its
+   min-height to 0, then shows it for out-of-scope pages (the bar gets the class "shown"). The fixed bar height
+   above is more specific than the addon's rule, so the empty bar stayed open under the tabs. A PWA window is the one
+   with the addon's #site-info in the tab bar; there the hidden bar gives its height back. */
+:root:has(#site-info) #nav-bar:not(.shown) {
+  min-height: 0 !important;
+  max-height: 0 !important;
+}
+
 /* Toolbar button padding from the config (--ut-btn-inner / --ut-btn-outer,
    set per density). A button is 16px icon + 2 x inner + 2 x outer square, so
    it never needs to fill the bar: the bar is set by --ut-bar-height, and the
@@ -170,4 +184,24 @@
   padding-block: 0 !important;
   --toolbarbutton-outer-padding: var(--ut-btn-outer, 2px) !important;
   --toolbarbutton-inner-padding: var(--ut-btn-inner, 4px) !important;
+}
+
+
+/* ==========================================================================
+   PUZZLE BUTTON COLOUR – FoxMica's signature touch, on in every mode.
+   --ut-puzzle-color (foxmica-config, or micaplus-config, userchrome) sets it; with none of those loaded it is
+   the Windows accent colour. The icon is an SVG drawn from the button's colour through context-fill, so both
+   `color` and `fill` are set, on the button and on its icon. Hover brightens it toward white so the button still
+   reacts.
+   ========================================================================== */
+:root #unified-extensions-button,
+:root #unified-extensions-button .toolbarbutton-icon {
+  color: var(--ut-puzzle-color, AccentColor) !important;
+  fill: var(--ut-puzzle-color, AccentColor) !important;
+}
+
+:root #unified-extensions-button:hover,
+:root #unified-extensions-button:hover .toolbarbutton-icon {
+  color: color-mix(in srgb, var(--ut-puzzle-color, AccentColor) 65%, white) !important;
+  fill: color-mix(in srgb, var(--ut-puzzle-color, AccentColor) 65%, white) !important;
 }

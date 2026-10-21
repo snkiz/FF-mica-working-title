@@ -1,0 +1,54 @@
+/* ==========================================================================
+   MICA+ CONFIG - the full theme with Firefox's own two-row layout.
+   Load this INSTEAD of foxmica-config.css (see the loader, userChrome.css):
+       @import url("foxone-mica.css") screen;
+       @import url("micaplus-config.css") screen;
+       @import url("foxmica-tabs.css") screen;
+   It starts by loading foxmica-config.css, so every setting there (the palette, the shapes, the layers, the delays)
+   applies as it is and nothing here can drift from it. Below are only the settings Mica+ changes. (A couple conveniences.
+   --ut-findbar-left, --uc-hide-extension-icons. Those can drtift.) To change anything else, edit foxmica-config.css
+   as usual. foxmica-config.css must be in the chrome folder in every mode anyway, because userContent.css imports it.
+   ========================================================================== */
+@import url("foxmica-config.css") screen;
+
+:root {
+  /* LAYOUT: Firefox's own two rows, tabs on top and the nav bar below, with the burger and the puzzle button in
+     the nav bar. FoxOne's one-line bar is off (patches 46 to 48 in patches/userChrome). 1 = one-line bar. */
+  --ut-one-line: 0;
+  --ut-drag-left: 16px;             /* Grab zone on the left when the window is not maximized. Firefox leaves this space
+                                    so you can drag the window */  
+  --uc-drag-space: 18px;            /* Grab zone after the tabs for moving the window. Kept small; They are functional,
+                                    not just a gap, so don't drop them to 0. */
+  --ut-findbar-left: 1;             /* Which side the floating find bar sits on (0 = right, 1 = left). */
+  
+  /*  Only extension icons hide. Firefox's own tools stay visible anywhere; You can put them into the >> overflow.
+    Move icons in Customize mode. (1 = hide + hover-reveal, 0 = always show) */  
+  --uc-hide-extension-icons: 1;
+
+  /* PUZZLE BUTTON: not pinned to the corner. The icons you drop beside it make the drawer that opens from it
+     (the unbroken run of extension icons touching the puzzle on its left). 1 = pinned to the corner like the full
+     theme, which is what a PWA window wants: its icons sit in the title bar, not beside the puzzle. */
+  --uc-extensions-button-right: 0;
+
+  /* NAVIGATION BUTTONS: always shown. The nav bar has its own row now, so there is no need to tuck them away
+     until you rest on the bar. (0 = always show, 1 = reveal with hover and focus, 2 = reveal with hover and
+     click to cancel.) */
+  --uc-autohide-nav-buttons: 0;
+  --ut-hide-disabled-nav: 1;        /* Hide the disabled Forward button only (no forward history; old Firefox behaviour),
+                                    even while the nav buttons are revealed by hover or focus. 0 = off, 1 = Forward only */
+
+  /* TAB WIDTHS: wider than the full theme, because the tabs have a row to themselves. Same names and meaning as
+     in foxmica-config.css. */
+  --uc-active-tab-width: clamp(120px, 30vw, 250px);
+  --uc-inactive-tab-width: clamp(76px, 15vw, 150px);
+  --uc-tab-min-width: 76px;
+
+  /* PUZZLE BUTTON COLOUR: your Windows accent colour here. Any CSS colour works; the full theme's default is the
+     palette's hover colour (var(--uc-color-hover)). */
+  --ut-puzzle-color: AccentColor;
+  
+  --uc-show-all-tabs-button: 1; /* The "list all tabs" button at the end of the tab strip. Shown here: with the two-row
+                                layout the tab bar has room for it, and it is no longer squeezed in beside the
+                                burger. (0 = hidden, 1 = visible) */
+                                
+}

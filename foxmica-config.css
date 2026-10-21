@@ -118,7 +118,7 @@
   --ut-tab-radius: 6px;             /* Top corners of tabs. 8px is WinUI's, but Firefox renders it rounder */
   --ut-tab-top-gap: 2px;            /* Gap above the tabs; they run flush to the bottom of the bar */
   --ut-tab-weight: 500;
-  --ut-tab-pinstripe: 1;            /* The 1px edge around the selected tab (no bottom edge): 1 = show, 0 = hide */
+  --ut-tab-pinstripe: 0;            /* The 1px edge around the selected tab (no bottom edge): 1 = show, 0 = hide */
   /* --ut-tab-pinstripe-color: white; */   /* Colour of that edge on Firefox's own themes (default, light, dark). Left
                                     unset it is the accent colour. Other themes use their own tab line colour. */
 
@@ -138,7 +138,7 @@
   --uc-inactive-tab-width: clamp(48px, 15vw, 78px);
 
   /* Tab min width: 76px = Firefox default (browser.tabs.tabMinWidth). Smaller to fit more before overflow scroll.
-  Less then 24px will make the close tab button get in the way of selectiing the tab */
+  Less than 24px will make the close tab button get in the way of selecting the tab */
   --uc-tab-min-width: 24px;
 
   /* ---- RIGHTSIDE ANNEX ---- */
@@ -194,7 +194,7 @@
                                 The struck icon says the same, and the label can push the collapsed bar onto two lines.
                                 (0 = leave Firefox's label.) */
 
-  --uc-show-all-tabs-button: 0; /* This button has fixed spacing in the ANNEX. It's not recomended to turn this on.
+  --uc-show-all-tabs-button: 0; /* This button has fixed spacing in the ANNEX. It's not recommended to turn this on.
                                 (0 = hidden, 1 = visible) */
 
   --uc-newtab-width: 26px;      /* Again this is scaffolding, you shouldn't touch it.

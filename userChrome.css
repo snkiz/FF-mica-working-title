@@ -1,40 +1,27 @@
 /* ==========================================================================
-   PICK A MODE. Only one of the three sets of @import lines below is on.
-   To switch, wrap the set you are leaving in a comment: a line holding
-   only a slash and a star above it, and a line holding only a star and a slash
-   below it. Remove that pair from the set you want. @imports must come first
+   PICK A MODE. Only some of the @import lines below are active at any one time.
+   Each line is active unless it’s wrapped in a comment. @imports must come first
    in this file, and later ones win ties, so keep them in this order.
 
-   MODE 1 - FULL THEME (on by default). FoxOne with FoxMica's changes built
+   MODE 1 - FOXONE-MICA, the full theme (on by default). FoxOne with FoxMica's changes built
    in: Mica, layers, URL dropdown, one-line bar, bookmarks bar. Your settings
    (palette, shape, bar height, layers, FoxOne toggles) live in
    foxmica-config.css. The tab style comes last.
+   
+   MODE 2 - STOCKMICA+ (Firefox's own layout, FoxMica's look). comment out foxmica-config.css and uncomment
+   micaplus-config.css (deactivate foxmica, by commenting it out, and turn on micaplus by 
+   uncommenting it.) micaplus chain loads foxmica-config for values it doesn't touch.
+   Mica+ uses the FoxMica palette, not Firefox’s colours.
+   **ONLY USE ONE, not both**
+   
+   MODE 3 - OEM DROP-IN REPLACEMENT TABS. Just the tabs, on regular Firefox or on another
+   theme, and nothing else. Doesn't touch the Nova palette. Comment out all the @import lines 
+   above foxmica-tabs.css
    ========================================================================== */
-@import url("foxone-mica.css") screen;
-@import url("foxmica-config.css") screen;
-@import url("foxmica-tabs.css") screen;
-
-/* ==========================================================================
-   MODE 2 - STOCK PLUS. For regular Firefox: keeps Firefox's own layout and
-   adds chosen FoxMica features (puzzle colour, hidden Forward button, URL
-   bar and bookmarks bar behaviour, tab sizes and more). The settings are in
-   the block at the top of foxmica-plus.css; open it to see them. Turn off
-   MODE 1 above, then delete the comment pair (the slash-star line above and the star-slash
-   line below) around the imports below.
-   ========================================================================== */
-/*
-@import url("foxmica-plus.css") screen;
-@import url("foxmica-tabs.css") screen;
-*/
-
-/* ==========================================================================
-   MODE 3 - TABS ONLY. Just the tabs, on regular Firefox or on another
-   theme, and nothing else. Turn off MODE 1 above, then delete the comment pair (the slash-star
-   line above and the star-slash line below) around the import below.
-   ========================================================================== */
-/*
-@import url("foxmica-tabs.css") screen;
-*/
+ @import url("foxone-mica.css") screen;
+ @import url("foxmica-config.css") screen;
+/* @import url("micaplus-config.css") screen; */
+ @import url("foxmica-tabs.css") screen;
 
 /* ==========================================================================
    OPTIONAL: tab settings, for MODE 3 (the other modes keep theirs in their
@@ -48,6 +35,9 @@
    --ut-tab-weight     how bold the tab titles are (400 normal, 700 bold)
    --ut-tab-text       tab title colour. Not set by default, so it follows
                        the toolbar text. Example: white, or #e8e8e8.
+   --ut-puzzle-color   colour of the puzzle (extensions) button. Just a bit of flare, change it if
+                       you don't like it. Any colour works. AccentColor is your Windows accent colour
+                       (the default here); currentColor gives Firefox's plain look.
    ========================================================================== */
 
 /* OFF-START (delete this line to enable)
@@ -55,6 +45,7 @@
   --ut-tab-radius: 6px;
   --ut-tab-pinstripe: 1;
   --ut-tab-weight: 500;
+  --ut-puzzle-color: AccentColor;
 }
 OFF-END (delete this line to enable) */
 
