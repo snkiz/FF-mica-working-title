@@ -1,0 +1,94 @@
+/* ==========================================================================
+   7. STOCK TAB POSITION – the one-line bar switched off (--ut-one-line: 0)
+   FoxOne's one-line layout puts the URL bar and the tabs in one row. This puts Firefox's own
+   two rows back: tabs on top, nav bar below, and the burger and puzzle in the nav bar's flow again. The vertical-tabs
+   rules in FoxOne (the block after ONE-LINE LAYOUT, and the puzzle's own vertical rule) are the template. The
+   URL-bar collapse is part of the one-line layout (the nav bar's width), so it goes with it.
+   The two bars are the same height by design (--ut-bar-height, foxmica-tabs.css), so --uc-row-height needs nothing.
+   The reserved widths are zeroed on the toolbox, not :root, because a style query on :root has no ancestor
+   container to ask (same trick as --uc-hide-window-buttons). The hover reveal of the pinned extensions keeps
+   working: it is keyed on :root:has(#PanelUI-button:hover), wherever the burger sits.
+   Switch: --ut-one-line: 0 turns it on (micaplus-config.css sets it). Unset or 1 = FoxOne's one-line bar.
+   ========================================================================== */
+@container style(--ut-one-line: 0) {
+
+  /* Rows back: tabs, then nav bar. FoxOne's base order is tabs 2, nav bar 3; the one-line layout moved the nav bar
+     to 1, so it goes back to 3 here (0 put it above the tabs). Its width and hover transition were the one-line
+     layout's too. */
+  #navigator-toolbox {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    /* The burger and the puzzle are no longer fixed over the tab strip, so nothing is reserved for them. */
+    --uc-hamburger-width: 0px;
+    --uc-extensions-button-width: 0px;
+  }
+  #nav-bar,
+  #navigator-toolbox:has(#nav-bar:focus-within) #nav-bar {
+    order: 3;
+    width: auto !important;
+    transition: none !important;
+  }
+  #titlebar,
+  #navigator-toolbox:has(#nav-bar:focus-within) #titlebar {
+    width: auto !important;
+    transition: none !important;
+  }
+  #TabsToolbar {
+    width: 100%;
+  }
+
+  /* The strip's max-width only existed to leave room for the fixed buttons. */
+  #tabbrowser-tabs:not([orient="vertical"]) {
+    max-width: none !important;
+  }
+
+  /* Burger and puzzle back in the nav bar's flow, as the vertical-tabs rules do. */
+  :root #PanelUI-button,
+  :root #unified-extensions-button {
+    position: static !important;
+    height: auto !important;
+  }
+  /* The nav bar is the selected tab's sheet: same fill (--ut-layer) as the selected tab and the bookmarks bar, so
+     the tab runs into it the way Explorer's does. The tab strip above stays the plain strip. */
+  :root:root #nav-bar {
+    background: var(--ut-layer) !important;
+    background-color: var(--ut-layer) !important;
+  }
+  /* The URL field on that sheet: a little lighter, like Explorer's address bar. (In the one-line bar it sits on the
+     plain strip and stays see-through.) A touch lighter again while it has focus. The open dropdown keeps FoxOne's
+     solid fill. --ut-urlbar-fill and --ut-urlbar-fill-focus can be set in the config to tune it. */
+  :root:root #urlbar:not([open]) > #urlbar-background,
+  :root:root #urlbar:not([open]) > .urlbar-background {
+    background: var(--ut-urlbar-fill, light-dark(rgb(255 255 255 / 45%), rgb(255 255 255 / 7%))) !important;
+  }
+  :root:root #urlbar[focused]:not([open]) > #urlbar-background,
+  :root:root #urlbar[focused]:not([open]) > .urlbar-background {
+    background: var(--ut-urlbar-fill-focus, light-dark(rgb(255 255 255 / 65%), rgb(255 255 255 / 11%))) !important;
+  }
+  /* The URL field is rounded on all four corners here. FoxOne squares the top because in the one-line bar the field
+     sits flush against the row; on its own row it is a field on a sheet. Same radius setting (--uc-rounded). The
+     open dropdown keeps FoxOne's shape. The id twice outranks FoxOne's `#urlbar #urlbar-background`. */
+  :root:root #urlbar:not([open]) > #urlbar-background,
+  :root:root #urlbar:not([open]) > .urlbar-background {
+    border-radius: var(--uc-radius-surface) !important;
+  }
+
+  /* Grab area on the left, back on the tab bar. In the one-line bar the nav bar is at the window's left edge, so
+     FoxMica (38-grab-and-nav.css) pads it by --ut-drag-left. Here the nav bar is the second row, so the padding
+     goes and the tab bar's own pre-tabs spacer (which FoxOne hides) comes back at the same width. Firefox hides
+     that spacer by itself when maximized, but FoxOne's display rule would override it, so it is gated here. */
+  @media (-moz-platform: windows) {
+    :root:not([sizemode="maximized"]):not([inFullscreen]) #nav-bar {
+      padding-inline-start: 0 !important;
+    }
+    :root:not([sizemode="maximized"]):not([inFullscreen]) .titlebar-spacer[type="pre-tabs"] {
+      display: flex !important;
+      width: var(--ut-drag-left, 12px) !important;
+    }
+  }
+
+  /* The puzzle's Firefox 153 one-pixel correction that the pinned rule zeroed. */
+  :root #unified-extensions-button {
+    margin-top: 2px !important;
+  }
+}
