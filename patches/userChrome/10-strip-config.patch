@@ -185,7 +185,7 @@
    * once the pointer leaves. The hide delay is the grace period for travelling
    * from the URL bar down onto the bookmarks. */
   --uc-dynamic-bookmarks-hover-delay: 450ms;
-  --uc-dynamic-bookmarks-hide-delay: 50ms;
+  --uc-dynamic-bookmarks-hide-delay: 150ms;
 
   /* Bookmarks bar on fresh tabs – keep the dynamic bar revealed while the
    * active tab shows no page yet (new tab, home), no hover needed
@@ -237,6 +237,6 @@
    * once the pointer leaves. The hide delay is the grace period for travelling
    * from the URL bar down onto the bookmarks. */
   --uc-dynamic-bookmarks-hover-delay: 450ms;
-  --uc-dynamic-bookmarks-hide-delay: 50ms;
+  --uc-dynamic-bookmarks-hide-delay: 150ms;
 }
 >>>>>>> REPLACE
