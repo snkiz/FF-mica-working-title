@@ -24,7 +24,7 @@ get things done, not to have Claude do it for me (boilerplate aside).
 FoxOne's one-line UI (tabs and URL bar in one row), with Windows 11 Explorer-style
 tabs. Repo: https://github.com/snkiz/FoxMica (public, MIT). Local: Documents\GitHub\FoxMica.
 
-- Built on FoxOne by Firnschnee (vendored unmodified, currently 3.9.7).
+- Built on FoxOne by Firnschnee (vendored unmodified, currently 3.9.9; 3.9.10 is out, not pulled yet).
 - Mica rules come from Wintego's Firefox-transparent-theme (written for FoxOne 3.5).
 - The look is matched by eye to Explorer with Windhawk's Explorer Styler "MicaBar" theme.
 
@@ -35,10 +35,14 @@ Load order is set in `userChrome.css` and it matters (later wins ties):
 1. `foxone-mica.css`: **built file, never edit it.** FoxOne's `userChrome.css` as released (`vendor/`), with FoxMica's
    changes applied from `patches/userChrome/`: FoxOne's settings block cut down to the settings FoxMica doesn't set,
    then the Mica, layers, URL dropdown, bar-height and bookmarks-bar rules, in filename order.
-2. `foxmica-config.css`: the one settings file (variables only). Shared by userChrome and userContent.
+2. `foxmica-config.css`: the one settings file (variables only). Shared by userChrome and userContent, so it must be in
+   `chrome` in every mode. StockMica+ loads `micaplus-config.css` here instead; that file starts by importing
+   `foxmica-config.css` and only holds the settings that differ.
 3. `foxmica-tabs.css`: the Explorer-style tabs and bar height. Meant to work on stock Firefox too.
 4. `userContent.css`: **built file, never edit it.** FoxOne's about: page styling (`vendor/userContent.css`) plus
    `patches/userContent/`. It imports the config.
+
+`docs/` holds the longer pages the README links to (`docs/README.md` is the Settings page: how `userChrome.css` picks a flavour, with a table of contents for FoxOne-Mica and its settings, StockMica+ and OEM tabs). `docs/known-issues.md` is the long list, not linked from the README (the issue tracker is). The build instructions are `scripts/README.md`. `docs/` is in `export-ignore` (not in the release zip); the top of `CHANGELOG.md` links to it on GitHub and survives each clear. Keep the README short.
 
 `userChrome.css` is the loader (the `@import` lines). It also has an optional, switched-off UI font block (the
 maintainer uses Shantell Sans).
@@ -47,7 +51,7 @@ maintainer uses Shantell Sans).
 
 `vendor/` is FoxOne untouched (`vendor/VERSION` = the release), `patches/<target>/` is every FoxMica change to it
 (`.patch` = find-and-replace hunks, `.css` = blocks added to the end, both in filename order), and `VERSION` in the
-root is FoxMica's own version (`0.8`, released 2026-10-17). Details and the patch format: `scripts/README.md`.
+root is FoxMica's own version (`0.9.1`, 2026-10-21). Details and the patch format: `scripts/README.md`.
 
 - To change a built file, change a patch, then `node scripts/assemble.mjs`. A hand edit to a built file is lost on the
   next build, and `node scripts/check.mjs` reports it with the first line that differs.
@@ -58,25 +62,27 @@ root is FoxMica's own version (`0.8`, released 2026-10-17). Details and the patc
 
 ## Where things stand (update this section at the end of every session)
 
-**Last updated:** 2026-10-18
+**Last updated:** 2026-10-24
 
-- **Released 0.8 "Brick by Brick" (2026-10-17)** on FoxOne 3.9.7; `VERSION` is `0.8`. Five-file refactor done (#21):
-  `foxone-mica.css` and `userContent.css` are built from `vendor/` plus `patches/`; `foxmica-overrides.css` is gone
-  (folded into `patches/userChrome/*.css`). Left to do: the mode switch for a portable Mica block (td8, stock-plus),
-  finishing ESR 153 (#22; preliminary testing done, td39 open) and the store submission (#30).
-- **Unreleased, after 0.8 (2026-10-18): tabs rebuilt on Nova's tab layers.** `foxmica-tabs.css` keeps the tab border
-  (stock Firefox gets Nova's gradient edge, no bottom edge, Explorer fill inside) with the switch `--ut-tab-pinstripe`.
-  FoxOne-only part is `patches/userChrome/35-selected-tab-edge.css` (Firefox's own themes: plain edge in FoxOne's
-  accent, `--ut-tab-pinstripe-color` overrides). `foxmica-config.css` holds both settings. Lessons: a user stylesheet
-  can't use Nova's `border-area` clip; Firefox only rereads userChrome at startup; `widget.windows.mica.toplevel-backdrop`
-  = 2 makes the strip black. Open: td40 (FoxOne accent vs dynamic themes), README fixes next release, light-system
-  dark bar on the default theme (suspected to be Corey's registry tweaks and/or Windhawk; he will test Windhawk in a
-  sandbox). Stock-plus (td8) is under way as a standalone `foxmica-plus.css` (settings block at the top, one numbered
-  section per feature, used with foxmica-tabs.css and instead of the full theme). Done and tested on stock: 1 puzzle
-  colour, 2 hide disabled Back/Forward (default Forward only), 3 window grab area, 4 URL bar radius, 5 tab widths (needs tuning), 6 tab fill (needs tuning), 7 URL bar icons (star/shield reveal), 8 trust label hidden, 9 PiP button hidden, 10 floating bookmarks bar (stock 16px bar, translucent grey `--ut-bookmarks-bg`, about 78% opacity), 11 tucked-away extensions (the unbroken run beside the puzzle collapses to no width, reveals on puzzle hover; the spacers resize unevenly, a flexible-spacer limit). The feature list is complete; the shield permission icon is untested. FoxMica's own floating bookmarks bar now uses the same translucent default (was solid).
-  Packaging idea: one release, files first; separate zips (full, plus, tabs-only) can be built by a script later.
-  Gotcha: a `*/` inside a header comment ends it early and silently kills the next rule.
-  Road to 1.0 (Corey, 2026-10-18): the only blockers are finishing stock-plus (td8) and the ESR 153 tab-text bug (td39). Then a lot of testing (some old bugs may be obsolete now), then the FirefoxCSS Store submission (#30). The five-colour palette (#26, including an accent pinstripe for built-in themes) is after 1.0. 0.9 stays on FoxOne 3.9.7 (tested); 1.0 pulls the current FoxOne (3.9.8 was out 2026-10-18).
+- **0.9.1 (2026-10-21)** on FoxOne 3.9.9; `VERSION` is `0.9.1`. Three modes, picked in `userChrome.css`: **FoxOne-Mica**
+  (the full theme, default), **StockMica+** (Firefox's own two rows with FoxMica's look; `micaplus-config.css`, which
+  chain-loads `foxmica-config.css`) and **OEM drop-in replacement tabs** (just `foxmica-tabs.css`). `foxmica-plus.css`
+  is gone. New patches: 44 (find bar below the floating bookmarks bar), 46 (`--ut-one-line: 0`, the two rows), 47
+  (title-bar icons hide only while the puzzle is pinned), 48 (drawer that follows an unpinned puzzle). Puzzle colour
+  lives in `foxmica-tabs.css` (every mode). Pinstripe default: off in modes 1 and 2, on in mode 3. PWAsForFirefox windows
+  work in StockMica+ with `--uc-extensions-button-right: 1`. Earlier 0.8 "Brick by Brick" did the five-file refactor (#21).
+- **Unreleased, 2026-10-24:** `42-delays.css` adds 100ms to the bookmarks-bar hide delay (150ms by default). FoxOne 3.9.10
+  is out ("Aim for the text": reveal only on the URL text, #59) and not pulled yet. Patch 26 is still needed (FoxOne's
+  `--uc-row-height` defaults to Firefox's tab-strip height, not our bar height).
+- **Road to 1.0:** a full test pass of every mode with screenshots
+  (four views: the three modes and PWA windows), then the FirefoxCSS Store submission (#30). The five-colour palette (#26)
+  is after 1.0. ESR 153 stays unsupported and is not a blocker (td39 tab text, #38; #37 URL bar widening). Upstream ideas for Firn after a few days with 0.9.1 are in TODO.md. Open: td40 (FoxOne accent vs dynamic
+  themes), README fixes next release, light-system dark bar on the default theme (suspected registry tweaks and/or
+  Windhawk; to test in a sandbox).
+- Lessons: a user stylesheet can't use Nova's `border-area` clip; Firefox only rereads userChrome at startup;
+  `widget.windows.mica.toplevel-backdrop` = 2 makes the strip black; a `*/` inside a header comment ends it early and
+  silently kills the next rule; a style query on `:root` has no ancestor container, so switches are set on
+  `#navigator-toolbox` (as FoxOne does).
 - **Released 0.7 "Better together"** on FoxOne 3.9.1 (merge tracked in #33; branch `3.9.1-upstream-pull`, rebased
   on 3.9.1). Earlier: 0.5 "Warts and all". Tags have no "v". Fixes go out as point releases until 1.0. A release is
   pinned to its tag: push first, then publish. Release zip leaves out dev files via `export-ignore` in .gitattributes.

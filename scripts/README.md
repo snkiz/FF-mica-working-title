@@ -1,6 +1,10 @@
-# scripts/
+[Back to the README](../README.md)
 
-Small Node scripts (no packages to install, Node 18 or newer) that keep FoxOne's files and FoxMica's changes to them
+# Building from source
+
+You don't need this to use the theme: the files listed under Install in the [README](../README.md#install) are all that goes in your profile. This page is for changing FoxMica itself.
+
+The tooling lives in `scripts/`: small Node scripts (no packages to install, Node 18 or newer) that keep FoxOne's files and FoxMica's changes to them
 apart. Run them from the repo root.
 
 ## The idea

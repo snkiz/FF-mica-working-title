@@ -15,6 +15,7 @@ CLAUDE.md       export-ignore
 TODO.md         export-ignore
 VERSION         export-ignore
 assets/         export-ignore
+docs/           export-ignore
 patches/        export-ignore
 scripts/        export-ignore
 vendor/         export-ignore
