@@ -17,9 +17,11 @@ To turn it on, open `userChrome.css`, comment out the `foxmica-config.css` impor
 | --- | --- | --- |
 | `--ut-one-line` | `0` | `0` = Firefox's two rows. `1` = FoxOne's one-line bar. |
 | `--uc-extensions-button-right` | `0` | The puzzle button isn't pinned to the corner. The run of extension icons touching it on its left is a drawer that opens when you hover the puzzle. `1` pins it like FoxOne-Mica. |
+| `--ut-drawer-side` | `left` | Which side of the puzzle button the drawer picks icons up from and opens on: `left` or `right`. Only that side counts, so it never opens both ways. `left` keeps the puzzle under the pointer; `right` moves it. |
 | `--uc-hide-extension-icons` | `1` | Only extension icons tuck away. Firefox's own buttons stay visible. |
 | `--ut-drag-left`, `--uc-drag-space` | `16px`, `18px` | Window-drag areas left of the tabs and after them. |
 | `--ut-findbar-left` | `1` | Floating find bar on the left. |
+| `--ut-urlbar-padding` | `4px` | Space above and below the URL field (the tabs keep `--ut-bar-padding`, 2px). Remove the line for the same height as the other flavours. |
 | `--ut-hide-disabled-nav` | `1` | Hide Forward while it has nowhere to go. |
 | `--uc-autohide-nav-buttons` | `0` | Back, Forward and Reload always show. |
 | `--uc-active-tab-width`, `--uc-inactive-tab-width`, `--uc-tab-min-width` | wider range | The tab row has more room than in the one-line bar. |
@@ -27,6 +29,4 @@ To turn it on, open `userChrome.css`, comment out the `foxmica-config.css` impor
 | `--uc-show-all-tabs-button` | `1` | Show the all-tabs button. |
 | `--ut-urlbar-fill`, `--ut-urlbar-fill-focus` | translucent white | Fill of the URL field, a little lighter than the bar. Not in the file by default; add them to change it. |
 
-**PWAsForFirefox:** StockMica+ is tested in [PWAsForFirefox](https://github.com/filips123/PWAsForFirefox) windows. Their extension icons live in the title bar, so set `--uc-extensions-button-right: 1` there.
-
-The drawer opens on the right of the puzzle only for now ([#41](https://github.com/snkiz/FoxMica/issues/41)).
+**PWAsForFirefox:** StockMica+ is tested in [PWAsForFirefox](https://github.com/filips123/PWAsForFirefox) windows. Their extension icons live in the title bar. Leave `--uc-extensions-button-right` at `0`: the drawer is whichever icons touch the puzzle button, in the title bar as in the nav bar. Icons dropped beside the puzzle land after it, so set `--ut-drawer-side: right` to pick them up.

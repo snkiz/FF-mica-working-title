@@ -2,7 +2,7 @@
 
 A Firefox theme for Windows 11: the real Mica backdrop and Explorer-style tabs, in three flavours. Pick the one that suits you, or just use the tabs. Built on [FoxOne](https://github.com/Firnschnee/FoxOne) by Firnschnee.
 
-> **Work in progress.** Tested mainly on Firefox Nightly on Windows 11, with the Nova redesign on (the default) and off. ESR 153 works but has known bugs (see Known issues). Versions in between have not been tried extensively.
+> **Work in progress.** Tested mainly on Firefox Nightly on Windows 11, with the Nova redesign on (the default) and off. ESR 153 works too: the two bugs found there are fixed, but it hasn't had a full test pass yet. Versions in between have not been tried extensively.
 
 ![FoxMica on Firefox Nightly, Windows 11](assets/Screenshot-main.png)
 
@@ -34,12 +34,12 @@ Firefox's own two rows (tabs above, URL bar below) with the same Mica look and p
 
 Just the Explorer-style tabs, on regular Firefox or under another theme, and nothing else. The colours follow whatever theme is in use. To turn it on, comment out every `@import` above `foxmica-tabs.css` in `userChrome.css`; only `userChrome.css` and `foxmica-tabs.css` are needed. [More about the tabs](https://github.com/snkiz/FoxMica/blob/main/docs/oem-tabs.md).
 
-## New in 0.9.1
+## New in 0.9.2
 
-- **StockMica+**, Firefox's own two-row layout with FoxMica's look (`micaplus-config.css`).
-- **The extension drawer follows the puzzle button** when it is unpinned.
-- **PWAsForFirefox windows** work in StockMica+.
-- **The puzzle button has FoxMica's accent colour in every mode**, and the find bar no longer hides behind the floating bookmarks bar.
+- **ESR 153 works better.** The URL bar widens while you type again and the selected tab's text has the right colour.
+- **The extension drawer works in PWAsForFirefox windows**, and a new setting (`--ut-drawer-side`) picks which side of the puzzle button it opens on.
+- **StockMica+ has more room around the URL field**, and the vertical tab list is no longer forced to one bar height.
+- **Built on FoxOne 3.9.10**, so the bookmarks bar reveals only when the pointer rests on the URL text.
 
 The full list is in [CHANGELOG.md](CHANGELOG.md) old versions on the tag. It's a live file.
 
@@ -96,11 +96,9 @@ The floating bookmarks bar needs the bookmarks toolbar set to "Always Show". The
 
 Hovering Mica areas sometimes flickered during development on a laptop with NVIDIA and integrated graphics. It's intermitent with reboots and driver updates. If you are using an optimus laptop, turning off hardware acceration in firefox (and eletron apps for that matter) helps.
 
-The floating bookmarks bar only reveals when the URL bar is active, not the whole top row. That is how FoxOne works
+The floating bookmarks bar only reveals when the pointer rests on the URL text, not the whole top row or the icons beside it. That is how FoxOne works
 
-- Firefox ESR 153 is now supported, however: the selected tab's text is the dark accent colour ([#38](https://github.com/snkiz/FoxMica/issues/38)) and the URL bar doesn't widen while typing ([#37](https://github.com/snkiz/FoxMica/issues/37)). Nightly as of 160 is fine.
 - Vertical tabs are untested in any mode. If it works, thank [@Firnschnee](https://github.com/firnschnee) ([#31](https://github.com/snkiz/FoxMica/issues/31)).
-- StockMica+ in PWAsForFirefox windows: the extension drawer opens to the right and pushes the puzzle button out from under the pointer ([#41](https://github.com/snkiz/FoxMica/issues/41)).
 
 And more on the [issue tracker](https://github.com/snkiz/FoxMica/issues)...
 
@@ -116,7 +114,7 @@ FoxMica dev does not have a Mac. If you would like to see FoxMica on Mac, it doe
 
 ## Credits
 
-- [FoxOne](https://github.com/Firnschnee/FoxOne) by Firnschnee (MIT). `foxone-mica.css` and `userContent.css` are built from FoxOne 3.9.9, kept exactly as released in `vendor/`, plus FoxMica's changes in `patches/`. FoxOne in turn credits [LittleFox](https://github.com/biglavis/LittleFox) and [Cascade](https://github.com/andreasgrafen/cascade).
+- [FoxOne](https://github.com/Firnschnee/FoxOne) by Firnschnee (MIT). `foxone-mica.css` and `userContent.css` are built from FoxOne 3.9.10, kept exactly as released in `vendor/`, plus FoxMica's changes in `patches/`. FoxOne in turn credits [LittleFox](https://github.com/biglavis/LittleFox) and [Cascade](https://github.com/andreasgrafen/cascade).
 - The extension drawer in `patches/userChrome/48-unpinned-puzzle-drawer.css` reuses FoxOne's "unbroken run" pattern for tucking away extension icons.
 - The Mica rules in `patches/userChrome/22-mica.css` are derived from [Wintego's Firefox-transparent-theme](https://github.com/Wintego/Firefox-transparent-theme).
 - The look was matched by eye against Windows 11 Explorer and the MicaBar theme of Windhawk's [Windows 11 File Explorer Styler](https://windhawk.net/mods/windows-11-file-explorer-styler) mod (Windhawk is by [m417z](https://github.com/m417z)). No code from that project was used.
