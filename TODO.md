@@ -17,13 +17,6 @@ where they disagree.
 
 ## Next time
 
-- **FoxOne 3.9.10 "Aim for the text"** (out 2026-10-24, not pulled yet): the dynamic bookmarks bar now reveals only
-  when the pointer rests on the URL text, not on the shield or star (#59), and `--uc-dynamic-bookmarks-hide-delay`
-  defaults to 150ms. Only `userChrome.css` changed. To do: `node scripts/pull-foxone.mjs 3.9.10`, assemble, check
-  (10-strip-config.patch cuts the settings block, so its FIND text may need the changed delay line), look at the
-  bookmarks bar in the dev profile and a PWA window. Already done on our side (unreleased): `42-delays.css` adds 100ms
-  to the bookmarks-bar hide delay (150ms by default), the same reason Firn gave. The nav buttons keep `--ut-hide-delay`
-  alone. Then update the README known issue ("only reveals over the URL bar" becomes "over the URL text").
 - **td40. FoxOne accent does not follow dynamic themes.** Seen 2026-10-18 while doing the selected-tab edge: with
   FoxOne, every theme (store themes too) gets FoxOne's accent on the tab edge, tab text and puzzle piece, not the
   theme's own colour. FoxOne's comment on that block says it is deliberate ("always applied, including under a
@@ -36,9 +29,6 @@ where they disagree.
 
 ## First bug-fix pass
 
-- [#41] StockMica+ in PWA windows: the puzzle drawer opens to the right and pushes the puzzle button out from under the
-  pointer. While the puzzle is pinned it should open to the left; a left/right switch for the unpinned case doesn't exist
-  yet. Look at the OEM taskbar pins while fixing this.
 - [#40] Customize mode: a large gap shows on the left and the new-tab button pins to the end of the tab bar (stock Firefox
   does it too). Cause not traced; guess: a spacer (FoxOne hides `.titlebar-spacer`). Check with the Browser Toolbox in
   Customize mode, pick the empty space. Rejected idea (2026-10-24): switching the one-line bar off while customizing
@@ -77,7 +67,7 @@ where they disagree.
   edge when the sidebar is hidden, so the bar goes full width. May need the bar switched from absolute to fixed
   (anchor rules). Jumps rather than slides; fine for a bar that only shows on hover. Experiment first, test profile.
 
-- Pre-1.0 test pass (2026-10-18): go through every open issue and every TODO feature, drop the ones that are obsolete, and turn the rest into one testing list (it will be a big one). Includes: re-check the about:config prefs table, starting with whether widget.windows.mica alone is enough (README says the `toplevel-backdrop` row is being re-checked); each StockMica+ setting (`micaplus-config.css`) switched off, and each mode (FoxOne-Mica, StockMica+, OEM drop-in replacement tabs, PWA windows) checked and documented with screenshots; ESR 153 stays unsupported until td39 is fixed (not a 1.0 blocker). 0.9.1 is built on FoxOne 3.9.9 (what was tested; 3.9.10 was out on 2026-10-24); for 1.0, pull whatever FoxOne release is current then with `node scripts/pull-foxone.mjs <tag>`, rebuild, and re-test. Also test how the theme behaves with Firefox's built-in pin to taskbar feature (Windows), in every mode of regular Firefox (PWA windows disable the button, so nothing to test there).
+- Pre-1.0 test pass (2026-10-18): go through every open issue and every TODO feature, drop the ones that are obsolete, and turn the rest into one testing list (it will be a big one). Includes: re-check the about:config prefs table, starting with whether widget.windows.mica alone is enough (README says the `toplevel-backdrop` row is being re-checked); each StockMica+ setting (`micaplus-config.css`) switched off, and each mode (FoxOne-Mica, StockMica+, OEM drop-in replacement tabs, PWA windows) checked and documented with screenshots; ESR 153: both known bugs are fixed (#37, #38), so give it a full test pass in every mode before calling it supported. 0.9.1 is built on FoxOne 3.9.9 (what was tested; 3.9.10 was out on 2026-10-24); for 1.0, pull whatever FoxOne release is current then with `node scripts/pull-foxone.mjs <tag>`, rebuild, and re-test. Also test how the theme behaves with Firefox's built-in pin to taskbar feature (Windows), in every mode of regular Firefox (PWA windows disable the button, so nothing to test there).
 
 ## After launch
 
@@ -97,10 +87,6 @@ where they disagree.
   blur, `widget.macos.titlebar-blend-mode.behind-window` in about:config. Liquid-fox and zvuc's
   firefox-macos-native-tabbar build their glass look on it. FoxMica could swap that pref for the Mica one and
   keep its transparency layer. Needs: a Mac tester, and a check that the pref still works on current releases.
-- td39. [#38; not a 1.0 blocker; split from the closed #22] ESR 153: the selected tab's text shows the dark accent colour instead of white. Release 160 is fine, so
-  something changed between 153 and 157. Lead, not checked: FoxOne sets `--tab-text-color-selected` to the accent (about
-  line 634) and FoxOne's own rules use `--tab-selected-textcolor`; foxmica-tabs.css only overrides the first, so 153 may
-  read the other name. Compare the tab text variables on 153 and 160 before changing anything.
 - td6, td7, td21. [#25] Theme-aware tint like WinUI (Mica grey tinted by accent/wallpaper),
   theme picker support, inherit Windows system colours. Do these together. Also: a pinstripe in the accent colour for the built-in default/light/dark themes in plus mode belongs to #26 (five-colour palette), after 1.0: CSS cannot tell built-ins from store themes, so it needs the palette feature (inherit the Windows or store theme palette, then a custom override is almost free).
 - td30. Palette readability [#8]: pick palette ratios so every text/background pair stays
@@ -115,6 +101,11 @@ where they disagree.
   extension for "New Tab to the Left" (no add-on found that does left; extensions can add items but
   not place them at the top).
 - [#31] Vertical tabs are untested. Firn notes vertical tabs change `--tabstrip-min-height` (bar-height overrides).
+  [#42] OEM tabs mode with vertical tabs (2026-10-24): works with the band-aid guard in `foxmica-tabs.css`, but the tabs
+  have no radius and the wrong shade; that is the real fix. Was suspected from reading before it was tried: `foxmica-tabs.css` has no vertical guard, and its
+  bar-height block forces `min-height` and `max-height` on `#tabbrowser-tabs` and `#tabbrowser-arrowscrollbox`, which would
+  squash the vertical tab list to one bar height. The separators, rounded top corners and pinstripe are also drawn for a
+  horizontal strip.
 
 ## Maybe, probably never
 
@@ -127,21 +118,33 @@ where they disagree.
   hiding disabled Back/Forward [#18], the star and shield reveals [#1]);
   extension icons before the tabs [landed in 3.9.4: FoxOne #62/#63, with #32]; one shared config for chrome and
   content [#16, offered on FoxOne #50]; the Firefox View fix.
-- FoxOne, after living with 0.9.1 for a few days (one small issue per idea, screenshots first):
-  - Title-bar extension icons hide only while the puzzle is pinned, plus the drawer that follows an unpinned puzzle (our
-    patches 47 and 48, as one change). Firn then doesn't have to disable the hover when the puzzle is unpinned.
-  - Find bar below the floating bookmarks bar (patch 44 is the proof of concept). First check plain FoxOne for the
-    overlap with a screenshot, and use FoxOne's own `--findbar-top`; it may need a bar-height variable.
+- FoxOne PR (three commits, in this order; the edits are written out in `Notes-n-Tools\issue-drafts\foxone-pr-edits.md`
+  and apply to 3.9.10): 1) ESR 153 URL bar widening (our patch 49; offer to test on ESR 153), 2) the puzzle drawer (patches
+  47 and 48; the side setting becomes `--uc-extensions-drawer-side`), 3) the find bar below the floating bookmarks bar
+  (patch 44's second half; FoxMica [#43], closed; FoxOne has the same overlap, the new `--uc-bookmarks-bar-height` is 39px measured). Order of
+  operations: tag the FoxMica point release (so the patches are a live example), post the issue to Firn, post the feature,
+  send the PR, float a 4.0 so point releases can sync. 4.0 idea: the puzzle as the one anchor and trigger for the drawer in
+  every case, pinned too; the pin stays (it is the only way to get the puzzle into the one-bar layout).
 - Wintego: FF157+ dropdown fix (also paint `.urlbarView-background`); find-bar fix;
   the double-encoded text in his file; license-holder question.
   Wintego has no issues open and asks for pull requests instead, so these go to him as PRs.
 
 ## Done
 
+- ESR 153 fixes (2026-10-24, tested on ESR 153, pushed, unreleased): #37 (URL bar didn't widen while typing; patch
+  `49-esr153-urlbar-widen.patch` adds `#urlbar[open]` to FoxOne's two widening rules, a new tab still waits for a click)
+  and #38 / td39 (selected tab text stayed accent-coloured; `--tab-selected-textcolor` is now set on the selected tab
+  in `foxmica-tabs.css`; FoxOne sets both that name and `--tab-text-color-selected` from `--uc-color-accent`, so it was
+  our override that only covered one).
+- Pulled FoxOne 3.9.10 (2026-10-25); only `10-strip-config.patch` needed a change (the hide-delay line, 50ms to 150ms). Patches
+  47, 49 and 44's find-bar rule still apply. The README known issue now says the bookmarks bar reveals on the URL text.
+- #41 fixed (2026-10-25): patch 48 is the whole drawer now (patch 50 folded in): the run of extension icons touching the
+  puzzle, nav bar or title bar, one side only, set by `--ut-drawer-side` (left by default, `right` for a PWA window).
+  Tested on ESR 153 in a PWA window and in both modes of a regular window. Gated on the puzzle being unpinned.
 - Closed or checked off 2026-10-24: #21 (refactor: five files, FoxOne untouched in vendor/, our changes in patches/, tooling in
   scripts/; still an idea, not tracked: trim the very long comments), #22 and td12 (ESR 153 backport), #24 and td8
   (StockMica+), #27 and td13 (tab-drag test), #29 and td20 (dwm resize hack with Mica), #5 with td29 and td1 (bookmarks bar
-  vs sidebar, and the new-tab bar background). td39 (ESR 153 tab text) moved to its own issue, #38; it is not a blocker.
+  vs sidebar, and the new-tab bar background). td39 (ESR 153 tab text) moved to its own issue, #38, and is fixed (see above).
 - 0.9.1 (2026-10-21) on FoxOne 3.9.9, details in CHANGELOG.md. td8 (stock-plus) is done as StockMica+: `micaplus-config.css`
   (loads `foxmica-config.css` first, then overrides what differs) with `--ut-one-line: 0` and patches 44, 46, 47 and 48.
   `foxmica-plus.css` is gone. The three modes are named FoxOne-Mica, StockMica+ and OEM drop-in replacement tabs. The puzzle

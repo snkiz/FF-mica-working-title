@@ -24,7 +24,7 @@ get things done, not to have Claude do it for me (boilerplate aside).
 FoxOne's one-line UI (tabs and URL bar in one row), with Windows 11 Explorer-style
 tabs. Repo: https://github.com/snkiz/FoxMica (public, MIT). Local: Documents\GitHub\FoxMica.
 
-- Built on FoxOne by Firnschnee (vendored unmodified, currently 3.9.9; 3.9.10 is out, not pulled yet).
+- Built on FoxOne by Firnschnee (vendored unmodified, currently 3.9.10).
 - Mica rules come from Wintego's Firefox-transparent-theme (written for FoxOne 3.5).
 - The look is matched by eye to Explorer with Windhawk's Explorer Styler "MicaBar" theme.
 
@@ -62,7 +62,7 @@ root is FoxMica's own version (`0.9.1`, 2026-10-21). Details and the patch forma
 
 ## Where things stand (update this section at the end of every session)
 
-**Last updated:** 2026-10-24
+**Last updated:** 2026-10-25
 
 - **0.9.1 (2026-10-21)** on FoxOne 3.9.9; `VERSION` is `0.9.1`. Three modes, picked in `userChrome.css`: **FoxOne-Mica**
   (the full theme, default), **StockMica+** (Firefox's own two rows with FoxMica's look; `micaplus-config.css`, which
@@ -70,13 +70,16 @@ root is FoxMica's own version (`0.9.1`, 2026-10-21). Details and the patch forma
   is gone. New patches: 44 (find bar below the floating bookmarks bar), 46 (`--ut-one-line: 0`, the two rows), 47
   (title-bar icons hide only while the puzzle is pinned), 48 (drawer that follows an unpinned puzzle). Puzzle colour
   lives in `foxmica-tabs.css` (every mode). Pinstripe default: off in modes 1 and 2, on in mode 3. PWAsForFirefox windows
-  work in StockMica+ with `--uc-extensions-button-right: 1`. Earlier 0.8 "Brick by Brick" did the five-file refactor (#21).
-- **Unreleased, 2026-10-24:** `42-delays.css` adds 100ms to the bookmarks-bar hide delay (150ms by default). FoxOne 3.9.10
-  is out ("Aim for the text": reveal only on the URL text, #59) and not pulled yet. Patch 26 is still needed (FoxOne's
-  `--uc-row-height` defaults to Firefox's tab-strip height, not our bar height).
+  work in StockMica+ (0.9.2 no longer needs the puzzle pinned for that). Earlier 0.8 "Brick by Brick" did the five-file refactor (#21).
+- **0.9.2 "Take your extensions with you" (2026-10-25, point release):** FoxOne 3.9.10 pulled (only `10-strip-config.patch` changed). Patch 48
+  is now the whole puzzle drawer (patch 50 folded in): the run of extension icons touching the puzzle on one side, in the
+  nav bar or title bar, set by `--ut-drawer-side` (`left` default, `right` for a PWA window); #41 fixed, tested on ESR 153.
+  `42-delays.css` adds 100ms to the bookmarks-bar hide delay (150ms by default). Patch 26 is still needed (FoxOne's
+  `--uc-row-height` defaults to Firefox's tab-strip height, not our bar height). PWA windows now work unpinned: leave
+  `--uc-extensions-button-right` at 0 in StockMica+. Released as 0.9.2 "Take your extensions with you"; `VERSION` is `0.9.2`.
 - **Road to 1.0:** a full test pass of every mode with screenshots
   (four views: the three modes and PWA windows), then the FirefoxCSS Store submission (#30). The five-colour palette (#26)
-  is after 1.0. ESR 153 stays unsupported and is not a blocker (td39 tab text, #38; #37 URL bar widening). Upstream ideas for Firn after a few days with 0.9.1 are in TODO.md. Open: td40 (FoxOne accent vs dynamic
+  is after 1.0. ESR 153: #37 (URL bar widening, patch 49) and #38 (tab text, `foxmica-tabs.css`) were fixed 2026-10-24 and tested on ESR 153; it needs a full test pass before it counts as supported. Upstream ideas for Firn after a few days with 0.9.1 are in TODO.md. Open: td40 (FoxOne accent vs dynamic
   themes), README fixes next release, light-system dark bar on the default theme (suspected registry tweaks and/or
   Windhawk; to test in a sandbox).
 - Lessons: a user stylesheet can't use Nova's `border-area` clip; Firefox only rereads userChrome at startup;
