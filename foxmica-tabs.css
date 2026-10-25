@@ -23,6 +23,7 @@
                                 micaplus-config.css) turn it off.
      --ut-tab-text              tab title colour (default: the toolbar text colour)
      --ut-bar-padding 2px       space above and below the tabs and the URL field
+     --ut-urlbar-padding        the same for the URL field alone (default: follows --ut-bar-padding)
      --ut-bar-height-compact 30px / -normal 38px / -touch 48px
      --ut-btn-inner-compact 2px / -normal 4px / -touch 8px
      --ut-btn-outer 2px         (compact density always uses 1px)
@@ -159,7 +160,7 @@
 #nav-bar,
 #urlbar-container,
 #urlbar {
-  --urlbar-height: calc(var(--ut-bar-height, 38px) - 2 * var(--ut-bar-padding, 2px)) !important;
+  --urlbar-height: calc(var(--ut-bar-height, 38px) - 2 * var(--ut-urlbar-padding, var(--ut-bar-padding, 2px))) !important;
   --urlbar-toolbar-height: var(--ut-bar-height, 38px) !important;
   --urlbar-container-height: var(--ut-bar-height, 38px) !important;
 }
@@ -167,8 +168,8 @@
 :root #TabsToolbar,
 :root #TabsToolbar > hbox,
 :root #TabsToolbar-customization-target,
-:root #tabbrowser-tabs,
-:root #tabbrowser-arrowscrollbox,
+:root #tabbrowser-tabs:not([orient="vertical"]),
+:root #tabbrowser-tabs:not([orient="vertical"]) #tabbrowser-arrowscrollbox,
 :root #nav-bar {
   min-height: var(--ut-bar-height, 38px) !important;
   max-height: var(--ut-bar-height, 38px) !important;

@@ -1,9 +1,9 @@
 /* BUILT FILE - do not edit by hand.
-   FoxMica 0.9: FoxOne 3.9.9 (vendor/userChrome.css) plus patches/userChrome/.
+   FoxMica 0.9.2: FoxOne 3.9.10 (vendor/userChrome.css) plus patches/userChrome/.
    Made by scripts/assemble.mjs. Change the patches, then rebuild. */
 /*==============================================================================================*
 
-  FoxOne 3.9.9 – A minimalistic one-line Firefox theme
+  FoxOne 3.9.10 – A minimalistic one-line Firefox theme
   Based on Cascade (https://github.com/andreasgrafen/cascade)
   Floating Find Bar and dynamic Bookmarks Bar by LittleFox
   (https://github.com/biglavis/LittleFox)
@@ -54,7 +54,7 @@
    * once the pointer leaves. The hide delay is the grace period for travelling
    * from the URL bar down onto the bookmarks. */
   --uc-dynamic-bookmarks-hover-delay: 450ms;
-  --uc-dynamic-bookmarks-hide-delay: 50ms;
+  --uc-dynamic-bookmarks-hide-delay: 150ms;
 }
 
 
@@ -820,9 +820,13 @@ sidebar-main,
      [breakout-extend]: under Nova that attribute follows the FOCUS alone
      (UrlbarInput.updateLayoutExtend: `if (this.focused || this.view.isOpen)`,
      where pre-Nova it followed view.isOpen), so guarding on it froze the bar
-     for as long as the caret sat in an empty URL bar – every fresh tab. */
+     for as long as the caret sat in an empty URL bar – every fresh tab.
+     The trigger is the input itself, not #urlbar: the shield, the star and
+     the icons they reveal sit in sibling containers, so aiming for them no
+     longer pulls the bar down. Nova moved the input from id to class, so
+     match both. */
   #navigator-toolbox:not(:has(#urlbar[open])) {
-    &:has(#urlbar:hover) #PersonalToolbar,
+    &:has(#urlbar-input:hover, .urlbar-input:hover) #PersonalToolbar,
     & #PersonalToolbar:is(:hover, :has(toolbarbutton[open])) {
       opacity: 1 !important;
       transform: scaleY(1) translateY(0) !important;
@@ -832,7 +836,7 @@ sidebar-main,
     }
     /* Hover on the URL bar waits out the delay; hover on the bar itself (the
        bridge that lets the pointer travel down) opens immediately. */
-    &:has(#urlbar:hover) #PersonalToolbar {
+    &:has(#urlbar-input:hover, .urlbar-input:hover) #PersonalToolbar {
       transition-delay: var(--uc-dynamic-bookmarks-hover-delay),
                         var(--uc-dynamic-bookmarks-hover-delay), 0s, 0s !important;
     }
@@ -947,14 +951,16 @@ sidebar-main,
    so the tab strip shrank under the cursor and the click missed. Keying on
    the open view instead of focus also keeps a fresh new tab narrow until you
    type, so opening a bookmark from it moves no tabs.
+   ESR 153 has no popover: its results are the old breakout. #urlbar[open] is set while the list is open, in every
+   version, so it covers that case and the new tab stays narrow until you type, as above.
    (#68, suggested by nickj2014) */
-#navigator-toolbox:has(.urlbarView:popover-open) #nav-bar {
+#navigator-toolbox:has(:is(.urlbarView:popover-open, #urlbar[open])) #nav-bar {
   width: var(--uc-urlbar-max-width);
   &.browser-titlebar {
     width: 100%;
   }
 }
-#navigator-toolbox:has(.urlbarView:popover-open) #titlebar {
+#navigator-toolbox:has(:is(.urlbarView:popover-open, #urlbar[open])) #titlebar {
   width: calc(100vw - var(--uc-urlbar-max-width) - 1px);
 }
 
@@ -4298,7 +4304,8 @@ notification-message {
    DELAYS: one pair of settings for everything that reveals and hides.
    --ut-hover-delay (450ms) and --ut-hide-delay (50ms), set in foxmica-config.css, drive the navigation buttons and
    the bookmarks bar. FoxOne has its own variable for each of them; they are pointed at the pair here, so there is
-   one place to change them.
+   one place to change them. The bookmarks bar adds 100ms on top of the hide delay (150ms by default, the same as
+   FoxOne 3.9.10), because 50ms was sometimes too short to reach the bar and it flickered.
 
    FoxOne's nav buttons reveal after the hover delay but hide at once. The rule below gives them the hide delay too,
    so a quick slip off the bar doesn't snap them away. It matches only the hidden state: FoxOne's hover rule is more
@@ -4308,7 +4315,7 @@ notification-message {
 :root {
   --uc-autohide-nav-delay: var(--ut-hover-delay, 450ms);
   --uc-dynamic-bookmarks-hover-delay: var(--ut-hover-delay, 450ms);
-  --uc-dynamic-bookmarks-hide-delay: var(--ut-hide-delay, 50ms);
+  --uc-dynamic-bookmarks-hide-delay: calc(var(--ut-hide-delay, 50ms) + 100ms);
 }
 
 @container style(--uc-autohide-nav-buttons: 1), style(--uc-autohide-nav-buttons: 2) {
@@ -4455,44 +4462,63 @@ findbar {
    nothing here applies, and the burger anchors, the reserved space and the title-bar rules behave as before.
    Today, with the puzzle unpinned, the title-bar icons still hide but only the burger or an icon opens them.
    47-title-bar-hide-only-when-pinned.patch turns that off, so unpinned there is one drawer, this one.
-   The drawer is the unbroken run of extension icons touching the puzzle button on its left: an icon is in it when
-   everything between that icon and the puzzle is another extension icon. What lies after the puzzle (toward the
-   corner) does not matter, so a spacer or a Firefox tool there no longer breaks it, and a Firefox tool between the
-   icons and the puzzle ends the run. The run tucks away and slides out when the pointer rests on the puzzle, on one
-   of its icons, or while an extension popup is open. Icons on the other side of the puzzle are not part of it.
-   Not covered: a left/right switch for which side of the puzzle the drawer opens on.
+   The drawer is the unbroken run of extension icons touching the puzzle button on ONE side: an icon is in it when
+   everything between that icon and the puzzle is another extension icon. What lies beyond the run does not matter,
+   so a spacer or a Firefox tool there no longer breaks it, and a Firefox tool between the icons and the puzzle ends
+   the run. The run tucks away and slides out when the pointer rests on the puzzle, on one of its icons, or while an
+   extension popup is open. Icons on the other side of the puzzle are not part of it.
+   The side is a setting, --ut-drawer-side: left (the default) or right. It picks up from that side only, and slides
+   out on that side only, so the drawer never opens on both. Left is the side that keeps the puzzle under the pointer
+   in a bar that ends at the corner (the burger and the window buttons stay put, only what is before the puzzle
+   moves). Right suits a puzzle at the start of its icons, and moves the puzzle when the drawer opens.
+   It works in the nav bar and in the title bar (#TabsToolbar-customization-target), where Firefox puts an icon in
+   whichever bar it was dragged to. In a PWAsForFirefox window that is the title bar, and the icons land after the
+   puzzle (FoxMica #41). FoxOne's own title-bar rule only takes the trailing run of items, and the puzzle, a
+   toolbarbutton, breaks it, so with the puzzle beside the burger nothing was picked up.
    ========================================================================== */
 @container style(--uc-extensions-button-right: 0) {
   @container style(--uc-hide-extension-icons: 1) {
 
-    /* In the run: an extension icon before the puzzle, with only extension icons (or hidden items) between. */
-    #nav-bar-customization-target > toolbaritem[id$="-browser-action"]:where(
-      :has(~ #unified-extensions-button):not(
-        :has(~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, [hidden]) ~ #unified-extensions-button)
-      )
-    ) {
-      max-width: 0 !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-      padding-inline: 0 !important;
-      overflow: hidden !important;
-      transition: max-width 0.2s ease, opacity 0.2s ease, padding-inline 0.2s ease !important;
+    @container not style(--ut-drawer-side: right) {
+      :is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:where(:has(~ #unified-extensions-button):not(:has(~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, [hidden]) ~ #unified-extensions-button))) {
+        max-width: 0 !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        padding-inline: 0 !important;
+        overflow: hidden !important;
+        transition: max-width 0.2s ease, opacity 0.2s ease, padding-inline 0.2s ease !important;
+      }
+      :root:root :is(#nav-bar, #TabsToolbar):is(
+        :has(#unified-extensions-button:is(:hover, [open])),
+        :has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:where(:has(~ #unified-extensions-button):not(:has(~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, [hidden]) ~ #unified-extensions-button))):hover),
+        :has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:where(:has(~ #unified-extensions-button):not(:has(~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, [hidden]) ~ #unified-extensions-button))) [open])
+      ) :is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:where(:has(~ #unified-extensions-button):not(:has(~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, [hidden]) ~ #unified-extensions-button))) {
+        max-width: 60px !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        padding-inline: revert !important;
+      }
     }
-    :root:root #nav-bar:is(
-      :has(#unified-extensions-button:is(:hover, [open])),
-      :has(#nav-bar-customization-target > toolbaritem[id$="-browser-action"]:hover:has(~ #unified-extensions-button):not(
-        :has(~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, [hidden]) ~ #unified-extensions-button))),
-      :has(#nav-bar-customization-target > toolbaritem[id$="-browser-action"]:has(~ #unified-extensions-button):not(
-        :has(~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, [hidden]) ~ #unified-extensions-button)) [open])
-    ) #nav-bar-customization-target > toolbaritem[id$="-browser-action"]:where(
-      :has(~ #unified-extensions-button):not(
-        :has(~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, [hidden]) ~ #unified-extensions-button)
-      )
-    ) {
-      max-width: 60px !important;
-      opacity: 1 !important;
-      pointer-events: auto !important;
-      padding-inline: revert !important;
+
+    @container style(--ut-drawer-side: right) {
+      :is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:where(#unified-extensions-button ~ *):not(#unified-extensions-button ~ :not(toolbaritem[id$="-browser-action"], [hidden]) ~ *) {
+        max-width: 0 !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        padding-inline: 0 !important;
+        overflow: hidden !important;
+        transition: max-width 0.2s ease, opacity 0.2s ease, padding-inline 0.2s ease !important;
+      }
+      :root:root :is(#nav-bar, #TabsToolbar):is(
+        :has(#unified-extensions-button:is(:hover, [open])),
+        :has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:where(#unified-extensions-button ~ *):not(#unified-extensions-button ~ :not(toolbaritem[id$="-browser-action"], [hidden]) ~ *):hover),
+        :has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:where(#unified-extensions-button ~ *):not(#unified-extensions-button ~ :not(toolbaritem[id$="-browser-action"], [hidden]) ~ *) [open])
+      ) :is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:where(#unified-extensions-button ~ *):not(#unified-extensions-button ~ :not(toolbaritem[id$="-browser-action"], [hidden]) ~ *) {
+        max-width: 60px !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        padding-inline: revert !important;
+      }
     }
   }
 }

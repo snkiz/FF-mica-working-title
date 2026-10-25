@@ -24,6 +24,9 @@
   /*  Only extension icons hide. Firefox's own tools stay visible anywhere; You can put them into the >> overflow.
     Move icons in Customize mode. (1 = hide + hover-reveal, 0 = always show) */  
   --uc-hide-extension-icons: 1;
+  --ut-drawer-side: left;           /* Which side of the puzzle button the extension drawer picks icons up from and opens on:
+                                    left or right. Only that side counts. Left keeps the puzzle under the pointer when the
+                                    drawer opens; right moves it. */
 
   /* PUZZLE BUTTON: not pinned to the corner. The icons you drop beside it make the drawer that opens from it
      (the unbroken run of extension icons touching the puzzle on its left). 1 = pinned to the corner like the full
@@ -34,6 +37,9 @@
      until you rest on the bar. (0 = always show, 1 = reveal with hover and focus, 2 = reveal with hover and
      click to cancel.) */
   --uc-autohide-nav-buttons: 0;
+  --ut-urlbar-padding: 4px;         /* Space above and below the URL field, which sits alone on the second row here. The tabs
+                                    keep --ut-bar-padding (2px). Remove this line to make the field as tall as in the
+                                    other flavours. */
   --ut-hide-disabled-nav: 1;        /* Hide the disabled Forward button only (no forward history; old Firefox behaviour),
                                     even while the nav buttons are revealed by hover or focus. 0 = off, 1 = Forward only */
 

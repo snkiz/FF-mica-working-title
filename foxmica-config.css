@@ -176,7 +176,7 @@
   --uc-dynamic-bookmarks-newtab: 1;     /* Bookmarks bar on fresh tabs – keep the dynamic bar revealed while the active
                                         tab shows no page yet, (1 = show on fresh tabs, 0 = hover only).
                                         Ignored while --uc-dynamic-bookmarks is 0. */
-  /* --ut-bookmarks-bg: light-dark(rgb(247 247 247 / 85%), rgb(96 96 96 / 78%));   Colour of the floating bookmarks
+  --ut-bookmarks-bg: light-dark(rgb(247 247 247 / 85%), rgb(52 52 52 / 78%));   /* Colour of the floating bookmarks
                                         bar (overlay mode). The last number is how solid it is; lower lets the page
                                         show through more. These values are the built-in default. */
   
