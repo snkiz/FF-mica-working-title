@@ -91,6 +91,13 @@
   --tab-text-color-hover: var(--ut-tab-text, var(--toolbar-text-color, var(--toolbar-color, CanvasText))) !important;
 }
 
+/* FoxOne sets --tab-selected-textcolor to its accent colour on :root. Older Firefox (ESR 153) appears to take the selected
+   title colour from that name, not from --tab-text-color-selected above, so the title stayed accent-coloured. Set it on
+   the tab itself: that wins for the title and leaves FoxOne's other uses of the accent variable alone. (#38) */
+:root .tabbrowser-tab[selected] {
+  --tab-selected-textcolor: var(--ut-tab-text, var(--toolbar-text-color, var(--toolbar-color, CanvasText)));
+}
+
 /* ---- Separators ----------------------------------------------------------
    A 1px line on the left edge of every tab but the first, drawn from a
    pseudo-element on .tab-content (out of flow, so it cannot shift layout).
