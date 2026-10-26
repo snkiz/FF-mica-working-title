@@ -25,12 +25,14 @@
     Move icons in Customize mode. (1 = hide + hover-reveal, 0 = always show) */  
   --uc-hide-extension-icons: 1;
   --ut-drawer-side: left;           /* Which side of the puzzle button the extension drawer picks icons up from and opens on:
-                                    left or right. Only that side counts. Left keeps the puzzle under the pointer when the
-                                    drawer opens; right moves it. */
+                                    left or right. Only that side counts. Point it toward the inside of the bar: left when the
+                                    puzzle is at the right end of the bar, right when it is at the left end. */
 
   /* PUZZLE BUTTON: not pinned to the corner. The icons you drop beside it make the drawer that opens from it
-     (the unbroken run of extension icons touching the puzzle on its left). 1 = pinned to the corner like the full
-     theme, which is what a PWA window wants: its icons sit in the title bar, not beside the puzzle. */
+     (the unbroken run of extension icons touching the puzzle, on the side --ut-drawer-side picks).
+     CAUTION: leave this at 0. Setting it to 1 does not move the puzzle here (Firefox keeps it where it is), but it
+     does pin the drawer: the title-bar icons collapse to nothing in the corner and are picked up from there, not from
+     the puzzle. */
   --uc-extensions-button-right: 0;
 
   /* NAVIGATION BUTTONS: always shown. The nav bar has its own row now, so there is no need to tuck them away

@@ -1,9 +1,9 @@
 /* BUILT FILE - do not edit by hand.
-   FoxMica 0.9.2: FoxOne 3.9.10 (vendor/userChrome.css) plus patches/userChrome/.
+   FoxMica 1.0: FoxOne 4.0 (vendor/userChrome.css) plus patches/userChrome/.
    Made by scripts/assemble.mjs. Change the patches, then rebuild. */
 /*==============================================================================================*
 
-  FoxOne 3.9.10 – A minimalistic one-line Firefox theme
+  FoxOne 4.0 – A minimalistic one-line Firefox theme
   Based on Cascade (https://github.com/andreasgrafen/cascade)
   Floating Find Bar and dynamic Bookmarks Bar by LittleFox
   (https://github.com/biglavis/LittleFox)
@@ -951,16 +951,19 @@ sidebar-main,
    so the tab strip shrank under the cursor and the click missed. Keying on
    the open view instead of focus also keeps a fresh new tab narrow until you
    type, so opening a bookmark from it moves no tabs.
-   ESR 153 has no popover: its results are the old breakout. #urlbar[open] is set while the list is open, in every
-   version, so it covers that case and the new tab stays narrow until you type, as above.
-   (#68, suggested by nickj2014) */
-#navigator-toolbox:has(:is(.urlbarView:popover-open, #urlbar[open])) #nav-bar {
+   (#68, suggested by nickj2014)
+   Before 157 the view is no popover, so :popover-open never matched and ESR
+   153 stopped widening at all. #urlbar[open] is set while the list is open in
+   every version (the bookmarks-bar guard keys on it too), so it covers ESR.
+   Not [breakout-extend]: under Nova that follows the focus alone, which
+   would widen a fresh new tab again. (#69, found by snkiz) */
+#navigator-toolbox:has(.urlbarView:popover-open, #urlbar[open]) #nav-bar {
   width: var(--uc-urlbar-max-width);
   &.browser-titlebar {
     width: 100%;
   }
 }
-#navigator-toolbox:has(:is(.urlbarView:popover-open, #urlbar[open])) #titlebar {
+#navigator-toolbox:has(.urlbarView:popover-open, #urlbar[open]) #titlebar {
   width: calc(100vw - var(--uc-urlbar-max-width) - 1px);
 }
 
@@ -3152,6 +3155,53 @@ findbar[hidden] {
   transition-delay: 0s, 0s, 100ms !important;
 }
 
+/* The dynamic bookmarks bar hangs over the top of the page, the same edge the
+   find bar starts at, so the open bar covered it. While the bar is open, the
+   find bar moves down out of its way, and back once it hides. A permanent
+   offset would cost every page the gap for a bar that is open for a moment.
+   Both live in browser.xhtml, so :root:has() sees the bar's state. The
+   conditions mirror the reveal rules in DYNAMIC BOOKMARKS BAR, chained on
+   :root because :has() can't nest, and so do the delays: the URL-field hover
+   waits out the hover delay, the bar itself and fresh tabs move at once,
+   leaving waits out the hide delay, an opening results list doesn't wait.
+   `translate` is its own property, so it stacks with the open/close
+   transform above. The delay overrides skip [hidden], whose own delays time
+   the close. A bar Firefox collapsed ("Only on New Tab" elsewhere) is never
+   revealed, so it moves nothing. (#70, found by snkiz) */
+@container style(--uc-dynamic-bookmarks: 1) {
+  findbar {
+    transition: opacity 100ms ease-out, transform 100ms ease-out, visibility 0s step-end,
+                translate 100ms ease-out var(--uc-dynamic-bookmarks-hide-delay) !important;
+  }
+  :root:not(:has(#urlbar[open], #PersonalToolbar[collapsed="true"])) {
+    &:has(#navigator-toolbox :is(#urlbar-input, .urlbar-input):hover,
+          #PersonalToolbar:hover,
+          #PersonalToolbar toolbarbutton[open]) findbar {
+      translate: 0 var(--uc-bookmarks-bar-height) !important;
+    }
+    &:has(#navigator-toolbox :is(#urlbar-input, .urlbar-input):hover) findbar:not([hidden]) {
+      transition-delay: 0s, 0s, 0s, var(--uc-dynamic-bookmarks-hover-delay) !important;
+    }
+    &:has(#PersonalToolbar:hover, #PersonalToolbar toolbarbutton[open]) findbar:not([hidden]) {
+      transition-delay: 0s !important;
+    }
+  }
+  :root:has(#urlbar[open]) findbar:not([hidden]) {
+    transition-delay: 0s !important;
+  }
+  @container style(--uc-dynamic-bookmarks-newtab: 1) {
+    :root:not(:has(#urlbar[open], #PersonalToolbar[collapsed="true"])):has(
+      #urlbar-input-container[pageproxystate="invalid"],
+      .urlbar-input-container[pageproxystate="invalid"]
+    ):has(#navigator-toolbox :is(#urlbar-input, .urlbar-input):placeholder-shown) findbar {
+      translate: 0 var(--uc-bookmarks-bar-height) !important;
+      &:not([hidden]) {
+        transition-delay: 0s !important;
+      }
+    }
+  }
+}
+
 .findbar-textbox {
   width: var(--textbox-width) !important;
   min-width: var(--textbox-min-width) !important;
@@ -4161,7 +4211,7 @@ notification-message {
 
 @container style(--uc-dynamic-bookmarks: 1) {
   #navigator-toolbox:not(:has(#urlbar[open])) {
-    &:has(#urlbar:hover) #PersonalToolbar,
+    &:has(#urlbar-input:hover, .urlbar-input:hover) #PersonalToolbar,
     & #PersonalToolbar:is(:hover, :has(toolbarbutton[open])) {
       max-height: var(--ut-bookmarks-height, var(--ut-bar-height, 40px)) !important;
       padding-block: 0 !important;
@@ -4349,15 +4399,12 @@ findbar {
 }
 
 /* FIND BAR BELOW THE FLOATING BOOKMARKS BAR
-   The floating bookmarks bar drops over the top of the page when it opens (and stays up on a fresh tab), and it
-   covered the find bar, which sits at the same top edge. So while the bookmarks bar floats (--uc-dynamic-bookmarks
-   is 1 and --ut-bookmarks-inflow is 0) the find bar starts below it: the bar's height plus the usual edge gap. A bar
-   that sits in the layout already pushes the page down, so nothing moves then. The gap stays when the bookmarks
-   bar is hidden: the find bar can't tell when it is open. */
-@container style(--uc-dynamic-bookmarks: 1) and style(--ut-bookmarks-inflow: 0) {
-  findbar {
-    top: calc(var(--ut-bookmarks-height, var(--ut-bar-height, 38px)) + var(--findbar-top)) !important;
-  }
+   FoxOne 4.0 moves the find bar down while the bookmarks bar is revealed, by --uc-bookmarks-bar-height (default
+   39px, which fits FoxOne's own bar). FoxMica's bar has another height: patch 32 sets the block padding to zero and
+   gives each item --ut-bookmarks-height (the bar height by default). So the setting follows that here, and FoxOne's
+   rules do the moving. (FoxMica's own offset for this, before 4.0, is gone.) */
+:root {
+  --uc-bookmarks-bar-height: var(--ut-bookmarks-height, var(--ut-bar-height, 38px));
 }
 
 /* ==========================================================================
@@ -4457,7 +4504,7 @@ findbar {
 
 /* ==========================================================================
    8. UNPINNED PUZZLE – the extension drawer follows the puzzle button
-   Meant to go to FoxOne. Only applies when the puzzle is NOT pinned to the corner
+   Offered to FoxOne (#71), declined: it stays here. Only applies when the puzzle is NOT pinned to the corner
    (--uc-extensions-button-right: 0) and the icons hide (--uc-hide-extension-icons: 1). With the puzzle pinned
    nothing here applies, and the burger anchors, the reserved space and the title-bar rules behave as before.
    Today, with the puzzle unpinned, the title-bar icons still hide but only the burger or an icon opens them.
@@ -4468,14 +4515,19 @@ findbar {
    the run. The run tucks away and slides out when the pointer rests on the puzzle, on one of its icons, or while an
    extension popup is open. Icons on the other side of the puzzle are not part of it.
    The side is a setting, --ut-drawer-side: left (the default) or right. It picks up from that side only, and slides
-   out on that side only, so the drawer never opens on both. Left is the side that keeps the puzzle under the pointer
-   in a bar that ends at the corner (the burger and the window buttons stay put, only what is before the puzzle
-   moves). Right suits a puzzle at the start of its icons, and moves the puzzle when the drawer opens.
+   out on that side only, so the drawer never opens on both. Point it toward the inside of the bar: left (the
+   default) when the puzzle is at the right end, right when it is at the left end. CSS can't tell which, so it is a
+   manual switch, and spacers on the bar can still shift things.
    It works in the nav bar and in the title bar (#TabsToolbar-customization-target), where Firefox puts an icon in
    whichever bar it was dragged to. In a PWAsForFirefox window that is the title bar, and the icons land after the
    puzzle (FoxMica #41). FoxOne's own title-bar rule only takes the trailing run of items, and the puzzle, a
    toolbarbutton, breaks it, so with the puzzle beside the burger nothing was picked up.
    ========================================================================== */
+/* The reveal conditions are flat on purpose: a :has() inside a :has() is not allowed by the spec, and inside :is() the
+   branch is silently dropped. So "an icon of the run is hovered" is written with sibling combinators from the bar
+   (hovered icon, then the puzzle later, with only icons between), not by reusing the run selector. "An extension popup
+   is open" is looser for the same reason: an open popup from any extension button in the bar opens the drawer and holds
+   it open, wherever that extension sits, not only one in the run. Harmless in practice. */
 @container style(--uc-extensions-button-right: 0) {
   @container style(--uc-hide-extension-icons: 1) {
 
@@ -4490,8 +4542,8 @@ findbar {
       }
       :root:root :is(#nav-bar, #TabsToolbar):is(
         :has(#unified-extensions-button:is(:hover, [open])),
-        :has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:where(:has(~ #unified-extensions-button):not(:has(~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, [hidden]) ~ #unified-extensions-button))):hover),
-        :has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:where(:has(~ #unified-extensions-button):not(:has(~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, [hidden]) ~ #unified-extensions-button))) [open])
+        :has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:hover ~ #unified-extensions-button):not(:has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:hover ~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, [hidden]) ~ #unified-extensions-button)),
+        :has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"] [open])
       ) :is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:where(:has(~ #unified-extensions-button):not(:has(~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, [hidden]) ~ #unified-extensions-button))) {
         max-width: 60px !important;
         opacity: 1 !important;
@@ -4511,8 +4563,8 @@ findbar {
       }
       :root:root :is(#nav-bar, #TabsToolbar):is(
         :has(#unified-extensions-button:is(:hover, [open])),
-        :has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:where(#unified-extensions-button ~ *):not(#unified-extensions-button ~ :not(toolbaritem[id$="-browser-action"], [hidden]) ~ *):hover),
-        :has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:where(#unified-extensions-button ~ *):not(#unified-extensions-button ~ :not(toolbaritem[id$="-browser-action"], [hidden]) ~ *) [open])
+        :has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > #unified-extensions-button ~ toolbaritem[id$="-browser-action"]:hover):not(:has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > #unified-extensions-button ~ :not(toolbaritem[id$="-browser-action"], [hidden]) ~ toolbaritem[id$="-browser-action"]:hover)),
+        :has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"] [open])
       ) :is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:where(#unified-extensions-button ~ *):not(#unified-extensions-button ~ :not(toolbaritem[id$="-browser-action"], [hidden]) ~ *) {
         max-width: 60px !important;
         opacity: 1 !important;
