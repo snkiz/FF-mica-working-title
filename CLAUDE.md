@@ -75,7 +75,7 @@ root is FoxMica's own version (`0.9.1`, 2026-10-21). Details and the patch forma
   find bar its own way (#70): patch 44 only sets `--uc-bookmarks-bar-height` to FoxMica's bar height. Patch 48 is the whole
   puzzle drawer (one side of the puzzle, `--ut-drawer-side`, flat selectors, popups from any extension open it); FoxOne
   declined it (PR #72), it stays here. Caution: in StockMica+ leave `--uc-extensions-button-right` at 0 (1 pins the drawer
-  to the title-bar corner, not the puzzle). Patch 26 is still needed. Next: FirefoxCSS Store submission (#30).
+  to the title-bar corner, not the puzzle). Patch 26 is still needed. Submitted to the FirefoxCSS Store (FirefoxCSS-Store issue #432, open a few weeks for input; FoxMica #30 closed). FoxOne keeps the puzzle switch for us (#73). Open: FoxOne 4.0.1 pull (bookmarks-bar bug, FoxOne #74) and the StockMica+ URL-bar overhang (TODO).
 - **Road to 1.0:** a full test pass of every mode with screenshots
   (four views: the three modes and PWA windows), then the FirefoxCSS Store submission (#30). The five-colour palette (#26)
   is after 1.0. ESR 153: #37 (URL bar widening, patch 49) and #38 (tab text, `foxmica-tabs.css`) were fixed 2026-10-24 and tested on ESR 153; it needs a full test pass before it counts as supported. Upstream ideas for Firn after a few days with 0.9.1 are in TODO.md. Open: td40 (FoxOne accent vs dynamic

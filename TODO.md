@@ -17,7 +17,7 @@ where they disagree.
 
 ## Next time
 
-- **FoxOne #73 (4.1 option cleanup, input open until 2026-11-08).** Our positions are drafted in the private notes (issue-drafts).
+- **FoxOne #73 (4.1 option cleanup, input open until 2026-11-08).** Firn is keeping the puzzle switch (`--uc-extensions-button-right`) for us. Our positions are drafted in the private notes (issue-drafts).
   If FoxOne removes `--uc-extensions-button-right`, StockMica+ and PWA windows need it, so FoxMica carries its own copy. If
   it removes `--uc-show-all-tabs-button`, the all-tabs button stays wherever Firefox puts it, in every mode: drop the setting
   from `foxmica-config.css` and `micaplus-config.css`. If it removes hide-disabled-nav, FoxMica carries `--ut-hide-disabled-nav`.
@@ -33,6 +33,14 @@ where they disagree.
   table now.)
 
 ## First bug-fix pass
+
+- **Noted 2026-10-25, not started:**
+  - FoxOne 4.0.1 is out: a small bookmarks-bar bug ([FoxOne #74](https://github.com/Firnschnee/FoxOne/issues/74)). Pull it
+    (`node scripts/pull-foxone.mjs 4.0.1`, assemble, check) and look at the bookmarks bar in StockMica+ and FoxOne-Mica,
+    since patch 32 (bar height, reveal rules) copies FoxOne's reveal selectors.
+  - StockMica+: the URL bar's inner part ("the gut") hangs out of the field. Screenshot saved in the private notes
+    (`issue-drafts\micaplus-urlbar-guts-2026-10-25.png`, URL text selected, Nightly). To do: reproduce, find which
+    element sticks out (Browser Toolbox), then draft a FoxMica issue.
 
 - [#40] Customize mode: a large gap shows on the left and the new-tab button pins to the end of the tab bar (stock Firefox
   does it too). Cause not traced; guess: a spacer (FoxOne hides `.titlebar-spacer`). Check with the Browser Toolbox in
