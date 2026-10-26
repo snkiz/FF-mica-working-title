@@ -1,6 +1,6 @@
 /* ==========================================================================
    8. UNPINNED PUZZLE – the extension drawer follows the puzzle button
-   Meant to go to FoxOne. Only applies when the puzzle is NOT pinned to the corner
+   Offered to FoxOne (#71), declined: it stays here. Only applies when the puzzle is NOT pinned to the corner
    (--uc-extensions-button-right: 0) and the icons hide (--uc-hide-extension-icons: 1). With the puzzle pinned
    nothing here applies, and the burger anchors, the reserved space and the title-bar rules behave as before.
    Today, with the puzzle unpinned, the title-bar icons still hide but only the burger or an icon opens them.
@@ -11,14 +11,19 @@
    the run. The run tucks away and slides out when the pointer rests on the puzzle, on one of its icons, or while an
    extension popup is open. Icons on the other side of the puzzle are not part of it.
    The side is a setting, --ut-drawer-side: left (the default) or right. It picks up from that side only, and slides
-   out on that side only, so the drawer never opens on both. Left is the side that keeps the puzzle under the pointer
-   in a bar that ends at the corner (the burger and the window buttons stay put, only what is before the puzzle
-   moves). Right suits a puzzle at the start of its icons, and moves the puzzle when the drawer opens.
+   out on that side only, so the drawer never opens on both. Point it toward the inside of the bar: left (the
+   default) when the puzzle is at the right end, right when it is at the left end. CSS can't tell which, so it is a
+   manual switch, and spacers on the bar can still shift things.
    It works in the nav bar and in the title bar (#TabsToolbar-customization-target), where Firefox puts an icon in
    whichever bar it was dragged to. In a PWAsForFirefox window that is the title bar, and the icons land after the
    puzzle (FoxMica #41). FoxOne's own title-bar rule only takes the trailing run of items, and the puzzle, a
    toolbarbutton, breaks it, so with the puzzle beside the burger nothing was picked up.
    ========================================================================== */
+/* The reveal conditions are flat on purpose: a :has() inside a :has() is not allowed by the spec, and inside :is() the
+   branch is silently dropped. So "an icon of the run is hovered" is written with sibling combinators from the bar
+   (hovered icon, then the puzzle later, with only icons between), not by reusing the run selector. "An extension popup
+   is open" is looser for the same reason: an open popup from any extension button in the bar opens the drawer and holds
+   it open, wherever that extension sits, not only one in the run. Harmless in practice. */
 @container style(--uc-extensions-button-right: 0) {
   @container style(--uc-hide-extension-icons: 1) {
 
@@ -33,8 +38,8 @@
       }
       :root:root :is(#nav-bar, #TabsToolbar):is(
         :has(#unified-extensions-button:is(:hover, [open])),
-        :has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:where(:has(~ #unified-extensions-button):not(:has(~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, [hidden]) ~ #unified-extensions-button))):hover),
-        :has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:where(:has(~ #unified-extensions-button):not(:has(~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, [hidden]) ~ #unified-extensions-button))) [open])
+        :has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:hover ~ #unified-extensions-button):not(:has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:hover ~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, [hidden]) ~ #unified-extensions-button)),
+        :has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"] [open])
       ) :is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:where(:has(~ #unified-extensions-button):not(:has(~ :not(toolbaritem[id$="-browser-action"], #unified-extensions-button, [hidden]) ~ #unified-extensions-button))) {
         max-width: 60px !important;
         opacity: 1 !important;
@@ -54,8 +59,8 @@
       }
       :root:root :is(#nav-bar, #TabsToolbar):is(
         :has(#unified-extensions-button:is(:hover, [open])),
-        :has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:where(#unified-extensions-button ~ *):not(#unified-extensions-button ~ :not(toolbaritem[id$="-browser-action"], [hidden]) ~ *):hover),
-        :has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:where(#unified-extensions-button ~ *):not(#unified-extensions-button ~ :not(toolbaritem[id$="-browser-action"], [hidden]) ~ *) [open])
+        :has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > #unified-extensions-button ~ toolbaritem[id$="-browser-action"]:hover):not(:has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > #unified-extensions-button ~ :not(toolbaritem[id$="-browser-action"], [hidden]) ~ toolbaritem[id$="-browser-action"]:hover)),
+        :has(:is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"] [open])
       ) :is(#nav-bar-customization-target, #TabsToolbar-customization-target) > toolbaritem[id$="-browser-action"]:where(#unified-extensions-button ~ *):not(#unified-extensions-button ~ :not(toolbaritem[id$="-browser-action"], [hidden]) ~ *) {
         max-width: 60px !important;
         opacity: 1 !important;
