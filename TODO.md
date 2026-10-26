@@ -17,6 +17,11 @@ where they disagree.
 
 ## Next time
 
+- **FoxOne #73 (4.1 option cleanup, input open until 2026-11-08).** Our positions are drafted in the private notes (issue-drafts).
+  If FoxOne removes `--uc-extensions-button-right`, StockMica+ and PWA windows need it, so FoxMica carries its own copy. If
+  it removes `--uc-show-all-tabs-button`, the all-tabs button stays wherever Firefox puts it, in every mode: drop the setting
+  from `foxmica-config.css` and `micaplus-config.css`. If it removes hide-disabled-nav, FoxMica carries `--ut-hide-disabled-nav`.
+  Our puzzle drawer (patch 48) stays in FoxMica; FoxOne declined it (PR #72).
 - **td40. FoxOne accent does not follow dynamic themes.** Seen 2026-10-18 while doing the selected-tab edge: with
   FoxOne, every theme (store themes too) gets FoxOne's accent on the tab edge, tab text and puzzle piece, not the
   theme's own colour. FoxOne's comment on that block says it is deliberate ("always applied, including under a
@@ -141,6 +146,10 @@ where they disagree.
 - #41 fixed (2026-10-25): patch 48 is the whole drawer now (patch 50 folded in): the run of extension icons touching the
   puzzle, nav bar or title bar, one side only, set by `--ut-drawer-side` (left by default, `right` for a PWA window).
   Tested on ESR 153 in a PWA window and in both modes of a regular window. Gated on the puzzle being unpinned.
+- 1.0 (2026-10-25) on FoxOne 4.0: FoxOne took our URL-bar fix (#69) and made the find-bar fix its own way (#70, same setting name
+  `--uc-bookmarks-bar-height`); patch 49 is gone and patch 44 only maps the setting to FoxMica's bar height. Patch 32's reveal
+  trigger follows FoxOne's URL-text trigger (it still used `#urlbar:hover`). Patch 48's reveal was flattened (no `:has()` in
+  `:has()`, Firn's catch). Submission to the FirefoxCSS Store (#30) next.
 - Closed or checked off 2026-10-24: #21 (refactor: five files, FoxOne untouched in vendor/, our changes in patches/, tooling in
   scripts/; still an idea, not tracked: trim the very long comments), #22 and td12 (ESR 153 backport), #24 and td8
   (StockMica+), #27 and td13 (tab-drag test), #29 and td20 (dwm resize hack with Mica), #5 with td29 and td1 (bookmarks bar

@@ -24,7 +24,7 @@ get things done, not to have Claude do it for me (boilerplate aside).
 FoxOne's one-line UI (tabs and URL bar in one row), with Windows 11 Explorer-style
 tabs. Repo: https://github.com/snkiz/FoxMica (public, MIT). Local: Documents\GitHub\FoxMica.
 
-- Built on FoxOne by Firnschnee (vendored unmodified, currently 3.9.10).
+- Built on FoxOne by Firnschnee (vendored unmodified, currently 4.0).
 - Mica rules come from Wintego's Firefox-transparent-theme (written for FoxOne 3.5).
 - The look is matched by eye to Explorer with Windhawk's Explorer Styler "MicaBar" theme.
 
@@ -71,12 +71,11 @@ root is FoxMica's own version (`0.9.1`, 2026-10-21). Details and the patch forma
   (title-bar icons hide only while the puzzle is pinned), 48 (drawer that follows an unpinned puzzle). Puzzle colour
   lives in `foxmica-tabs.css` (every mode). Pinstripe default: off in modes 1 and 2, on in mode 3. PWAsForFirefox windows
   work in StockMica+ (0.9.2 no longer needs the puzzle pinned for that). Earlier 0.8 "Brick by Brick" did the five-file refactor (#21).
-- **0.9.2 "Take your extensions with you" (2026-10-25, point release):** FoxOne 3.9.10 pulled (only `10-strip-config.patch` changed). Patch 48
-  is now the whole puzzle drawer (patch 50 folded in): the run of extension icons touching the puzzle on one side, in the
-  nav bar or title bar, set by `--ut-drawer-side` (`left` default, `right` for a PWA window); #41 fixed, tested on ESR 153.
-  `42-delays.css` adds 100ms to the bookmarks-bar hide delay (150ms by default). Patch 26 is still needed (FoxOne's
-  `--uc-row-height` defaults to Firefox's tab-strip height, not our bar height). PWA windows now work unpinned: leave
-  `--uc-extensions-button-right` at 0 in StockMica+. Released as 0.9.2 "Take your extensions with you"; `VERSION` is `0.9.2`.
+- **1.0 (2026-10-25)** on FoxOne 4.0; `VERSION` is `1.0`. FoxOne 4.0 took our URL-bar fix (#69, patch 49 is gone) and did the
+  find bar its own way (#70): patch 44 only sets `--uc-bookmarks-bar-height` to FoxMica's bar height. Patch 48 is the whole
+  puzzle drawer (one side of the puzzle, `--ut-drawer-side`, flat selectors, popups from any extension open it); FoxOne
+  declined it (PR #72), it stays here. Caution: in StockMica+ leave `--uc-extensions-button-right` at 0 (1 pins the drawer
+  to the title-bar corner, not the puzzle). Patch 26 is still needed. Next: FirefoxCSS Store submission (#30).
 - **Road to 1.0:** a full test pass of every mode with screenshots
   (four views: the three modes and PWA windows), then the FirefoxCSS Store submission (#30). The five-colour palette (#26)
   is after 1.0. ESR 153: #37 (URL bar widening, patch 49) and #38 (tab text, `foxmica-tabs.css`) were fixed 2026-10-24 and tested on ESR 153; it needs a full test pass before it counts as supported. Upstream ideas for Firn after a few days with 0.9.1 are in TODO.md. Open: td40 (FoxOne accent vs dynamic
@@ -150,6 +149,14 @@ root is FoxMica's own version (`0.9.1`, 2026-10-21). Details and the patch forma
 - Laptop is NVIDIA Optimus. Mica flicker has been driver trouble before; rule that
   out before blaming CSS. A flash on every hover (2026-10-17) went away after restarting
   Explorer (the Windows desktop shell), so try that too.
+
+## Upstream commits and PRs to FoxOne
+
+Each commit stands alone: the variable, its row in FoxOne's `docs/customisation.md` (its check fails on a CONFIG variable
+that isn't listed there) and the fix go in the same commit, one issue per commit. Run FoxOne's check on every commit
+before pushing. After pasting an edit into FoxOne's file, check the brace count; a FIND block ends on the line that
+gets replaced, so the last line of the FIND must not be left behind. A slip after a push can be squashed into the commit
+it belongs to before the PR goes up. The edits are written out in `foxone-pr-edits.md` in the private notes repo.
 
 ## Public repo
 
