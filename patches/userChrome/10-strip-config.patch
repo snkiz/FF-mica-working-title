@@ -193,6 +193,13 @@
    * --uc-dynamic-bookmarks is 0. */
   --uc-dynamic-bookmarks-newtab: 1;
 
+  /* Height of the revealed bookmarks bar (its items plus 6px padding top and
+   * bottom). While the bar is open, the find bar moves down by this much so
+   * the bar doesn't cover it. CSS can't measure the bar, so adjust it if your
+   * density or font size changes its height. Ignored while
+   * --uc-dynamic-bookmarks is 0. */
+  --uc-bookmarks-bar-height: 39px;
+
 }
 =======
 /* ==========================================================================
