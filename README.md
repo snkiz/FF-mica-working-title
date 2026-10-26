@@ -2,7 +2,7 @@
 
 A Firefox theme for Windows 11: the real Mica backdrop and Explorer-style tabs, in three flavours. Pick the one that suits you, or just use the tabs. Built on [FoxOne](https://github.com/Firnschnee/FoxOne) by Firnschnee.
 
-> **Work in progress.** Tested mainly on Firefox Nightly on Windows 11, with the Nova redesign on (the default) and off. ESR 153 works too: the two bugs found there are fixed, but it hasn't had a full test pass yet. Versions in between have not been tried extensively.
+> **Work in progress.** It will always be a work in progress. Tested mainly on Firefox Nightly on Windows 11, with the Nova redesign on (the default) and off. ESR 153 Now officaly supported upstream as well. Versions in between have not been tried extensively. 
 
 ![FoxMica on Firefox Nightly, Windows 11](assets/Screenshot-main.png)
 
