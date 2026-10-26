@@ -5,13 +5,12 @@ this file is cleared for the next version. Older versions live in their GitHub r
 
 The settings and each flavour are documented in [docs/](https://github.com/snkiz/FoxMica/tree/main/docs) on GitHub. The folder is left out of the release zip.
 
-## 0.9.2 "Take your extensions with you", built on FoxOne 3.9.10
+## 1.0, built on FoxOne 4.0
 
 ### Fixed
 
-- **ESR 153: the URL bar widens while you type again** ([#37](https://github.com/snkiz/FoxMica/issues/37)).
-  `patches/userChrome/49-esr153-urlbar-widen.patch` makes FoxOne's two widening rules match `#urlbar[open]` as well as
-  `.urlbarView:popover-open`, which doesn't exist before Firefox 157. A new tab still stays narrow until you click.
+- **ESR 153: the URL bar widens while you type again** ([#37](https://github.com/snkiz/FoxMica/issues/37)). FoxOne 4.0
+  took our fix ([FoxOne #69](https://github.com/Firnschnee/FoxOne/issues/69)), so `patches/userChrome/49-esr153-urlbar-widen.patch` is gone.
 - **ESR 153: the selected tab's text is no longer accent-coloured** ([#38](https://github.com/snkiz/FoxMica/issues/38)).
   `foxmica-tabs.css` now also sets `--tab-selected-textcolor` on the selected tab, the name older Firefox reads.
 - **StockMica+: the extension drawer works in PWAsForFirefox windows** ([#41](https://github.com/snkiz/FoxMica/issues/41)).
@@ -21,11 +20,13 @@ The settings and each flavour are documented in [docs/](https://github.com/snkiz
 ### Changed
 
 - **New setting `--ut-drawer-side` (`left` or `right`, default `left`; in `micaplus-config.css`).** It picks which side of
-  the puzzle button the drawer picks icons up from and opens on. Only that side is read, so it never opens both ways and
-  the puzzle no longer moves. In a PWA window the icons land after the puzzle, so set `right` there.
+  the puzzle button the drawer picks icons up from and opens on. Only that side is read, so it never opens both ways.
+  Point it toward the inside of the bar: `left` when the puzzle is at the right end, `right` when it is at the left end.
   `patches/userChrome/48-unpinned-puzzle-drawer.css` now holds the whole drawer.
-- **Built on FoxOne 3.9.10** ("Aim for the text"). The bookmarks bar reveals only while the pointer rests on the URL text,
-  not on the shield or star beside it. `10-strip-config.patch` follows the new hide-delay default (150ms).
+- **Built on FoxOne 4.0** ("Back on ESR"). The bookmarks bar reveals only while the pointer rests on the URL text, not on
+  the shield or star beside it, and waits 150ms before hiding. The find bar now moves down only while the bookmarks bar
+  is revealed, FoxOne's own way ([FoxOne #70](https://github.com/Firnschnee/FoxOne/issues/70)), so FoxMica's static offset is gone: `44-findbar.css` just sets
+  `--uc-bookmarks-bar-height` to FoxMica's own bar height. `32-bookmarks-height.css` follows the new reveal trigger.
 - **StockMica+: the URL field has more room above and below it.** New setting `--ut-urlbar-padding` (default: follows
   `--ut-bar-padding`, 2px; `micaplus-config.css` sets 4px). It only affects the field, not the tabs.
 - **Vertical tabs: the tab list is no longer forced to one bar height by `foxmica-tabs.css`** (a first step for

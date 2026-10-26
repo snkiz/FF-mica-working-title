@@ -16,8 +16,8 @@ To turn it on, open `userChrome.css`, comment out the `foxmica-config.css` impor
 | Setting | StockMica+ default | What it does |
 | --- | --- | --- |
 | `--ut-one-line` | `0` | `0` = Firefox's two rows. `1` = FoxOne's one-line bar. |
-| `--uc-extensions-button-right` | `0` | The puzzle button isn't pinned to the corner. The run of extension icons touching it on its left is a drawer that opens when you hover the puzzle. `1` pins it like FoxOne-Mica. |
-| `--ut-drawer-side` | `left` | Which side of the puzzle button the drawer picks icons up from and opens on: `left` or `right`. Only that side counts, so it never opens both ways. `left` keeps the puzzle under the pointer; `right` moves it. |
+| `--uc-extensions-button-right` | `0` | The puzzle button isn't pinned to the corner. The run of extension icons touching it, on the side `--ut-drawer-side` sets, is a drawer that opens when you hover the puzzle. **Caution: leave it at `0`.** `1` doesn't move the puzzle here (Firefox keeps it in the nav bar), but it pins the drawer to the corner: the title-bar icons collapse to nothing in the title bar corner and are picked up from there, not from the puzzle. |
+| `--ut-drawer-side` | `left` | Which side of the puzzle button the drawer picks icons up from and opens on: `left` or `right`. Only that side counts, so it never opens both ways. Point it toward the inside of the bar: `left` (the default) when the puzzle is at the right end, `right` when it is at the left end. It's a manual switch: spacers on the bar can still shift things. |
 | `--uc-hide-extension-icons` | `1` | Only extension icons tuck away. Firefox's own buttons stay visible. |
 | `--ut-drag-left`, `--uc-drag-space` | `16px`, `18px` | Window-drag areas left of the tabs and after them. |
 | `--ut-findbar-left` | `1` | Floating find bar on the left. |
@@ -29,4 +29,4 @@ To turn it on, open `userChrome.css`, comment out the `foxmica-config.css` impor
 | `--uc-show-all-tabs-button` | `1` | Show the all-tabs button. |
 | `--ut-urlbar-fill`, `--ut-urlbar-fill-focus` | translucent white | Fill of the URL field, a little lighter than the bar. Not in the file by default; add them to change it. |
 
-**PWAsForFirefox:** StockMica+ is tested in [PWAsForFirefox](https://github.com/filips123/PWAsForFirefox) windows. Their extension icons live in the title bar. Leave `--uc-extensions-button-right` at `0`: the drawer is whichever icons touch the puzzle button, in the title bar as in the nav bar. Icons dropped beside the puzzle land after it, so set `--ut-drawer-side: right` to pick them up.
+**PWAsForFirefox:** StockMica+ is tested in [PWAsForFirefox](https://github.com/filips123/PWAsForFirefox) windows. Their extension icons live in the title bar. Leave `--uc-extensions-button-right` at `0`: the drawer is whichever icons touch the puzzle button, in the title bar as in the nav bar. Icons dropped in the title bar land after the puzzle: drag them to its left to use the default (`left`), which opens toward the inside of the bar, or set `--ut-drawer-side: right` to pick up the ones after it.

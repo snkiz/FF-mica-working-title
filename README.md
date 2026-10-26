@@ -34,12 +34,12 @@ Firefox's own two rows (tabs above, URL bar below) with the same Mica look and p
 
 Just the Explorer-style tabs, on regular Firefox or under another theme, and nothing else. The colours follow whatever theme is in use. To turn it on, comment out every `@import` above `foxmica-tabs.css` in `userChrome.css`; only `userChrome.css` and `foxmica-tabs.css` are needed. [More about the tabs](https://github.com/snkiz/FoxMica/blob/main/docs/oem-tabs.md).
 
-## New in 0.9.2
+## New in 1.0
 
-- **ESR 153 works better.** The URL bar widens while you type again and the selected tab's text has the right colour.
+- **ESR 153 works.** The URL bar widens while you type again and the selected tab's text has the right colour. FoxOne 4.0 took the URL fix.
 - **The extension drawer works in PWAsForFirefox windows**, and a new setting (`--ut-drawer-side`) picks which side of the puzzle button it opens on.
 - **StockMica+ has more room around the URL field**, and the vertical tab list is no longer forced to one bar height.
-- **Built on FoxOne 3.9.10**, so the bookmarks bar reveals only when the pointer rests on the URL text.
+- **Built on FoxOne 4.0**: the bookmarks bar reveals only when the pointer rests on the URL text, and the find bar moves down out of its way only while it is open.
 
 The full list is in [CHANGELOG.md](CHANGELOG.md) old versions on the tag. It's a live file.
 
@@ -114,7 +114,7 @@ FoxMica dev does not have a Mac. If you would like to see FoxMica on Mac, it doe
 
 ## Credits
 
-- [FoxOne](https://github.com/Firnschnee/FoxOne) by Firnschnee (MIT). `foxone-mica.css` and `userContent.css` are built from FoxOne 3.9.10, kept exactly as released in `vendor/`, plus FoxMica's changes in `patches/`. FoxOne in turn credits [LittleFox](https://github.com/biglavis/LittleFox) and [Cascade](https://github.com/andreasgrafen/cascade).
+- [FoxOne](https://github.com/Firnschnee/FoxOne) by Firnschnee (MIT). `foxone-mica.css` and `userContent.css` are built from FoxOne 4.0, kept exactly as released in `vendor/`, plus FoxMica's changes in `patches/`. FoxOne in turn credits [LittleFox](https://github.com/biglavis/LittleFox) and [Cascade](https://github.com/andreasgrafen/cascade).
 - The extension drawer in `patches/userChrome/48-unpinned-puzzle-drawer.css` reuses FoxOne's "unbroken run" pattern for tucking away extension icons.
 - The Mica rules in `patches/userChrome/22-mica.css` are derived from [Wintego's Firefox-transparent-theme](https://github.com/Wintego/Firefox-transparent-theme).
 - The look was matched by eye against Windows 11 Explorer and the MicaBar theme of Windhawk's [Windows 11 File Explorer Styler](https://windhawk.net/mods/windows-11-file-explorer-styler) mod (Windhawk is by [m417z](https://github.com/m417z)). No code from that project was used.
