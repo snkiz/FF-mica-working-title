@@ -24,7 +24,11 @@
 @container style(--uc-dynamic-bookmarks: 1) {
   #navigator-toolbox:not(:has(#urlbar[open])) {
     &:has(#urlbar-input:hover, .urlbar-input:hover) #PersonalToolbar,
-    & #PersonalToolbar:is(:hover, :has(toolbarbutton[open])) {
+    & #PersonalToolbar:is(:hover, :has(toolbarbutton[open])),
+    :root:has(#placesContext:hover):not(:has(
+      #PanelUI-menu-button[open], #bookmarks-menu-button[open],
+      #library-button[open], #bookmarksMenu[open]
+    )) & #PersonalToolbar {
       max-height: var(--ut-bookmarks-height, var(--ut-bar-height, 40px)) !important;
       padding-block: 0 !important;
     }
