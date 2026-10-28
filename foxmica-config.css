@@ -179,6 +179,14 @@
   --ut-bookmarks-bg: light-dark(rgb(247 247 247 / 85%), rgb(52 52 52 / 78%));   /* Colour of the floating bookmarks
                                         bar (overlay mode). The last number is how solid it is; lower lets the page
                                         show through more. These values are the built-in default. */
+  --ut-sidebar-strip: 36px;             /* Overlay bookmarks bar, horizontal tabs: how far the bar steps in from the
+                                        window edge so it doesn't cover the collapsed sidebar's icons. A fixed
+                                        number, because CSS can't read the strip's real width: if the bar starts
+                                        early or late, measure the strip and change this. Ignored while the
+                                        sidebar is hidden. */
+  --ut-sidebar-strip-vertical: 48px;    /* The same for vertical tabs with the sidebar set to "expand on hover".
+                                        With vertical tabs any other way the bar stays hidden, because the strip is
+                                        as wide as it was dragged. */
   
 
   /* ========================================================================
