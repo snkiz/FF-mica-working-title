@@ -1,0 +1,69 @@
+/* ==========================================================================
+   5e. BOOKMARKS BAR AND THE SIDEBAR (overlay mode only)
+   FoxOne's floating bookmarks bar spans the whole window, so it covers the
+   sidebar launcher's icons. This steps it aside. CSS can't read the sidebar's
+   live width: the sidebar sits outside the toolbox, and Firefox refuses to
+   anchor the bar to anything out there. So the offsets are fixed settings
+   (--ut-sidebar-strip and --ut-sidebar-strip-vertical in foxmica-config.css).
+   In-flow mode (--ut-bookmarks-inflow: 1) is not touched: that bar stays in
+   the toolbox flow and never covers the sidebar.
+
+   The four cases:
+     1. Horizontal tabs, collapsed strip showing: the bar starts after the
+        strip. With the sidebar hidden there is no strip, so the bar keeps
+        its full width.
+     2. Vertical tabs with "expand on hover": the strip stays narrow, so it
+        gets its own offset. The bar hides while the floating launcher is out.
+     3. Vertical tabs any other way: the strip is as wide as it was dragged,
+        which CSS can't read, so the bar stays hidden.
+     4. Sidebar panel open, with any tabs: no room, so the bar stays hidden.
+   With the sidebar on the right (:root[sidebar-positionend]) the same offsets
+   count from the right edge.
+   ========================================================================== */
+
+@container style(--uc-dynamic-bookmarks: 1) and style(--ut-bookmarks-inflow: 0) {
+
+  /* 1. Horizontal tabs, collapsed strip showing. */
+  :root:root:has(#sidebar-container:not([hidden])):not(
+    :has(#tabbrowser-tabs[orient="vertical"])
+  ) #navigator-toolbox #PersonalToolbar {
+    width: auto !important;
+    left: var(--ut-sidebar-strip, 36px) !important;
+    right: 0 !important;
+  }
+  :root:root[sidebar-positionend]:has(#sidebar-container:not([hidden])):not(
+    :has(#tabbrowser-tabs[orient="vertical"])
+  ) #navigator-toolbox #PersonalToolbar {
+    left: 0 !important;
+    right: var(--ut-sidebar-strip, 36px) !important;
+  }
+
+  /* 2. Vertical tabs with "expand on hover". The pref is used here, not the root attribute, because Firefox
+        removes that attribute for a moment in some cases. */
+  @media -moz-pref("sidebar.visibility", "expand-on-hover") {
+    :root:root:has(#tabbrowser-tabs[orient="vertical"]) #navigator-toolbox #PersonalToolbar {
+      width: auto !important;
+      left: var(--ut-sidebar-strip-vertical, 48px) !important;
+      right: 0 !important;
+    }
+    :root:root[sidebar-positionend]:has(#tabbrowser-tabs[orient="vertical"]) #navigator-toolbox #PersonalToolbar {
+      left: 0 !important;
+      right: var(--ut-sidebar-strip-vertical, 48px) !important;
+    }
+    :root:has(#sidebar-container[sidebar-launcher-expanded]) #PersonalToolbar {
+      display: none !important;
+    }
+  }
+
+  /* 3. Vertical tabs any other way. */
+  @media not -moz-pref("sidebar.visibility", "expand-on-hover") {
+    :root:has(#tabbrowser-tabs[orient="vertical"]) #PersonalToolbar {
+      display: none !important;
+    }
+  }
+
+  /* 4. Sidebar panel open, with any tabs. */
+  :root:has(#tabbrowser-tabbox[sidebar-panel-open]) #PersonalToolbar {
+    display: none !important;
+  }
+}
