@@ -1,0 +1,22 @@
+/* ==========================================================================
+   6a. LAUNCHER FLYOUT COLOURS
+   With vertical tabs and the sidebar set to "expand on hover", the launcher
+   floats over the page. Firefox paints that flyout with its toolbox gradient
+   (violet to orange, half transparent) over the toolbox colour, and falls back
+   to a plain grey when the toolbox colour is transparent, which it is under
+   Mica (patch 22). On ESR 153 that same transparency leaves the flyout with
+   no background at all, and FoxOne alone is fine there. The gradient part
+   below shows on newer Firefox (seen on 160). FoxOne pins the toolbox colour,
+   but its override of the gradient is spelled --toolbox-background-color-gradient-leading, and Firefox's
+   tokens are --toolbox-background-gradient-leading and -trailing, so the
+   gradient survives and the flyout sits off the palette.
+   The flyout floats over page pixels, so it needs a solid colour, like the
+   other floating surfaces (patch 30). This sets it to the palette base, on the
+   flyout only, so the Mica toolbox is untouched. A dynamic theme keeps its own.
+   ========================================================================== */
+
+:root:not([lwtheme]) #sidebar-container[sidebar-launcher-expanded] {
+  background-image: none !important;
+  background-color: var(--uc-color-base) !important;
+  color: var(--uc-color-text) !important;
+}
