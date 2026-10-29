@@ -28,7 +28,7 @@
     top: auto !important;
     transform: none !important;
     overflow: hidden !important;
-    max-height: 2px !important;
+    max-height: 0 !important;
     padding-block: 0 !important;
     opacity: 0 !important;
     transition:
@@ -37,16 +37,36 @@
       opacity 150ms ease-out var(--uc-dynamic-bookmarks-hide-delay) !important;
   }
 
-  /* Revealed: hover anywhere in the top row, or on the bar / an open folder.
-     Never while the URL-bar results list is open. */
-  #navigator-toolbox:not(:has(#urlbar[open])):hover #PersonalToolbar:not(:has(toolbarpaletteitem)),
-  #navigator-toolbox:not(:has(#urlbar[open])) #PersonalToolbar:is(:hover, :has(toolbarbutton[open])) {
-    max-height: 4em !important;
-    padding-block: 6px !important;
-    opacity: 1 !important;
-    transition-delay:
-      var(--uc-dynamic-bookmarks-hover-delay),
-      var(--uc-dynamic-bookmarks-hover-delay),
-      var(--uc-dynamic-bookmarks-hover-delay) !important;
+  /* Revealed by the same triggers as the floating bar (FoxOne 4.0's rules, see 5d in 32-bookmarks-height.css): the
+     pointer resting on the URL text, on the bar, on an open folder or its right-click menu, and on a fresh tab. Not
+     the whole toolbar, which is what made the bar grow when the toolbar was hovered. Never while the URL-bar results
+     list is open. It grows to the same height the floating bar has, with no extra padding. */
+  #navigator-toolbox:not(:has(#urlbar[open])) {
+    &:has(#urlbar-input:hover, .urlbar-input:hover, #star-button-box:hover) #PersonalToolbar:not(:has(toolbarpaletteitem)),
+    & #PersonalToolbar:not(:has(toolbarpaletteitem)):is(:hover, :has(toolbarbutton[open])),
+    :root:has(#placesContext:hover):not(:has(
+      #PanelUI-menu-button[open], #bookmarks-menu-button[open],
+      #library-button[open], #bookmarksMenu[open]
+    )) & #PersonalToolbar:not(:has(toolbarpaletteitem)) {
+      max-height: var(--ut-bookmarks-height, var(--ut-bar-height, 40px)) !important;
+      padding-block: 0 !important;
+      opacity: 1 !important;
+      transition-delay:
+        var(--uc-dynamic-bookmarks-hover-delay),
+        var(--uc-dynamic-bookmarks-hover-delay),
+        var(--uc-dynamic-bookmarks-hover-delay) !important;
+    }
+  }
+
+  @container style(--uc-dynamic-bookmarks-newtab: 1) {
+    #navigator-toolbox:not(:has(#urlbar[open])):has(
+      #urlbar-input-container[pageproxystate="invalid"],
+      .urlbar-input-container[pageproxystate="invalid"]
+    ):has(#urlbar-input:placeholder-shown, .urlbar-input:placeholder-shown)
+      #PersonalToolbar:not(:has(toolbarpaletteitem)) {
+      max-height: var(--ut-bookmarks-height, var(--ut-bar-height, 40px)) !important;
+      padding-block: 0 !important;
+      opacity: 1 !important;
+    }
   }
 }
