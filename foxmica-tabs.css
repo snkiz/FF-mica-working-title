@@ -35,7 +35,7 @@
    ========================================================================== */
 /* ---- Tab shape: top-only rounding, filled selected tab, flat inactive ---- */
 
-:root .tab-background {
+:root :where(#tabbrowser-tabs:not([orient="vertical"])) .tab-background {
   border-radius: var(--ut-tab-radius, 6px) var(--ut-tab-radius, 6px) 0 0 !important;
   margin-block: var(--ut-tab-top-gap, 2px) 0 !important;
   margin-inline: 0 !important;
@@ -45,33 +45,37 @@
 }
 
 /* Inactive: no fill, no border, no outline, no shadow, just the strip */
-:root .tabbrowser-tab:not([selected], [multiselected]) .tab-background {
+:root :where(#tabbrowser-tabs:not([orient="vertical"])) .tabbrowser-tab:not([selected], [multiselected]) .tab-background {
   background-color: transparent !important;
   background-image: none !important;
   outline: none !important;
   box-shadow: none !important;
 }
 
-:root .tabbrowser-tab:not([selected], [multiselected]):hover .tab-background {
+:root :where(#tabbrowser-tabs:not([orient="vertical"])) .tabbrowser-tab:not([selected], [multiselected]):hover .tab-background {
   background-color: var(--ut-tab-hover-bg, light-dark(rgb(255 255 255 / 30%), rgb(0 0 0 / 12%))) !important;
 }
 
-:root:root:root .tabbrowser-tab:is([selected], [multiselected]) .tab-background {
+:root:root:root :where(#tabbrowser-tabs:not([orient="vertical"])) .tabbrowser-tab:is([selected], [multiselected]) .tab-background {
   background-color: var(--ut-layer, light-dark(rgb(255 255 255 / 55%), rgb(0 0 0 / 25%))) !important;
 }
 
 /* Themes other than Firefox's own default, light and dark draw the selected tab's edge as an outline, and an outline
    can't skip one side. Swap it for the 1px border Nova gives every tab, which has no bottom edge (set above). Firefox's
    own themes are left alone: Nova draws their edge itself (a gradient), and the switch above works on it as it is. */
-:root:not([theme-in-app]) .tabbrowser-tab[selected]:not([multiselected]) .tab-background {
+:root:not([theme-in-app]) :where(#tabbrowser-tabs:not([orient="vertical"])) .tabbrowser-tab[selected]:not([multiselected]) .tab-background {
   outline: none !important;
   border-color: var(--tab-border-color-selected) !important;
 }
 
-/* No extra gap between tabs */
-:root .tabbrowser-tab:not(:first-of-type) {
+/* No extra gap between tabs (horizontal only: in the vertical list it pulled every tab after the first off-centre) */
+:root :where(#tabbrowser-tabs:not([orient="vertical"])) .tabbrowser-tab:not(:first-of-type) {
   padding-left: 0 !important;
 }
+
+/* Vertical tabs (the list in the sidebar launcher) are left to Firefox in this file: its pill when the list is extended,
+   its circle outline when collapsed. Every tab-shape rule above and below skips them through :where(), which adds no
+   specificity. FoxMica's own modes draw a filled rounded rectangle instead (patches/userChrome/39-vertical-tabs.css). (#42) */
 
 :root .tabbrowser-tab {
   font-weight: var(--ut-tab-weight, 500) !important;
@@ -104,7 +108,7 @@
    pseudo-element on .tab-content (out of flow, so it cannot shift layout).
    Hidden next to the selected tab and the hovered tab, on both sides. */
 
-:root .tabbrowser-tab:not(:first-of-type) .tab-content::before {
+:root :where(#tabbrowser-tabs:not([orient="vertical"])) .tabbrowser-tab:not(:first-of-type) .tab-content::before {
   content: "";
   position: absolute;
   inset-inline-start: 0;
@@ -115,10 +119,10 @@
   pointer-events: none;
 }
 
-:root .tabbrowser-tab:is([selected], [multiselected]) .tab-content::before,
-:root .tabbrowser-tab:is([selected], [multiselected]) + .tabbrowser-tab .tab-content::before,
-:root .tabbrowser-tab:hover .tab-content::before,
-:root .tabbrowser-tab:hover + .tabbrowser-tab .tab-content::before {
+:root :where(#tabbrowser-tabs:not([orient="vertical"])) .tabbrowser-tab:is([selected], [multiselected]) .tab-content::before,
+:root :where(#tabbrowser-tabs:not([orient="vertical"])) .tabbrowser-tab:is([selected], [multiselected]) + .tabbrowser-tab .tab-content::before,
+:root :where(#tabbrowser-tabs:not([orient="vertical"])) .tabbrowser-tab:hover .tab-content::before,
+:root :where(#tabbrowser-tabs:not([orient="vertical"])) .tabbrowser-tab:hover + .tabbrowser-tab .tab-content::before {
   background: transparent;
 }
 

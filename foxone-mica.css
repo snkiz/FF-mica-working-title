@@ -1,5 +1,5 @@
 /* BUILT FILE - do not edit by hand.
-   FoxMica 1.0: FoxOne 4.0.2 (vendor/userChrome.css) plus patches/userChrome/.
+   FoxMica 1.0.2: FoxOne 4.0.2 (vendor/userChrome.css) plus patches/userChrome/.
    Made by scripts/assemble.mjs. Change the patches, then rebuild. */
 /*==============================================================================================*
 
@@ -4489,6 +4489,50 @@ notification-message {
     padding: 0 !important;
     transition: all 0.2s ease !important;
   }
+}
+
+/* ==========================================================================
+   VERTICAL TABS (#42): a filled rounded rectangle for the selected tab
+   foxmica-tabs.css leaves the vertical tab list to Firefox (a pill when the list is extended, a circle outline when it
+   is collapsed), so the OEM drop-in tabs look native there. In FoxMica's own modes the selected tab is drawn the way
+   the horizontal one is: the --ut-layer fill, rounded by --ut-tab-radius on all four corners (nothing to join to
+   beside the page), and the pinstripe, if it is on, all the way round. Inactive tabs have no fill; hover gets the same
+   hover fill as the horizontal tabs. The same on a left or a right sidebar.
+   ========================================================================== */
+
+:root:root:root #tabbrowser-tabs[orient="vertical"] .tab-background {
+  border-radius: var(--ut-tab-radius, 6px) !important;
+  border-width: calc(var(--ut-tab-pinstripe, 1) * 1px) !important;
+  /* FoxOne zeroes every tab's margin, which left the fill flush against the outer window edge. The same inset on both
+     sides keeps it centred on the icon, on a left or a right sidebar. Tuned by eye (4px and 8px sat too close to the edge).
+     width: auto because with a set width the browser ignores the end margin, and only the start margin counted. */
+  margin-inline: 10px !important;
+  width: auto !important;
+  justify-self: stretch !important;
+}
+
+:root:root:root #tabbrowser-tabs[orient="vertical"] .tabbrowser-tab:not([selected], [multiselected]) .tab-background {
+  background-color: transparent !important;
+  background-image: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+:root:root:root #tabbrowser-tabs[orient="vertical"] .tabbrowser-tab:not([selected], [multiselected]):hover .tab-background {
+  background-color: var(--ut-tab-hover-bg, light-dark(rgb(255 255 255 / 30%), rgb(0 0 0 / 12%))) !important;
+}
+
+:root:root:root #tabbrowser-tabs[orient="vertical"] .tabbrowser-tab:is([selected], [multiselected]) .tab-background {
+  background-color: var(--ut-layer, light-dark(rgb(255 255 255 / 55%), rgb(0 0 0 / 25%))) !important;
+  background-image: none !important;
+  background-clip: border-box !important;
+  outline: none !important;
+  border-color: var(--ut-tab-pinstripe-color, var(--uc-color-accent)) !important;
+}
+
+/* Themes other than Firefox's own: the theme's own edge colour, as on the horizontal tabs. */
+:root:root:root:not([theme-in-app]) #tabbrowser-tabs[orient="vertical"] .tabbrowser-tab[selected]:not([multiselected]) .tab-background {
+  border-color: var(--tab-border-color-selected) !important;
 }
 
 /* ==========================================================================
