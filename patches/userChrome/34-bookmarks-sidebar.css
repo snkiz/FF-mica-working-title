@@ -21,6 +21,22 @@
    count from the right edge.
    ========================================================================== */
 
+/* The strip is wider on ESR 153 (measured 49px with horizontal tabs, 43px with vertical tabs on "expand on hover") than
+   on newer Firefox (36px and 48px). ESR 153 still has the pref sidebar.revamp.round-content-area, on by default;
+   newer Firefox dropped it, so the query below only matches the old sidebar. These are the defaults: a number in
+   --ut-sidebar-strip or --ut-sidebar-strip-vertical (foxmica-config.css) wins over them. */
+:root {
+  --ut-sidebar-strip-auto: 36px;
+  --ut-sidebar-strip-vertical-auto: 48px;
+}
+
+@media -moz-pref("sidebar.revamp.round-content-area") {
+  :root {
+    --ut-sidebar-strip-auto: 49px;
+    --ut-sidebar-strip-vertical-auto: 43px;
+  }
+}
+
 @container style(--uc-dynamic-bookmarks: 1) and style(--ut-bookmarks-inflow: 0) {
 
   /* 1. Horizontal tabs, collapsed strip showing. */
@@ -28,14 +44,14 @@
     :has(#tabbrowser-tabs[orient="vertical"])
   ) #navigator-toolbox #PersonalToolbar {
     width: auto !important;
-    left: var(--ut-sidebar-strip, 36px) !important;
+    left: var(--ut-sidebar-strip, var(--ut-sidebar-strip-auto)) !important;
     right: 0 !important;
   }
   :root:root[sidebar-positionend]:has(#sidebar-container:not([hidden])):not(
     :has(#tabbrowser-tabs[orient="vertical"])
   ) #navigator-toolbox #PersonalToolbar {
     left: 0 !important;
-    right: var(--ut-sidebar-strip, 36px) !important;
+    right: var(--ut-sidebar-strip, var(--ut-sidebar-strip-auto)) !important;
   }
 
   /* 2. Vertical tabs with "expand on hover". The pref is used here, not the root attribute, because Firefox
@@ -43,12 +59,12 @@
   @media -moz-pref("sidebar.visibility", "expand-on-hover") {
     :root:root:has(#tabbrowser-tabs[orient="vertical"]) #navigator-toolbox #PersonalToolbar {
       width: auto !important;
-      left: var(--ut-sidebar-strip-vertical, 48px) !important;
+      left: var(--ut-sidebar-strip-vertical, var(--ut-sidebar-strip-vertical-auto)) !important;
       right: 0 !important;
     }
     :root:root[sidebar-positionend]:has(#tabbrowser-tabs[orient="vertical"]) #navigator-toolbox #PersonalToolbar {
       left: 0 !important;
-      right: var(--ut-sidebar-strip-vertical, 48px) !important;
+      right: var(--ut-sidebar-strip-vertical, var(--ut-sidebar-strip-vertical-auto)) !important;
     }
     :root:has(#sidebar-container[sidebar-launcher-expanded]) #PersonalToolbar {
       display: none !important;
