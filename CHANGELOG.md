@@ -16,6 +16,22 @@ The settings and each flavour are documented in [docs/](https://github.com/snkiz
   sides, the same on a left or a right sidebar. Before, it had top-only corners, a flat bottom and separators, and
   every tab after the first sat off-centre. `patches/userChrome/39-vertical-tabs.css`.
 
+- **The tab loading bar is the accent colour again.** The ESR 153 tab text fix (#38) had turned it text-coloured on
+  every version. Only the bar along the bottom of a loading tab is drawn now; FoxOne's glow along the top edge is
+  hidden. `patches/userChrome/36-small-fixes.css`.
+
+- **ESR 153: the floating bookmarks bar no longer covers the sidebar launcher.** The launcher is wider on ESR 153 (49px
+  with horizontal tabs, 43px with vertical tabs on "expand on hover") than on newer Firefox. The bar now steps aside by
+  49px and 43px there, and by 36px and 48px elsewhere; the old sidebar is recognised by the pref
+  `sidebar.revamp.round-content-area`, which newer Firefox dropped. `--ut-sidebar-strip` and
+  `--ut-sidebar-strip-vertical` are no longer set in `foxmica-config.css` (commented examples instead), so those
+  defaults apply; set a number to override. `patches/userChrome/34-bookmarks-sidebar.css`.
+
+- **The in-flow bookmarks bar (`--ut-bookmarks-inflow: 1`) no longer grows when you hover the toolbar** ([#44](https://github.com/snkiz/FoxMica/issues/44)). It opened on
+  any hover over the whole toolbar, at FoxOne's `4em` plus 6px padding. It now follows the floating bar's rules: it
+  opens when the pointer rests on the URL text, on the bar, on an open folder or its right-click menu, or on a fresh
+  tab, and grows to `--ut-bookmarks-height` with no extra padding. `patches/userChrome/28-bookmarks-bar.css`.
+
 ### Docs
 
 - README: the tested-on note now says Nightly and ESR 153 are the ones tested properly, and the other channels get a
