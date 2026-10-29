@@ -100,8 +100,8 @@
   /* ---- URL BAR ---- */
   /* URL Bar width (min applied normally, max on focus). The px ceiling caps growth on ultrawide/4K, where bare vw 
   scales to absurd widths (fonxone/issue #6). Caps engage from ~1800px CSS-px viewport; below that the vw value wins. */  
-  --uc-urlbar-min-width: min(24vw, 260px);
-  --uc-urlbar-max-width: min(48vw, 540px);
+  --uc-urlbar-min-width: min(32vw, 290px);
+  --uc-urlbar-max-width: min(48vw, 560px);
 
   --uc-urlbar-icons-reveal: 1;      /* URL-bar icons (reader, translations, add-to-taskbar, add-ons, permissions)
                                     reveal mode; (0 = on URL-bar hover and focus, 1 = hover only on the bookmark
@@ -134,12 +134,12 @@
   active-tab size advantage only appears at very wide strips (foxone/issue #7).
   These are the narrow-window defaults (< 1710px). At and above 1710px (~2/3 of WQHD) the ceilings are widened
   back to the pre-#7 pair so the strip distributes evenly and tabs read uniformly again */
-  --uc-active-tab-width: clamp(108px, 40vw, 184px);
-  --uc-inactive-tab-width: clamp(48px, 15vw, 78px);
+  --uc-active-tab-width: clamp(96px, 42vw, 184px);
+  --uc-inactive-tab-width: clamp(48px, 20vw, 96px);
 
   /* Tab min width: 76px = Firefox default (browser.tabs.tabMinWidth). Smaller to fit more before overflow scroll.
   Less than 24px will make the close tab button get in the way of selecting the tab */
-  --uc-tab-min-width: 24px;
+  --uc-tab-min-width: 30px;
 
   /* ---- RIGHTSIDE ANNEX ---- */
  /* Where you put an icon decides it. The split is the overflow chevron (>>):
@@ -179,15 +179,19 @@
   --ut-bookmarks-bg: light-dark(rgb(247 247 247 / 85%), rgb(52 52 52 / 78%));   /* Colour of the floating bookmarks
                                         bar (overlay mode). The last number is how solid it is; lower lets the page
                                         show through more. These values are the built-in default. */
-  --ut-sidebar-strip: 36px;             /* Overlay bookmarks bar, horizontal tabs: how far the bar steps in from the
+  /* --ut-sidebar-strip (not set; the default is 36px, or 48px on ESR 153, picked by patch 34). Overlay bookmarks bar,
+                                        horizontal tabs: how far the bar steps in from the
                                         window edge so it doesn't cover the collapsed sidebar's icons. A fixed
                                         number, because CSS can't read the strip's real width: if the bar starts
                                         early or late, measure the strip and change this. Ignored while the
-                                        sidebar is hidden. */
-  --ut-sidebar-strip-vertical: 48px;    /* The same for vertical tabs with the sidebar set to "expand on hover".
+                                        sidebar is hidden. Remove the comment marks around a line to set it. */
+  /* --ut-sidebar-strip: 36px; */
+  /* --ut-sidebar-strip-vertical (not set; the default is 48px, or 42px on ESR 153). The same for vertical tabs
+                                        with the sidebar set to "expand on hover".
                                         With vertical tabs any other way the bar stays hidden, because the strip is
                                         as wide as it was dragged. */
-  
+  /* --ut-sidebar-strip-vertical: 48px; */
+
 
   /* ========================================================================
      ADVANCED (leave alone unless you know why)

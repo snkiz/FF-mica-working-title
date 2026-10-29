@@ -47,13 +47,13 @@
 
   /* TAB WIDTHS: wider than the full theme, because the tabs have a row to themselves. Same names and meaning as
      in foxmica-config.css. */
-  --uc-active-tab-width: clamp(120px, 30vw, 250px);
-  --uc-inactive-tab-width: clamp(76px, 15vw, 150px);
-  --uc-tab-min-width: 76px;
+  --uc-active-tab-width: clamp(108px, 30vw, 204px);
+  --uc-inactive-tab-width: clamp(76px, 15vw, 128px);
+  --uc-tab-min-width: 54px;
 
   /* PUZZLE BUTTON COLOUR: your Windows accent colour here. Any CSS colour works; the full theme's default is the
      palette's hover colour (var(--uc-color-hover)). */
-  --ut-puzzle-color: AccentColor;
+  --ut-puzzle-color: var(--uc-color-hover);
   
   --uc-show-all-tabs-button: 1; /* The "list all tabs" button at the end of the tab strip. Shown here: with the two-row
                                 layout the tab bar has room for it, and it is no longer squeezed in beside the
