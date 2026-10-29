@@ -2,7 +2,7 @@
 
 A Firefox theme for Windows 11: the real Mica backdrop and Explorer-style tabs, in three flavours. Pick the one that suits you, or just use the tabs. Built on [FoxOne](https://github.com/Firnschnee/FoxOne) by Firnschnee.
 
-> **Work in progress.** It will always be a work in progress. Tested mainly on Firefox Nightly on Windows 11, with the Nova redesign on (the default) and off. ESR 153 Now officaly supported upstream as well. Versions in between have not been tried extensively. 
+> **Work in progress.** It will always be a work in progress. Tested mainly on Firefox Nightly and ESR 153 on Windows 11, with the Nova redesign on (the default) and off. FoxOne supports ESR 153 upstream as well. The other channels (Beta, Release, Developer Edition) only get a look when a change touches them or I am tracking one down, so they have not been tried extensively.
 
 ![FoxMica on Firefox Nightly, Windows 11](assets/Screenshot-main.png)
 
@@ -46,7 +46,7 @@ The full list is in [CHANGELOG.md](CHANGELOG.md) old versions on the tag. It's a
 ## Requirements
 
 - Windows 11. Mica does not exist on other systems.
-- Firefox (Nightly), see the note above.
+- Firefox. Any current channel should work: FoxOne is tested on Release and Beta, and FoxMica mainly on Nightly and ESR 153 (see the note above).
 - Transparency effects on: Windows Settings -> Personalization -> Colors.
 
 ## Install
@@ -94,11 +94,11 @@ The floating bookmarks bar needs the bookmarks toolbar set to "Always Show". The
 
 ## Known issues
 
-Hovering Mica areas sometimes flickered during development on a laptop with NVIDIA and integrated graphics. It's intermitent with reboots and driver updates. If you are using an optimus laptop, turning off hardware acceration in firefox (and eletron apps for that matter) helps.
+Hovering Mica areas sometimes flickered during development on a laptop with NVIDIA and integrated graphics. It's intermittent with reboots and driver updates. If you are using an optimus laptop, turning off hardware acceleration in Firefox (and Electron apps for that matter) helps.
 
 The floating bookmarks bar only reveals when the pointer rests on the URL text, not the whole top row or the icons beside it. That is how FoxOne works
 
-- Vertical tabs are untested in any mode. If it works, thank [@Firnschnee](https://github.com/firnschnee) ([#31](https://github.com/snkiz/FoxMica/issues/31)).
+- Vertical tabs are "Good Enough": poked at a fair bit, but not in every mode ([#31](https://github.com/snkiz/FoxMica/issues/31)). If it works, thank [@Firnschnee](https://github.com/firnschnee).
 
 And more on the [issue tracker](https://github.com/snkiz/FoxMica/issues)...
 
