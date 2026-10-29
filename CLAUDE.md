@@ -24,7 +24,7 @@ get things done, not to have Claude do it for me (boilerplate aside).
 FoxOne's one-line UI (tabs and URL bar in one row), with Windows 11 Explorer-style
 tabs. Repo: https://github.com/snkiz/FoxMica (public, MIT). Local: Documents\GitHub\FoxMica.
 
-- Built on FoxOne by Firnschnee (vendored unmodified, currently 4.0).
+- Built on FoxOne by Firnschnee (vendored unmodified, currently 4.0.2).
 - Mica rules come from Wintego's Firefox-transparent-theme (written for FoxOne 3.5).
 - The look is matched by eye to Explorer with Windhawk's Explorer Styler "MicaBar" theme.
 
@@ -51,7 +51,7 @@ maintainer uses Shantell Sans).
 
 `vendor/` is FoxOne untouched (`vendor/VERSION` = the release), `patches/<target>/` is every FoxMica change to it
 (`.patch` = find-and-replace hunks, `.css` = blocks added to the end, both in filename order), and `VERSION` in the
-root is FoxMica's own version (`0.9.1`, 2026-10-21). Details and the patch format: `scripts/README.md`.
+root is FoxMica's own version (`1.0.2`, 2026-10-28). Details and the patch format: `scripts/README.md`.
 
 - To change a built file, change a patch, then `node scripts/assemble.mjs`. A hand edit to a built file is lost on the
   next build, and `node scripts/check.mjs` reports it with the first line that differs.
@@ -62,7 +62,7 @@ root is FoxMica's own version (`0.9.1`, 2026-10-21). Details and the patch forma
 
 ## Where things stand (update this section at the end of every session)
 
-**Last updated:** 2026-10-25
+**Last updated:** 2026-10-28
 
 - **0.9.1 (2026-10-21)** on FoxOne 3.9.9; `VERSION` is `0.9.1`. Three modes, picked in `userChrome.css`: **FoxOne-Mica**
   (the full theme, default), **StockMica+** (Firefox's own two rows with FoxMica's look; `micaplus-config.css`, which
@@ -75,8 +75,22 @@ root is FoxMica's own version (`0.9.1`, 2026-10-21). Details and the patch forma
   find bar its own way (#70): patch 44 only sets `--uc-bookmarks-bar-height` to FoxMica's bar height. Patch 48 is the whole
   puzzle drawer (one side of the puzzle, `--ut-drawer-side`, flat selectors, popups from any extension open it); FoxOne
   declined it (PR #72), it stays here. Caution: in StockMica+ leave `--uc-extensions-button-right` at 0 (1 pins the drawer
-  to the title-bar corner, not the puzzle). Patch 26 is still needed. Submitted to the FirefoxCSS Store (FirefoxCSS-Store issue #432, open a few weeks for input; FoxMica #30 closed). FoxOne keeps the puzzle switch for us (#73). Open: FoxOne 4.0.1 pull (bookmarks-bar bug, FoxOne #74) and the StockMica+ URL-bar overhang (TODO).
-- **Road to 1.0:** a full test pass of every mode with screenshots
+  to the title-bar corner, not the puzzle). Patch 26 is still needed. Submitted to the FirefoxCSS Store (FirefoxCSS-Store issue #432, open a few weeks for input; FoxMica #30 closed). FoxOne keeps the puzzle switch for us (#73). The StockMica+ URL-bar overhang is gone on Nightly (cause unknown, TODO).
+- **1.0.2 "Paper Cuts" (2026-10-28, tagged)** on FoxOne 4.0.2; `VERSION` is `1.0.2`. After the tag, for the next release:
+  vertical tabs (#42, patch 39) and the README wording; the changelog now holds only those. In 1.0.2:
+  patch 32 holds the bookmarks bar at its own height while the bookmark
+  right-click menu is under the pointer (FoxOne 4.0.1 regression); patch 34 (the floating bookmarks bar steps aside for
+  the sidebar launcher, fixed offsets `--ut-sidebar-strip` 36px and `--ut-sidebar-strip-vertical` 48px; not live, because
+  anchor positioning only reaches anchors inside the toolbox in his Firefox: the sidebar, tabbox and splitter all
+  refused); patch 37 (launcher flyout follows the palette); the brace check in `scripts/check.mjs`. Not in the tag:
+  patch 39 plus a `:where()` guard in `foxmica-tabs.css` (#42: the OEM tabs leave vertical tabs to Firefox, FoxMica's
+  modes draw a filled rounded rectangle with a 10px inset). Upstream, posted by him: FoxOne #81 (flyout gradient; the PR is on branch
+  `83-sidebar-hover` of his FoxOne fork), #82 (bookmarks bar and sidebar proposal, links patch 34). FoxOne #80 (Ctrl+Tab
+  tab-border flash) is covered here by patch 35 and by the pinstripe switch at 0, each on its own. Release steps are in
+  `Notes-n-Tools\FoxMica-RELEASING.md`; the 1.0.2 release notes are in `issue-drafts\posted`.
+- Lesson (2026-10-28): Firefox renamed the toolbox gradient stops between 159 and 160 (`--toolbox-background-color-gradient-*`
+  became `--toolbox-background-gradient-*`), so set both spellings. ESR 153's sidebar is different and has no gradient problem.
+- **Road to 1.0 (done, kept for the record):** a full test pass of every mode with screenshots
   (four views: the three modes and PWA windows), then the FirefoxCSS Store submission (#30). The five-colour palette (#26)
   is after 1.0. ESR 153: #37 (URL bar widening, patch 49) and #38 (tab text, `foxmica-tabs.css`) were fixed 2026-10-24 and tested on ESR 153; it needs a full test pass before it counts as supported. Upstream ideas for Firn after a few days with 0.9.1 are in TODO.md. Open: td40 (FoxOne accent vs dynamic
   themes), README fixes next release, light-system dark bar on the default theme (suspected registry tweaks and/or
@@ -93,9 +107,9 @@ root is FoxMica's own version (`0.9.1`, 2026-10-21). Details and the patch forma
   landed in 3.8.8. FoxMica keeps click-to-cancel (override 7e), Forward-only hiding, and the trust-label and PiP
   switches.
 - Issues #1-#34 are on GitHub. `TODO.md` maps items to issue numbers. Items are `tdN`, issues are `#N`; never a bare number.
-- Built and hand-tested on Nightly 160 with Nova on (the default) and off; ESR 153 tested preliminarily for 0.8.
-  Proton/old look is a dead end.
-- Daily browser is ESR 140. Plan: get Nightly right, then move to ESR 153 (has the Nova switch) and backport (#22).
+- Built and hand-tested on Nightly with Nova on (the default) and off, and on ESR 153. Beta, Release and Developer
+  Edition only get a look when a change touches them or he is tracking one down. Proton/old look is a dead end.
+- Daily browser is ESR 153 (updated 2026-10-28; it was ESR 140).
 - Nightly has dropped `browser.compactmode.show`; density is now set in about:settings (td34).
 
 ### td26 (solved): how it was found

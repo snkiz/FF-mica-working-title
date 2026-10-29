@@ -22,23 +22,30 @@ where they disagree.
   it removes `--uc-show-all-tabs-button`, the all-tabs button stays wherever Firefox puts it, in every mode: drop the setting
   from `foxmica-config.css` and `micaplus-config.css`. If it removes hide-disabled-nav, FoxMica carries `--ut-hide-disabled-nav`.
   Our puzzle drawer (patch 48) stays in FoxMica; FoxOne declined it (PR #72).
+- **FoxOne #81 (flyout gradient), #82 (bookmarks bar and sidebar proposal), PR branch `83-sidebar-hover`** (2026-10-28):
+  posted and pushed by him, waiting on Firn. On #82 he offers a PR with FoxOne's own variable names and docs rows,
+  once invited (patch 34 adds `--ut-sidebar-strip` and `--ut-sidebar-strip-vertical`, which FoxOne would name its way).
+  The flyout fix sets all four toolbox gradient stop names (Firefox renamed them between 159 and 160).
+- **1.0.2 is released (2026-10-28).** The next release has vertical tabs (#42) and the README wording (both in
+  `CHANGELOG.md`); steps in `Notes-n-Tools\FoxMica-RELEASING.md`. Release notes for it are not started.
 - **td40. FoxOne accent does not follow dynamic themes.** Seen 2026-10-18 while doing the selected-tab edge: with
   FoxOne, every theme (store themes too) gets FoxOne's accent on the tab edge, tab text and puzzle piece, not the
   theme's own colour. FoxOne's comment on that block says it is deliberate ("always applied, including under a
   dynamic theme"), but FoxOne is meant to have adaptive theme support, so check whether the accent itself should
   follow the theme (FoxOne's docs and issues) before calling it a bug. Our edge (patches/userChrome/35) uses
   `--uc-color-accent`, so it follows whatever FoxOne does.
-- README: fix the "tested on" line and re-check the about:config table (is `widget.windows.mica.toplevel-backdrop` 2
+- README: re-check the about:config table (is `widget.windows.mica.toplevel-backdrop` 2
   or 4 still wanted? In the dev profile, 2 made the tab strip black). Next release. (The pinstripe settings are in the
   table now.)
 
 ## First bug-fix pass
 
 - **Noted 2026-10-25, not started:**
-  - FoxOne 4.0.1 is out: a small bookmarks-bar bug ([FoxOne #74](https://github.com/Firnschnee/FoxOne/issues/74)). Pull it
+  - DONE 2026-10-28 (4.0.2 pulled; patch 32 fixed the right-click growth). FoxOne 4.0.1 was out: a small bookmarks-bar bug ([FoxOne #74](https://github.com/Firnschnee/FoxOne/issues/74)). Pull it
     (`node scripts/pull-foxone.mjs 4.0.1`, assemble, check) and look at the bookmarks bar in StockMica+ and FoxOne-Mica,
     since patch 32 (bar height, reveal rules) copies FoxOne's reveal selectors.
-  - StockMica+: the URL bar's inner part ("the gut") hangs out of the field. Screenshot saved in the private notes
+  - StockMica+: the URL bar's inner part ("the gut") hangs out of the field. Gone on Nightly as of 2026-10-28 (cause
+    unknown); recheck on ESR 153 before dropping this. Screenshot saved in the private notes
     (`issue-drafts\micaplus-urlbar-guts-2026-10-25.png`, URL text selected, Nightly). To do: reproduce, find which
     element sticks out (Browser Toolbox), then draft a FoxMica issue.
 
@@ -74,7 +81,8 @@ where they disagree.
   - The bar pushes the sidebar down with the page. Idea: negative top margin on the sidebar while the bar is open,
     so it reaches up into the bar's row and stays put.
   - Flicker looked fine on Nightly with hardware acceleration off.
-- td37. Overlay bookmarks bar (default) stops at the sidebar launcher: start the bar at the collapsed launcher's right
+- td37. DONE 2026-10-28 in 1.0.2 (patch 34, fixed offsets, not live: anchor positioning could not reach the sidebar,
+  tabbox or splitter). Original plan: Overlay bookmarks bar (default) stops at the sidebar launcher: start the bar at the collapsed launcher's right
   edge so it doesn't cover the icons; the open sidebar panel covers the bar (or the bar sits over it, test both).
   Must follow the sidebar live: anchor positioning (as FoxOne pins the hamburger), with a fallback to the window
   edge when the sidebar is hidden, so the bar goes full width. May need the bar switched from absolute to fixed
@@ -113,8 +121,9 @@ where they disagree.
   Reopen Closed Tab to the top; untested idea: `#context_undoCloseTab { order: -1; }`). Plus a small
   extension for "New Tab to the Left" (no add-on found that does left; extensions can add items but
   not place them at the top).
-- [#31] Vertical tabs are untested. Firn notes vertical tabs change `--tabstrip-min-height` (bar-height overrides).
-  [#42] OEM tabs mode with vertical tabs (2026-10-24): works with the band-aid guard in `foxmica-tabs.css`, but the tabs
+- [#31] Vertical tabs are "Good Enough" (poked at a fair bit, not in every mode). Firn notes vertical tabs change `--tabstrip-min-height` (bar-height overrides).
+  [#42] FIXED 2026-10-28, not released yet (next release): `foxmica-tabs.css` leaves vertical tabs to Firefox (`:where()` guard), patch 39 draws
+  the FoxMica look (filled rounded rectangle, 10px inset). Original note, OEM tabs mode with vertical tabs (2026-10-24): works with the band-aid guard in `foxmica-tabs.css`, but the tabs
   have no radius and the wrong shade; that is the real fix. Was suspected from reading before it was tried: `foxmica-tabs.css` has no vertical guard, and its
   bar-height block forces `min-height` and `max-height` on `#tabbrowser-tabs` and `#tabbrowser-arrowscrollbox`, which would
   squash the vertical tab list to one bar height. The separators, rounded top corners and pinstripe are also drawn for a
