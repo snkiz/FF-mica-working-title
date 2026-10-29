@@ -16,3 +16,16 @@
 #urlbar:hover #translations-button-icon {
   fill: var(--uc-tab-hover-text) !important;
 }
+
+/* Tab loading bar colour. FoxOne draws the bar from --tab-selected-textcolor, which it sets to the accent on :root.
+   foxmica-tabs.css sets the same name on the selected tab to fix the title colour on ESR 153 (#38), and the bar, which is
+   drawn inside .tab-background, inherited that and turned text-coloured on every version. Set it back to the accent on
+   .tab-background itself: the bar is its ::before and ::after, and the tab title is not inside it.
+   Only the bottom bar is kept. FoxOne also draws a glow along the top edge of a loading tab; it is hidden here. */
+.tabbrowser-tab .tab-background {
+  --tab-selected-textcolor: var(--uc-color-accent);
+}
+
+:root .tabbrowser-tab[busy]:not([pinned]) .tab-background::after {
+  display: none !important;
+}
