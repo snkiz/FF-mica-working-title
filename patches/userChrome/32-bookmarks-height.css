@@ -34,6 +34,16 @@
     }
   }
 
+  /* The bookmark star opens the bar too (FoxOne only reacts to the URL text, which is a small target on a short URL bar
+     and is no use if the URL-bar icons are hidden). Same reveal as FoxOne's text rule, including the hover delay. */
+  #navigator-toolbox:not(:has(#urlbar[open])):has(#star-button-box:hover) #PersonalToolbar {
+    opacity: 1 !important;
+    transform: scaleY(1) translateY(0) !important;
+    max-height: var(--ut-bookmarks-height, var(--ut-bar-height, 40px)) !important;
+    padding-block: 0 !important;
+    transition-delay: var(--uc-dynamic-bookmarks-hover-delay), var(--uc-dynamic-bookmarks-hover-delay), 0s, 0s !important;
+  }
+
   @container style(--uc-dynamic-bookmarks-newtab: 1) {
     #navigator-toolbox:not(:has(#urlbar[open])):has(
       #urlbar-input-container[pageproxystate="invalid"],
