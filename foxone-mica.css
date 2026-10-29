@@ -1,5 +1,5 @@
 /* BUILT FILE - do not edit by hand.
-   FoxMica 1.0.2: FoxOne 4.0.2 (vendor/userChrome.css) plus patches/userChrome/.
+   FoxMica 1.0.2-dev: FoxOne 4.0.2 (vendor/userChrome.css) plus patches/userChrome/.
    Made by scripts/assemble.mjs. Change the patches, then rebuild. */
 /*==============================================================================================*
 
@@ -4208,7 +4208,7 @@ html[id^="taskbartab"] #unified-extensions-button {
     top: auto !important;
     transform: none !important;
     overflow: hidden !important;
-    max-height: 2px !important;
+    max-height: 0 !important;
     padding-block: 0 !important;
     opacity: 0 !important;
     transition:
@@ -4217,17 +4217,37 @@ html[id^="taskbartab"] #unified-extensions-button {
       opacity 150ms ease-out var(--uc-dynamic-bookmarks-hide-delay) !important;
   }
 
-  /* Revealed: hover anywhere in the top row, or on the bar / an open folder.
-     Never while the URL-bar results list is open. */
-  #navigator-toolbox:not(:has(#urlbar[open])):hover #PersonalToolbar:not(:has(toolbarpaletteitem)),
-  #navigator-toolbox:not(:has(#urlbar[open])) #PersonalToolbar:is(:hover, :has(toolbarbutton[open])) {
-    max-height: 4em !important;
-    padding-block: 6px !important;
-    opacity: 1 !important;
-    transition-delay:
-      var(--uc-dynamic-bookmarks-hover-delay),
-      var(--uc-dynamic-bookmarks-hover-delay),
-      var(--uc-dynamic-bookmarks-hover-delay) !important;
+  /* Revealed by the same triggers as the floating bar (FoxOne 4.0's rules, see 5d in 32-bookmarks-height.css): the
+     pointer resting on the URL text, on the bar, on an open folder or its right-click menu, and on a fresh tab. Not
+     the whole toolbar, which is what made the bar grow when the toolbar was hovered. Never while the URL-bar results
+     list is open. It grows to the same height the floating bar has, with no extra padding. */
+  #navigator-toolbox:not(:has(#urlbar[open])) {
+    &:has(#urlbar-input:hover, .urlbar-input:hover, #star-button-box:hover) #PersonalToolbar:not(:has(toolbarpaletteitem)),
+    & #PersonalToolbar:not(:has(toolbarpaletteitem)):is(:hover, :has(toolbarbutton[open])),
+    :root:has(#placesContext:hover):not(:has(
+      #PanelUI-menu-button[open], #bookmarks-menu-button[open],
+      #library-button[open], #bookmarksMenu[open]
+    )) & #PersonalToolbar:not(:has(toolbarpaletteitem)) {
+      max-height: var(--ut-bookmarks-height, var(--ut-bar-height, 40px)) !important;
+      padding-block: 0 !important;
+      opacity: 1 !important;
+      transition-delay:
+        var(--uc-dynamic-bookmarks-hover-delay),
+        var(--uc-dynamic-bookmarks-hover-delay),
+        var(--uc-dynamic-bookmarks-hover-delay) !important;
+    }
+  }
+
+  @container style(--uc-dynamic-bookmarks-newtab: 1) {
+    #navigator-toolbox:not(:has(#urlbar[open])):has(
+      #urlbar-input-container[pageproxystate="invalid"],
+      .urlbar-input-container[pageproxystate="invalid"]
+    ):has(#urlbar-input:placeholder-shown, .urlbar-input:placeholder-shown)
+      #PersonalToolbar:not(:has(toolbarpaletteitem)) {
+      max-height: var(--ut-bookmarks-height, var(--ut-bar-height, 40px)) !important;
+      padding-block: 0 !important;
+      opacity: 1 !important;
+    }
   }
 }
 
@@ -4288,6 +4308,16 @@ notification-message {
     }
   }
 
+  /* The bookmark star opens the bar too (FoxOne only reacts to the URL text, which is a small target on a short URL bar
+     and is no use if the URL-bar icons are hidden). Same reveal as FoxOne's text rule, including the hover delay. */
+  #navigator-toolbox:not(:has(#urlbar[open])):has(#star-button-box:hover) #PersonalToolbar {
+    opacity: 1 !important;
+    transform: scaleY(1) translateY(0) !important;
+    max-height: var(--ut-bookmarks-height, var(--ut-bar-height, 40px)) !important;
+    padding-block: 0 !important;
+    transition-delay: var(--uc-dynamic-bookmarks-hover-delay), var(--uc-dynamic-bookmarks-hover-delay), 0s, 0s !important;
+  }
+
   @container style(--uc-dynamic-bookmarks-newtab: 1) {
     #navigator-toolbox:not(:has(#urlbar[open])):has(
       #urlbar-input-container[pageproxystate="invalid"],
@@ -4323,6 +4353,22 @@ notification-message {
    count from the right edge.
    ========================================================================== */
 
+/* The strip is wider on ESR 153 (measured 49px with horizontal tabs, 43px with vertical tabs on "expand on hover") than
+   on newer Firefox (36px and 48px). ESR 153 still has the pref sidebar.revamp.round-content-area, on by default;
+   newer Firefox dropped it, so the query below only matches the old sidebar. These are the defaults: a number in
+   --ut-sidebar-strip or --ut-sidebar-strip-vertical (foxmica-config.css) wins over them. */
+:root {
+  --ut-sidebar-strip-auto: 36px;
+  --ut-sidebar-strip-vertical-auto: 48px;
+}
+
+@media -moz-pref("sidebar.revamp.round-content-area") {
+  :root {
+    --ut-sidebar-strip-auto: 49px;
+    --ut-sidebar-strip-vertical-auto: 43px;
+  }
+}
+
 @container style(--uc-dynamic-bookmarks: 1) and style(--ut-bookmarks-inflow: 0) {
 
   /* 1. Horizontal tabs, collapsed strip showing. */
@@ -4330,14 +4376,14 @@ notification-message {
     :has(#tabbrowser-tabs[orient="vertical"])
   ) #navigator-toolbox #PersonalToolbar {
     width: auto !important;
-    left: var(--ut-sidebar-strip, 36px) !important;
+    left: var(--ut-sidebar-strip, var(--ut-sidebar-strip-auto)) !important;
     right: 0 !important;
   }
   :root:root[sidebar-positionend]:has(#sidebar-container:not([hidden])):not(
     :has(#tabbrowser-tabs[orient="vertical"])
   ) #navigator-toolbox #PersonalToolbar {
     left: 0 !important;
-    right: var(--ut-sidebar-strip, 36px) !important;
+    right: var(--ut-sidebar-strip, var(--ut-sidebar-strip-auto)) !important;
   }
 
   /* 2. Vertical tabs with "expand on hover". The pref is used here, not the root attribute, because Firefox
@@ -4345,12 +4391,12 @@ notification-message {
   @media -moz-pref("sidebar.visibility", "expand-on-hover") {
     :root:root:has(#tabbrowser-tabs[orient="vertical"]) #navigator-toolbox #PersonalToolbar {
       width: auto !important;
-      left: var(--ut-sidebar-strip-vertical, 48px) !important;
+      left: var(--ut-sidebar-strip-vertical, var(--ut-sidebar-strip-vertical-auto)) !important;
       right: 0 !important;
     }
     :root:root[sidebar-positionend]:has(#tabbrowser-tabs[orient="vertical"]) #navigator-toolbox #PersonalToolbar {
       left: 0 !important;
-      right: var(--ut-sidebar-strip-vertical, 48px) !important;
+      right: var(--ut-sidebar-strip-vertical, var(--ut-sidebar-strip-vertical-auto)) !important;
     }
     :root:has(#sidebar-container[sidebar-launcher-expanded]) #PersonalToolbar {
       display: none !important;
@@ -4404,6 +4450,19 @@ notification-message {
 
 #urlbar:hover #translations-button-icon {
   fill: var(--uc-tab-hover-text) !important;
+}
+
+/* Tab loading bar colour. FoxOne draws the bar from --tab-selected-textcolor, which it sets to the accent on :root.
+   foxmica-tabs.css sets the same name on the selected tab to fix the title colour on ESR 153 (#38), and the bar, which is
+   drawn inside .tab-background, inherited that and turned text-coloured on every version. Set it back to the accent on
+   .tab-background itself: the bar is its ::before and ::after, and the tab title is not inside it.
+   Only the bottom bar is kept. FoxOne also draws a glow along the top edge of a loading tab; it is hidden here. */
+.tabbrowser-tab .tab-background {
+  --tab-selected-textcolor: var(--uc-color-accent);
+}
+
+:root .tabbrowser-tab[busy]:not([pinned]) .tab-background::after {
+  display: none !important;
 }
 
 /* ==========================================================================
