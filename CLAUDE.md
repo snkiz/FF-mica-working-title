@@ -106,7 +106,7 @@ root is FoxMica's own version (`1.0.2`, 2026-10-28). Details and the patch forma
   icon reveals; FoxOne #54, #55, #58, #59), so our 7b/7c overrides are gone. Find-bar fix and `--uc-row-height`
   landed in 3.8.8. FoxMica keeps click-to-cancel (override 7e), Forward-only hiding, and the trust-label and PiP
   switches.
-- Issues #1-#34 are on GitHub. `TODO.md` maps items to issue numbers. Items are `tdN`, issues are `#N`; never a bare number.
+- `TODO.md` maps items to issue numbers. Items are `tdN`, issues are `#N`; never a bare number.
 - Built and hand-tested on Nightly with Nova on (the default) and off, and on ESR 153. Beta, Release and Developer
   Edition only get a look when a change touches them or he is tracking one down. Proton/old look is a dead end.
 - Daily browser is ESR 153 (updated 2026-10-28; it was ESR 140).

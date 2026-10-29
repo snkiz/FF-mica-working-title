@@ -16,6 +16,10 @@ The settings and each flavour are documented in [docs/](https://github.com/snkiz
   sides, the same on a left or a right sidebar. Before, it had top-only corners, a flat bottom and separators, and
   every tab after the first sat off-centre. `patches/userChrome/39-vertical-tabs.css`.
 
+- **The URL bar keeps its click area at larger densities** ([#34](https://github.com/snkiz/FoxMica/issues/34)). The
+  URL bar now has room for the worst case, the largest density, so the same size works at every density. The default
+  URL bar and tab widths were retuned to match (`foxmica-config.css`, `micaplus-config.css`).
+
 - **The tab loading bar is the accent colour again.** The ESR 153 tab text fix (#38) had turned it text-coloured on
   every version. Only the bar along the bottom of a loading tab is drawn now; FoxOne's glow along the top edge is
   hidden. `patches/userChrome/36-small-fixes.css`.
@@ -27,10 +31,16 @@ The settings and each flavour are documented in [docs/](https://github.com/snkiz
   `--ut-sidebar-strip-vertical` are no longer set in `foxmica-config.css` (commented examples instead), so those
   defaults apply; set a number to override. `patches/userChrome/34-bookmarks-sidebar.css`.
 
-- **The in-flow bookmarks bar (`--ut-bookmarks-inflow: 1`) no longer grows when you hover the toolbar** ([#44](https://github.com/snkiz/FoxMica/issues/44)). It opened on
-  any hover over the whole toolbar, at FoxOne's `4em` plus 6px padding. It now follows the floating bar's rules: it
-  opens when the pointer rests on the URL text, on the bar, on an open folder or its right-click menu, or on a fresh
-  tab, and grows to `--ut-bookmarks-height` with no extra padding. `patches/userChrome/28-bookmarks-bar.css`.
+- **The in-flow bookmarks bar (`--ut-bookmarks-inflow: 1`) no longer grows when you hover the toolbar**
+  ([#44](https://github.com/snkiz/FoxMica/issues/44)). It opened on any hover over the whole toolbar, at FoxOne's `4em`
+  plus 6px padding. It now follows the floating bar's rules: it opens when the pointer rests on the URL text, on the
+  bookmark star, on the bar, on an open folder or its right-click menu, or on a fresh tab, and grows to
+  `--ut-bookmarks-height` with no extra padding. Collapsed, it is 0px instead of 2px, which removes the thin strip that
+  showed on about pages. The sidebar is still pushed down by the open bar in this mode; it sits outside the toolbox, so
+  that stays. `patches/userChrome/28-bookmarks-bar.css`.
+
+- **The bookmark star opens the floating bookmarks bar too.** FoxOne only reacts to the URL text, a small target on a
+  short URL bar. Same hover delay as the text. `patches/userChrome/32-bookmarks-height.css`.
 
 ### Docs
 
