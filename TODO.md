@@ -113,6 +113,15 @@ where they disagree.
 - td30. Palette readability [#8]: pick palette ratios so every text/background pair stays
   readable (4.5:1 for text, 3:1 for icons and large text), whatever colours are
   chosen. Found while drafting td18 (selected text is about 1.8:1). Ties in with td6, td7, td21.
+  Notes (2026-10-30): patch 36 sets the text on primary buttons (popups) to the puzzle colour, a stopgap that does not
+  pass the ratio on every palette. FoxOne pins it to the palette base, which passes but is near black. By my rough
+  estimate: puzzle colour on FoxOne's dark accent is about 3:1, on FoxOne's light accent about 1.7:1 (not measured).
+  FoxMica has no light defaults of its own yet; the light palette is FoxOne's Gruvbox Light, so ratios will change when
+  we set ours. The maths route: relative colour syntax derives text from the accent, for example
+  `oklch(from var(--uc-color-accent) calc((l - 0.65) * -100) 0 0)` clamps to black or white by the accent's lightness.
+  Believed to ship in Firefox 128+ (not tested). CSS `color-contrast()` has not shipped, so it only approximates WCAG
+  and the threshold needs tuning. Test set: FoxOne dark and light as the baseline, our own light defaults once they
+  exist, a few custom palettes, and a dynamic theme's accent (test that part first).
 - [#26] Five-colour palette: only the main five colours in the user config, the rest derived and moved
   to an advanced section. Depends on #25 and #8.
 - td5. [#23] Scaling: "certified good enough", poke at it later.

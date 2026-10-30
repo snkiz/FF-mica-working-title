@@ -3,13 +3,15 @@
 // Usage (from the repo root):   node scripts/check.mjs            (needs the internet for the first check)
 //                               node scripts/check.mjs --offline  (skips the first check)
 //
-// It checks four things:
+// It checks five things:
 //   1. vendor/ is byte-for-byte the FoxOne release named in vendor/VERSION.
 //   2. every patch applies to the vendored file (each FIND text occurs exactly once).
 //   3. the built files in the repo are what vendor + patches produce right now, so nobody has
 //      edited a built file by hand or forgotten to rebuild.
 //   4. every CSS file has matching { and }, and so does each built file as the patches produce it. A missing
 //      or extra brace gives no error anywhere: the browser just drops every rule after it.
+//   5. a release (a FoxMica VERSION with no -dev) is not built on a pre-release FoxOne copy (a vendor/VERSION
+//      with a +).
 //
 // Changes nothing. Exits with an error if anything fails, so it can also run before a release.
 
@@ -28,6 +30,10 @@ const fail = (msg) => {
 const version = (await readText("vendor/VERSION")).trim();
 if (offline) {
   console.log(`skip  vendor/ against the FoxOne ${version} release (--offline)`);
+} else if (version.includes("+")) {
+  // "4.0.2+pr83" means a release plus an unreleased FoxOne pull request, which is not a tag to fetch.
+  // Put the plain release number back in vendor/VERSION when Firn releases it.
+  console.log(`skip  vendor/ against the FoxOne release: ${version} is not a release (a pre-release copy)`);
 } else {
   for (const name of ["userChrome.css", "userContent.css"]) {
     try {
@@ -128,5 +134,17 @@ for (const target of TARGETS) {
 }
 if (failures === failuresBefore) ok(`braces match in ${cssFiles.length} CSS file(s) and ${TARGETS.length} built result(s)`);
 
+// 5. a release must not ship a pre-release FoxOne copy. FoxMica's VERSION ends in -dev between releases and the
+// release step removes it. If vendor/VERSION still has a + (a FoxOne release plus an unreleased pull request) at
+// that point, stop: a tag would point at a FoxOne nobody can fetch.
+const foxmicaVersion = (await readText("VERSION")).trim();
+if (version.includes("+") && !foxmicaVersion.includes("-")) {
+  fail(
+    `VERSION is ${foxmicaVersion}, a release, but vendor/VERSION is ${version}, a pre-release FoxOne copy: ` +
+      "wait for the FoxOne release and put it in vendor/ first",
+  );
+} else if (version.includes("+")) {
+  ok(`VERSION ${foxmicaVersion} is a dev version, so the pre-release FoxOne copy (${version}) is fine for now`);
+}
 console.log(failures === 0 ? "\nAll good." : `\n${failures} problem(s).`);
 process.exit(failures === 0 ? 0 : 1);

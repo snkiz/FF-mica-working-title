@@ -24,7 +24,10 @@ get things done, not to have Claude do it for me (boilerplate aside).
 FoxOne's one-line UI (tabs and URL bar in one row), with Windows 11 Explorer-style
 tabs. Repo: https://github.com/snkiz/FoxMica (public, MIT). Local: Documents\GitHub\FoxMica.
 
-- Built on FoxOne by Firnschnee (vendored unmodified, currently 4.0.2).
+- Built on FoxOne by Firnschnee (vendored unmodified, currently 4.0.2+pr83: his fork's branch `83-sidebar-hover`, i.e.
+  FoxOne main plus the flyout fix, not a release). Never tag FoxMica on it; put a real release in `vendor/VERSION` first
+  (`node scripts/pull-foxone.mjs <tag>`). `check.mjs` skips the online vendor check while the version has a "+",
+  and fails a release (a FoxMica `VERSION` with no `-dev`) while it does.
 - Mica rules come from Wintego's Firefox-transparent-theme (written for FoxOne 3.5).
 - The look is matched by eye to Explorer with Windhawk's Explorer Styler "MicaBar" theme.
 
