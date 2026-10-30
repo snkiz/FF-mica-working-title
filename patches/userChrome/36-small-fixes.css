@@ -29,3 +29,12 @@
 :root .tabbrowser-tab[busy]:not([pinned]) .tab-background::after {
   display: none !important;
 }
+
+/* Text on the accent (primary buttons in popups). FoxOne pins it to the palette base so any palette stays readable, but
+   base is near black against FoxMica's softer look. The puzzle button's colour (--ut-puzzle-color, which defaults to
+   the palette's hover colour) is the one FoxMica already uses for its highlights, so the text takes the same colour. */
+:root:root {
+  --button-text-color-primary: var(--ut-puzzle-color, var(--uc-color-hover)) !important;
+  --button-text-color-primary-hover: var(--ut-puzzle-color, var(--uc-color-hover)) !important;
+  --button-text-color-primary-active: var(--ut-puzzle-color, var(--uc-color-hover)) !important;
+}
