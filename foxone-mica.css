@@ -1,5 +1,5 @@
 /* BUILT FILE - do not edit by hand.
-   FoxMica 1.0.2-dev: FoxOne 4.0.2 (vendor/userChrome.css) plus patches/userChrome/.
+   FoxMica 1.0.2-dev: FoxOne 4.0.2+pr83 (vendor/userChrome.css) plus patches/userChrome/.
    Made by scripts/assemble.mjs. Change the patches, then rebuild. */
 /*==============================================================================================*
 
@@ -302,6 +302,13 @@
    same lwtheme path) back to violet or the system accent, e.g. on the
    bookmark panel's primary button and checkbox (#77).
 
+   The text on the accent has to travel with it. Nova sets
+   --button-text-color-primary to light-dark(white, gray-70), and a popup
+   resolves light-dark() against its own colour scheme, which a light
+   theme turns light while FoxOne's palette stays dark: white on amber.
+   Base is the dark ink on the dark palette's amber and the light ink on
+   the light palette's dark amber, so it reads in both.
+
    A handful of Nova tokens reference the violet palette DIRECTLY, past
    the accent tokens; those are repointed individually below. Scoped
    :root:not([lwtheme]) like the other surface colours, so a dynamic theme
@@ -314,6 +321,14 @@
   --color-accent-primary-hover: var(--uc-color-accent) !important;
   --color-accent-primary-active: var(--uc-color-accent) !important;
   --color-accent-primary-selected: var(--uc-color-accent) !important;
+  --button-text-color-primary: var(--uc-color-base) !important;
+  --button-text-color-primary-hover: var(--uc-color-base) !important;
+  --button-text-color-primary-active: var(--uc-color-base) !important;
+  /* Nova paints the toolbox with a violet-to-orange gradient, and the sidebar launcher flyout
+     (expand on hover) paints the whole thing. The stop names changed in Firefox 160, so override
+     the gradient itself, which keeps its name on every version. The opaque toolbox colour layer
+     still paints. Unconditional, because the flyout has no lwtheme guard. (#81) */
+  --toolbox-background-gradient: none !important;
 }
 
 /* Direct violet references (satellites). */
@@ -338,9 +353,6 @@
   /* Base chrome text drifts to violet-desaturated-0 (#f2f0f8) under Nova;
      pin to the palette text colour. */
   --text-color: var(--uc-color-text) !important;
-  /* Nova paints the toolbox with a violet-leading gradient; FoxOne pins
-     the toolbox colour already, kill the gradient stop too. */
-  --toolbox-background-color-gradient-leading: var(--uc-color-base) !important;
 }
 
 /* ----------------------------------------------------------------------
@@ -2645,7 +2657,7 @@ sidebar-main {
     padding-inline: revert !important;
   }
   /* Hamburger clearance on the revealed cluster's last item as PADDING, not
-     margin, so the 44px lives inside the item's own hover box. That closes the
+     margin, so the clearance lives inside the item's own hover box. That closes the
      dead zone between the last icon and the fixed hamburger: the toolbaritem
      :hover bridge now spans the whole gap, so the icons stay open while the
      pointer travels from the hamburger onto them. max-width grows by the same
@@ -3073,8 +3085,15 @@ sidebar-main {
   color: var(--uc-color-base) !important;
 }
 
-/* selected tab: accent text only, no background tint or underline */
-.tabbrowser-tab[selected] .tab-background {
+/* selected tab: accent text only, no background tint or underline.
+   Keyed on .tab-background's own [selected], which tab.mjs maps from the
+   tab's [visuallyselected] – the same attribute Nova's rules use. The tab's
+   [selected] moves the moment a tab is picked, [visuallyselected] only once
+   the async tab switcher has the new tab painted. A .tabbrowser-tab[selected]
+   selector left that gap open: the outgoing tab had already lost [selected]
+   but still showed Nova's gradient (or, in private windows, the lwt-tab-line
+   outline), which fast Ctrl+Tab cycling made visible (#80). */
+.tab-background[selected] {
   background-color: transparent !important;
   /* Nova paints a gradient "border" on the active tab via a layered
      background-image (--tab-border-color-accent). FoxOne marks the active
@@ -4346,26 +4365,43 @@ notification-message {
         its full width.
      2. Vertical tabs with "expand on hover": the strip stays narrow, so it
         gets its own offset. The bar hides while the floating launcher is out.
-     3. Vertical tabs any other way: the strip is as wide as it was dragged,
-        which CSS can't read, so the bar stays hidden.
+     3. Vertical tabs any other way: collapsed to icons the strip is the same
+        narrow width as in case 2, so the bar steps aside the same way.
+        Expanded, the strip is as wide as it was dragged, which CSS can't
+        read, so the bar stays hidden.
      4. Sidebar panel open, with any tabs: no room, so the bar stays hidden.
    With the sidebar on the right (:root[sidebar-positionend]) the same offsets
    count from the right edge.
    ========================================================================== */
 
-/* The strip is wider on ESR 153 (measured 49px with horizontal tabs, 43px with vertical tabs on "expand on hover") than
-   on newer Firefox (36px and 48px). ESR 153 still has the pref sidebar.revamp.round-content-area, on by default;
-   newer Firefox dropped it, so the query below only matches the old sidebar. These are the defaults: a number in
-   --ut-sidebar-strip or --ut-sidebar-strip-vertical (foxmica-config.css) wins over them. */
+/* The strip's width is Firefox's own sum, built from tokens that sit on :root and follow the density, so we can
+   build the same sum here. (The width Firefox measures is on #browser, which the toolbox can't read.)
+   Newer Firefox: the launcher button size plus the padding on each side. Firefox's comment: "28px icon button + 2 * 4px
+   = 36px collapsed sidebar" at compact density. Vertical tabs on "expand on hover": the collapsed tab width
+   (--tab-collapsed-width), which Firefox pins the launcher to, plus a classic scrollbar's extra.
+   ESR 153 builds it a little differently: the tab height plus the padding on each side, and the same collapsed tab
+   width. It is recognised by the pref sidebar.revamp.round-content-area, on by default there; newer Firefox dropped it.
+   The numbers after the commas are used only if Firefox ever stops providing a token: they are what we measured on
+   ESR 153 at normal density (49px, 43px) and on newer Firefox (40px, 48px). A number in --ut-sidebar-strip or
+   --ut-sidebar-strip-vertical (foxmica-config.css) wins over all of it. */
 :root {
-  --ut-sidebar-strip-auto: 36px;
-  --ut-sidebar-strip-vertical-auto: 48px;
+  --ut-sidebar-strip-auto: calc(
+    var(--sidebar-launcher-button-size, var(--size-item-large, 32px))
+    + 2 * var(--sidebar-launcher-button-padding-inline, 4px)
+    + var(--tab-collapsed-scrollbar-extra, 0px)
+  );
+  --ut-sidebar-strip-vertical-auto: calc(var(--tab-collapsed-width, 48px) + var(--tab-collapsed-scrollbar-extra, 0px));
 }
 
 @media -moz-pref("sidebar.revamp.round-content-area") {
   :root {
-    --ut-sidebar-strip-auto: 49px;
-    --ut-sidebar-strip-vertical-auto: 43px;
+    /* Measured on ESR 153 at normal density: #sidebar-container is 50.4667px wide. Firefox's own
+       --sidebar-launcher-collapsed-width reads 52.4667px, 2px more than the strip you can see, so it is not used.
+       A fixed 50.47px until the strip's width can be worked out from Firefox's tokens (the old sidebar sets the
+       variable on #browser only, and the toolbox can't read #browser anyway). */
+    --ut-sidebar-strip-auto: 50.47px;
+    /* --tab-collapsed-width runs a constant 1px longer than the strip at every density on ESR 153. */
+    --ut-sidebar-strip-vertical-auto: calc(var(--tab-collapsed-width, 43px) - 1px);
   }
 }
 
@@ -4403,9 +4439,22 @@ notification-message {
     }
   }
 
-  /* 3. Vertical tabs any other way. */
+  /* 3. Vertical tabs any other way (static). Collapsed to icons, the strip is the same narrow width as the hover
+        launcher (Firefox won't let it go below that, it bounces back), so the bar steps aside by the same offset.
+        Expanded, the strip is as wide as it was dragged, which CSS can't read, so the bar stays hidden. */
   @media not -moz-pref("sidebar.visibility", "expand-on-hover") {
-    :root:has(#tabbrowser-tabs[orient="vertical"]) #PersonalToolbar {
+    :root:root:has(#tabbrowser-tabs[orient="vertical"]:not([expanded])) #navigator-toolbox #PersonalToolbar {
+      width: auto !important;
+      left: var(--ut-sidebar-strip-vertical, var(--ut-sidebar-strip-vertical-auto)) !important;
+      right: 0 !important;
+    }
+    :root:root[sidebar-positionend]:has(#tabbrowser-tabs[orient="vertical"]:not([expanded])) #navigator-toolbox #PersonalToolbar {
+      left: 0 !important;
+      right: var(--ut-sidebar-strip-vertical, var(--ut-sidebar-strip-vertical-auto)) !important;
+    }
+    /* Expanded is either flag: the tab strip's [expanded], or the launcher's own [sidebar-launcher-expanded]. */
+    :root:has(#tabbrowser-tabs[orient="vertical"][expanded]) #PersonalToolbar,
+    :root:has(#tabbrowser-tabs[orient="vertical"]):has(#sidebar-container[sidebar-launcher-expanded]) #PersonalToolbar {
       display: none !important;
     }
   }
@@ -4465,6 +4514,15 @@ notification-message {
   display: none !important;
 }
 
+/* Text on the accent (primary buttons in popups). FoxOne pins it to the palette base so any palette stays readable, but
+   base is near black against FoxMica's softer look. The puzzle button's colour (--ut-puzzle-color, which defaults to
+   the palette's hover colour) is the one FoxMica already uses for its highlights, so the text takes the same colour. */
+:root:root {
+  --button-text-color-primary: var(--ut-puzzle-color, var(--uc-color-hover)) !important;
+  --button-text-color-primary-hover: var(--ut-puzzle-color, var(--uc-color-hover)) !important;
+  --button-text-color-primary-active: var(--ut-puzzle-color, var(--uc-color-hover)) !important;
+}
+
 /* ==========================================================================
    6a. LAUNCHER FLYOUT COLOURS
    With vertical tabs and the sidebar set to "expand on hover", the launcher
@@ -4486,6 +4544,40 @@ notification-message {
   background-image: none !important;
   background-color: var(--uc-color-base) !important;
   color: var(--uc-color-text) !important;
+}
+
+/* 6b. The collapsed strip (expand on hover, vertical tabs). Firefox's rule above paints the container whether or not
+   it is expanded, with a solid light-dark(#e8e8e8, #202020) underneath, because it assumes a transparent toolbox could
+   leave a hole. The collapsed strip reserves its own space and sits on the window body, not over the page, so under Mica
+   it can be left clear and the backdrop shows through like it does with horizontal tabs. Only the expanded flyout,
+   which floats over page pixels, needs a solid colour. */
+:root:not([lwtheme])[sidebar-expand-on-hover] #sidebar-container:not([sidebar-launcher-expanded]) {
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
+/* 6c. The panel keeps room for the launcher (expand on hover). With a sidebar panel open (History, Settings), Firefox
+   holds a margin on #sidebar-box the width of the collapsed launcher, so the panel does not slide under the floating
+   launcher. FoxOne zeroes the margin of every .chrome-block with !important, and #sidebar-box is one, so the hold was
+   lost and the panel sat under the launcher. This puts Firefox's own margins back, per version: Nova holds it for
+   as long as a panel is open, the old sidebar (ESR 153) only while the launcher is out or animating. */
+@media -moz-pref("browser.nova.enabled") {
+  :root[sidebar-expand-on-hover] #sidebar-box[sidebar-panel-open]:not([sidebar-positionend]) {
+    margin-inline-start: calc(var(--sidebar-launcher-collapsed-width, 0px) + var(--chrome-window-gap, 0px)) !important;
+  }
+  :root[sidebar-expand-on-hover] #sidebar-box[sidebar-panel-open][sidebar-positionend] {
+    margin-inline-end: calc(var(--sidebar-launcher-collapsed-width, 0px) + var(--chrome-window-gap, 0px)) !important;
+  }
+}
+@media not -moz-pref("browser.nova.enabled") {
+  :root[sidebar-expand-on-hover] #sidebar-box:not([sidebar-positionend])[sidebar-panel-open][sidebar-launcher-hovered][sidebar-launcher-expanded],
+  :root[sidebar-expand-on-hover] #sidebar-box:not([sidebar-positionend])[sidebar-ongoing-animations][sidebar-panel-open] {
+    margin-inline-start: var(--sidebar-launcher-collapsed-width, 0px) !important;
+  }
+  :root[sidebar-expand-on-hover] #sidebar-box[sidebar-positionend][sidebar-panel-open][sidebar-launcher-hovered][sidebar-launcher-expanded],
+  :root[sidebar-expand-on-hover] #sidebar-box[sidebar-positionend][sidebar-ongoing-animations][sidebar-panel-open] {
+    margin-inline-end: var(--sidebar-launcher-collapsed-width, 0px) !important;
+  }
 }
 
 /* ==========================================================================
