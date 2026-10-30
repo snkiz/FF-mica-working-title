@@ -20,3 +20,37 @@
   background-color: var(--uc-color-base) !important;
   color: var(--uc-color-text) !important;
 }
+
+/* 6b. The collapsed strip (expand on hover, vertical tabs). Firefox's rule above paints the container whether or not
+   it is expanded, with a solid light-dark(#e8e8e8, #202020) underneath, because it assumes a transparent toolbox could
+   leave a hole. The collapsed strip reserves its own space and sits on the window body, not over the page, so under Mica
+   it can be left clear and the backdrop shows through like it does with horizontal tabs. Only the expanded flyout,
+   which floats over page pixels, needs a solid colour. */
+:root:not([lwtheme])[sidebar-expand-on-hover] #sidebar-container:not([sidebar-launcher-expanded]) {
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
+/* 6c. The panel keeps room for the launcher (expand on hover). With a sidebar panel open (History, Settings), Firefox
+   holds a margin on #sidebar-box the width of the collapsed launcher, so the panel does not slide under the floating
+   launcher. FoxOne zeroes the margin of every .chrome-block with !important, and #sidebar-box is one, so the hold was
+   lost and the panel sat under the launcher. This puts Firefox's own margins back, per version: Nova holds it for
+   as long as a panel is open, the old sidebar (ESR 153) only while the launcher is out or animating. */
+@media -moz-pref("browser.nova.enabled") {
+  :root[sidebar-expand-on-hover] #sidebar-box[sidebar-panel-open]:not([sidebar-positionend]) {
+    margin-inline-start: calc(var(--sidebar-launcher-collapsed-width, 0px) + var(--chrome-window-gap, 0px)) !important;
+  }
+  :root[sidebar-expand-on-hover] #sidebar-box[sidebar-panel-open][sidebar-positionend] {
+    margin-inline-end: calc(var(--sidebar-launcher-collapsed-width, 0px) + var(--chrome-window-gap, 0px)) !important;
+  }
+}
+@media not -moz-pref("browser.nova.enabled") {
+  :root[sidebar-expand-on-hover] #sidebar-box:not([sidebar-positionend])[sidebar-panel-open][sidebar-launcher-hovered][sidebar-launcher-expanded],
+  :root[sidebar-expand-on-hover] #sidebar-box:not([sidebar-positionend])[sidebar-ongoing-animations][sidebar-panel-open] {
+    margin-inline-start: var(--sidebar-launcher-collapsed-width, 0px) !important;
+  }
+  :root[sidebar-expand-on-hover] #sidebar-box[sidebar-positionend][sidebar-panel-open][sidebar-launcher-hovered][sidebar-launcher-expanded],
+  :root[sidebar-expand-on-hover] #sidebar-box[sidebar-positionend][sidebar-ongoing-animations][sidebar-panel-open] {
+    margin-inline-end: var(--sidebar-launcher-collapsed-width, 0px) !important;
+  }
+}
