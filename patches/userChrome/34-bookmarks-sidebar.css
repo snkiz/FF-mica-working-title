@@ -14,26 +14,43 @@
         its full width.
      2. Vertical tabs with "expand on hover": the strip stays narrow, so it
         gets its own offset. The bar hides while the floating launcher is out.
-     3. Vertical tabs any other way: the strip is as wide as it was dragged,
-        which CSS can't read, so the bar stays hidden.
+     3. Vertical tabs any other way: collapsed to icons the strip is the same
+        narrow width as in case 2, so the bar steps aside the same way.
+        Expanded, the strip is as wide as it was dragged, which CSS can't
+        read, so the bar stays hidden.
      4. Sidebar panel open, with any tabs: no room, so the bar stays hidden.
    With the sidebar on the right (:root[sidebar-positionend]) the same offsets
    count from the right edge.
    ========================================================================== */
 
-/* The strip is wider on ESR 153 (measured 49px with horizontal tabs, 43px with vertical tabs on "expand on hover") than
-   on newer Firefox (36px and 48px). ESR 153 still has the pref sidebar.revamp.round-content-area, on by default;
-   newer Firefox dropped it, so the query below only matches the old sidebar. These are the defaults: a number in
-   --ut-sidebar-strip or --ut-sidebar-strip-vertical (foxmica-config.css) wins over them. */
+/* The strip's width is Firefox's own sum, built from tokens that sit on :root and follow the density, so we can
+   build the same sum here. (The width Firefox measures is on #browser, which the toolbox can't read.)
+   Newer Firefox: the launcher button size plus the padding on each side. Firefox's comment: "28px icon button + 2 * 4px
+   = 36px collapsed sidebar" at compact density. Vertical tabs on "expand on hover": the collapsed tab width
+   (--tab-collapsed-width), which Firefox pins the launcher to, plus a classic scrollbar's extra.
+   ESR 153 builds it a little differently: the tab height plus the padding on each side, and the same collapsed tab
+   width. It is recognised by the pref sidebar.revamp.round-content-area, on by default there; newer Firefox dropped it.
+   The numbers after the commas are used only if Firefox ever stops providing a token: they are what we measured on
+   ESR 153 at normal density (49px, 43px) and on newer Firefox (40px, 48px). A number in --ut-sidebar-strip or
+   --ut-sidebar-strip-vertical (foxmica-config.css) wins over all of it. */
 :root {
-  --ut-sidebar-strip-auto: 36px;
-  --ut-sidebar-strip-vertical-auto: 48px;
+  --ut-sidebar-strip-auto: calc(
+    var(--sidebar-launcher-button-size, var(--size-item-large, 32px))
+    + 2 * var(--sidebar-launcher-button-padding-inline, 4px)
+    + var(--tab-collapsed-scrollbar-extra, 0px)
+  );
+  --ut-sidebar-strip-vertical-auto: calc(var(--tab-collapsed-width, 48px) + var(--tab-collapsed-scrollbar-extra, 0px));
 }
 
 @media -moz-pref("sidebar.revamp.round-content-area") {
   :root {
-    --ut-sidebar-strip-auto: 49px;
-    --ut-sidebar-strip-vertical-auto: 43px;
+    /* Measured on ESR 153 at normal density: #sidebar-container is 50.4667px wide. Firefox's own
+       --sidebar-launcher-collapsed-width reads 52.4667px, 2px more than the strip you can see, so it is not used.
+       A fixed 50.47px until the strip's width can be worked out from Firefox's tokens (the old sidebar sets the
+       variable on #browser only, and the toolbox can't read #browser anyway). */
+    --ut-sidebar-strip-auto: 50.47px;
+    /* --tab-collapsed-width runs a constant 1px longer than the strip at every density on ESR 153. */
+    --ut-sidebar-strip-vertical-auto: calc(var(--tab-collapsed-width, 43px) - 1px);
   }
 }
 
@@ -71,9 +88,22 @@
     }
   }
 
-  /* 3. Vertical tabs any other way. */
+  /* 3. Vertical tabs any other way (static). Collapsed to icons, the strip is the same narrow width as the hover
+        launcher (Firefox won't let it go below that, it bounces back), so the bar steps aside by the same offset.
+        Expanded, the strip is as wide as it was dragged, which CSS can't read, so the bar stays hidden. */
   @media not -moz-pref("sidebar.visibility", "expand-on-hover") {
-    :root:has(#tabbrowser-tabs[orient="vertical"]) #PersonalToolbar {
+    :root:root:has(#tabbrowser-tabs[orient="vertical"]:not([expanded])) #navigator-toolbox #PersonalToolbar {
+      width: auto !important;
+      left: var(--ut-sidebar-strip-vertical, var(--ut-sidebar-strip-vertical-auto)) !important;
+      right: 0 !important;
+    }
+    :root:root[sidebar-positionend]:has(#tabbrowser-tabs[orient="vertical"]:not([expanded])) #navigator-toolbox #PersonalToolbar {
+      left: 0 !important;
+      right: var(--ut-sidebar-strip-vertical, var(--ut-sidebar-strip-vertical-auto)) !important;
+    }
+    /* Expanded is either flag: the tab strip's [expanded], or the launcher's own [sidebar-launcher-expanded]. */
+    :root:has(#tabbrowser-tabs[orient="vertical"][expanded]) #PersonalToolbar,
+    :root:has(#tabbrowser-tabs[orient="vertical"]):has(#sidebar-container[sidebar-launcher-expanded]) #PersonalToolbar {
       display: none !important;
     }
   }
