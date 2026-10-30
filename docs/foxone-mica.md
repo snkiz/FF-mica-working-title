@@ -25,7 +25,7 @@ Everything you are meant to change is in `foxmica-config.css`. It is variables o
 | `--ut-puzzle-color` | Colour of the extensions (puzzle) button icon, in every mode. A bit of flare; set `currentColor` for Firefox's plain look. |
 | `--ut-bookmarks-inflow` | The bookmarks bar floats over the page (`0`) or sits in the page flow (`1`). |
 | `--ut-bookmarks-bg` | Colour of the floating bookmarks bar (commented example in `foxmica-config.css`). The last number is its opacity: lower lets the page show through more. |
-| `--ut-sidebar-strip`, `--ut-sidebar-strip-vertical` | How far the floating bookmarks bar steps aside for the sidebar launcher: horizontal tabs (default `36px`, `48px` on ESR 153) and vertical tabs on "expand on hover" (default `49px`, `43px` on ESR 153). Not set in the config by default; a number there wins. Fixed numbers: the bar does not follow if you resize the strip. |
+| `--ut-sidebar-strip`, `--ut-sidebar-strip-vertical` | How far the floating bookmarks bar steps aside for the sidebar launcher: horizontal tabs and vertical tabs on "expand on hover". Not set by default: FoxMica works the width out from Firefox's own sizes, so it follows the density. A commented example sits in the ADVANCED section of `foxmica-config.css` as a last resort; a number there overrides it, and a fixed number does not follow the density. |
 | `--ut-drag-left` | Window-drag area left of the sidebar button when not maximized. `0` removes it. |
 | `--ut-hide-trust-label` | Hide the text next to the site-info icon ("Not secure"). Default: hidden. |
 | `--ut-hide-pip-button` | Hide the picture-in-picture button in the URL bar (the video has its own). Default: hidden. |
