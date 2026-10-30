@@ -106,8 +106,10 @@
    * leaves. (#60) */
   --uc-hide-window-buttons: 0;
 
-  /* Hamburger button width – reserved in tab bar to prevent overlap */
-  --uc-hamburger-width: 44px;
+  /* Hamburger button width – reserved in tab bar to prevent overlap.
+   * With the pinned puzzle it works out as the puzzle's own width, so the
+   * puzzle sits at regular button spacing from the tab-bar item before it. */
+  --uc-hamburger-width: 36px;
 
   /* Extensions (puzzle) button – pin it to the right edge, next to the
    * hamburger, instead of leaving it in the nav-bar after the URL bar
@@ -118,8 +120,11 @@
   --uc-extensions-button-right: 1;
   /* Width reserved for the pinned puzzle button. Also its distance from the
    * window controls beyond the hamburger, so it doubles as the gap knob:
-   * lower it to pull the two buttons closer, raise it to space them out. */
-  --uc-extensions-button-width: 36px;
+   * lower it to pull the two buttons closer, raise it to space them out.
+   * The hamburger is 4px wider than the puzzle (40 vs 36 at normal density),
+   * so 38 puts the two at regular button spacing. Measured on Windows, FF159;
+   * compact and normal both read even with 36 / 38. (#73) */
+  --uc-extensions-button-width: 38px;
 
   /* Extra toolbar button width (extensions, uBlock etc.) */
   --uc-toolbar-button-width: 36px;
@@ -454,6 +459,13 @@
    same lwtheme path) back to violet or the system accent, e.g. on the
    bookmark panel's primary button and checkbox (#77).
 
+   The text on the accent has to travel with it. Nova sets
+   --button-text-color-primary to light-dark(white, gray-70), and a popup
+   resolves light-dark() against its own colour scheme, which a light
+   theme turns light while FoxOne's palette stays dark: white on amber.
+   Base is the dark ink on the dark palette's amber and the light ink on
+   the light palette's dark amber, so it reads in both.
+
    A handful of Nova tokens reference the violet palette DIRECTLY, past
    the accent tokens; those are repointed individually below. Scoped
    :root:not([lwtheme]) like the other surface colours, so a dynamic theme
@@ -466,6 +478,14 @@
   --color-accent-primary-hover: var(--uc-color-accent) !important;
   --color-accent-primary-active: var(--uc-color-accent) !important;
   --color-accent-primary-selected: var(--uc-color-accent) !important;
+  --button-text-color-primary: var(--uc-color-base) !important;
+  --button-text-color-primary-hover: var(--uc-color-base) !important;
+  --button-text-color-primary-active: var(--uc-color-base) !important;
+  /* Nova paints the toolbox with a violet-to-orange gradient, and the sidebar launcher flyout
+     (expand on hover) paints the whole thing. The stop names changed in Firefox 160, so override
+     the gradient itself, which keeps its name on every version. The opaque toolbox colour layer
+     still paints. Unconditional, because the flyout has no lwtheme guard. (#81) */
+  --toolbox-background-gradient: none !important;
 }
 
 /* Direct violet references (satellites). */
@@ -490,9 +510,6 @@
   /* Base chrome text drifts to violet-desaturated-0 (#f2f0f8) under Nova;
      pin to the palette text colour. */
   --text-color: var(--uc-color-text) !important;
-  /* Nova paints the toolbox with a violet-leading gradient; FoxOne pins
-     the toolbox colour already, kill the gradient stop too. */
-  --toolbox-background-color-gradient-leading: var(--uc-color-base) !important;
 }
 
 /* ----------------------------------------------------------------------
@@ -2797,7 +2814,7 @@ sidebar-main {
     padding-inline: revert !important;
   }
   /* Hamburger clearance on the revealed cluster's last item as PADDING, not
-     margin, so the 44px lives inside the item's own hover box. That closes the
+     margin, so the clearance lives inside the item's own hover box. That closes the
      dead zone between the last icon and the fixed hamburger: the toolbaritem
      :hover bridge now spans the whole gap, so the icons stay open while the
      pointer travels from the hamburger onto them. max-width grows by the same
@@ -3225,8 +3242,15 @@ sidebar-main {
   color: var(--uc-color-base) !important;
 }
 
-/* selected tab: accent text only, no background tint or underline */
-.tabbrowser-tab[selected] .tab-background {
+/* selected tab: accent text only, no background tint or underline.
+   Keyed on .tab-background's own [selected], which tab.mjs maps from the
+   tab's [visuallyselected] – the same attribute Nova's rules use. The tab's
+   [selected] moves the moment a tab is picked, [visuallyselected] only once
+   the async tab switcher has the new tab painted. A .tabbrowser-tab[selected]
+   selector left that gap open: the outgoing tab had already lost [selected]
+   but still showed Nova's gradient (or, in private windows, the lwt-tab-line
+   outline), which fast Ctrl+Tab cycling made visible (#80). */
+.tab-background[selected] {
   background-color: transparent !important;
   /* Nova paints a gradient "border" on the active tab via a layered
      background-image (--tab-border-color-accent). FoxOne marks the active
