@@ -4556,27 +4556,32 @@ notification-message {
   background-color: transparent !important;
 }
 
-/* 6c. The panel keeps room for the launcher (expand on hover). With a sidebar panel open (History, Settings), Firefox
-   holds a margin on #sidebar-box the width of the collapsed launcher, so the panel does not slide under the floating
-   launcher. FoxOne zeroes the margin of every .chrome-block with !important, and #sidebar-box is one, so the hold was
-   lost and the panel sat under the launcher. This puts Firefox's own margins back, per version: Nova holds it for
-   as long as a panel is open, the old sidebar (ESR 153) only while the launcher is out or animating. */
-@media -moz-pref("browser.nova.enabled") {
-  :root[sidebar-expand-on-hover] #sidebar-box[sidebar-panel-open]:not([sidebar-positionend]) {
-    margin-inline-start: calc(var(--sidebar-launcher-collapsed-width, 0px) + var(--chrome-window-gap, 0px)) !important;
+/* 6c. The panel keeps room for the launcher (expand on hover). With a sidebar panel open (History, Settings),
+   Firefox holds a margin on #sidebar-box the width of the collapsed launcher, so the panel does not slide under the
+   floating launcher's hover trigger. FoxOne zeroes the margin of every .chrome-block with !important, and
+   #sidebar-box is one, so the hold was lost. This puts Firefox's own margins back, for the panel only. Only the old
+   sidebar (ESR 153) needs it: newer Firefox no longer loses the margin, so a copy there would add a second one. The
+   old sidebar is recognised by the pref newer builds dropped. Per setting: with Nova on the margin holds for as long
+   as a panel is open, with it off only while the launcher is hovered and expanded or animating. Can go once
+   FoxOne carries the same fix (the same block is FoxOne PR #84). */
+@media -moz-pref("sidebar.revamp.round-content-area") {
+  @media -moz-pref("browser.nova.enabled") {
+    :root[sidebar-expand-on-hover] #sidebar-box[sidebar-panel-open]:not([sidebar-positionend]) {
+      margin-inline-start: calc(var(--sidebar-launcher-collapsed-width, 0px) + var(--chrome-window-gap, 0px)) !important;
+    }
+    :root[sidebar-expand-on-hover] #sidebar-box[sidebar-panel-open][sidebar-positionend] {
+      margin-inline-end: calc(var(--sidebar-launcher-collapsed-width, 0px) + var(--chrome-window-gap, 0px)) !important;
+    }
   }
-  :root[sidebar-expand-on-hover] #sidebar-box[sidebar-panel-open][sidebar-positionend] {
-    margin-inline-end: calc(var(--sidebar-launcher-collapsed-width, 0px) + var(--chrome-window-gap, 0px)) !important;
-  }
-}
-@media not -moz-pref("browser.nova.enabled") {
-  :root[sidebar-expand-on-hover] #sidebar-box:not([sidebar-positionend])[sidebar-panel-open][sidebar-launcher-hovered][sidebar-launcher-expanded],
-  :root[sidebar-expand-on-hover] #sidebar-box:not([sidebar-positionend])[sidebar-ongoing-animations][sidebar-panel-open] {
-    margin-inline-start: var(--sidebar-launcher-collapsed-width, 0px) !important;
-  }
-  :root[sidebar-expand-on-hover] #sidebar-box[sidebar-positionend][sidebar-panel-open][sidebar-launcher-hovered][sidebar-launcher-expanded],
-  :root[sidebar-expand-on-hover] #sidebar-box[sidebar-positionend][sidebar-ongoing-animations][sidebar-panel-open] {
-    margin-inline-end: var(--sidebar-launcher-collapsed-width, 0px) !important;
+  @media not -moz-pref("browser.nova.enabled") {
+    :root[sidebar-expand-on-hover] #sidebar-box:not([sidebar-positionend])[sidebar-panel-open][sidebar-launcher-hovered][sidebar-launcher-expanded],
+    :root[sidebar-expand-on-hover] #sidebar-box:not([sidebar-positionend])[sidebar-ongoing-animations][sidebar-panel-open] {
+      margin-inline-start: var(--sidebar-launcher-collapsed-width, 0px) !important;
+    }
+    :root[sidebar-expand-on-hover] #sidebar-box[sidebar-positionend][sidebar-panel-open][sidebar-launcher-hovered][sidebar-launcher-expanded],
+    :root[sidebar-expand-on-hover] #sidebar-box[sidebar-positionend][sidebar-ongoing-animations][sidebar-panel-open] {
+      margin-inline-end: var(--sidebar-launcher-collapsed-width, 0px) !important;
+    }
   }
 }
 
