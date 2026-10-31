@@ -22,7 +22,10 @@ where they disagree.
   description. (3) New screenshots with the new bookmarks bar. (4) Split the settings table in `docs/foxone-mica.md` into
   sections in the same order as `foxmica-config.css`. `micaplus-config.css` itself gets the same sections; its table in
   `docs/stockmica-plus.md` is probably too short to split, but is reordered to match the file. (5) Possibly borrow Firn's
-  doc checker script, so the tables are checked against the config files.
+  doc checker script, so the tables are checked against the config files. (6) Update the FirefoxCSS-Store listing
+  (firefoxcss-store.github.io/themes/foxmica): take the links out of the description and keep the wording (it does not
+  support links), resize the screenshots, and keep only a new main image (a full window, like the other listings have) and
+  a properly sized composite; the other images can go. Needs an issue filed in the store's repository to get it changed.
 - **Drop section 6c of patch 37 when `vendor/` has the FoxOne fix.** The held margin for the sidebar panel with "expand
   on hover" (ESR 153 only) is FoxOne PR #84 (sidebar-panel-under-fix); FoxOne 4.1 will probably carry it. When `vendor/` is on a
   FoxOne release that has it, remove 6c and its CHANGELOG entry, or reword the entry as "now in FoxOne".
