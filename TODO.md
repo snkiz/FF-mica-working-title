@@ -17,6 +17,12 @@ where they disagree.
 
 ## Next time
 
+- **1.1 docs pass.** (1) Move the install instructions into the docs landing page (`docs/README.md`) and lead with them.
+  (2) Cut the OEM tab settings table on `docs/README.md` ("Tab settings (for OEM drop-in replacement tabs)") down to its
+  description. (3) New screenshots with the new bookmarks bar. (4) Split the settings table in `docs/foxone-mica.md` into
+  sections in the same order as `foxmica-config.css`. `micaplus-config.css` itself gets the same sections; its table in
+  `docs/stockmica-plus.md` is probably too short to split, but is reordered to match the file. (5) Possibly borrow Firn's
+  doc checker script, so the tables are checked against the config files.
 - **Drop section 6c of patch 37 when `vendor/` has the FoxOne fix.** The held margin for the sidebar panel with "expand
   on hover" (ESR 153 only) is FoxOne PR #84 (sidebar-panel-under-fix); FoxOne 4.1 will probably carry it. When `vendor/` is on a
   FoxOne release that has it, remove 6c and its CHANGELOG entry, or reword the entry as "now in FoxOne".
