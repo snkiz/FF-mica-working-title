@@ -17,6 +17,9 @@ where they disagree.
 
 ## Next time
 
+- **Drop section 6c of patch 37 when `vendor/` has the FoxOne fix.** The held margin for the sidebar panel with "expand
+  on hover" (ESR 153 only) is FoxOne PR #84 (sidebar-panel-under-fix); FoxOne 4.1 will probably carry it. When `vendor/` is on a
+  FoxOne release that has it, remove 6c and its CHANGELOG entry, or reword the entry as "now in FoxOne".
 - **FoxOne #73 (4.1 option cleanup, input open until 2026-11-08).** Firn is keeping the puzzle switch (`--uc-extensions-button-right`) for us. Our positions are drafted in the private notes (issue-drafts).
   If FoxOne removes `--uc-extensions-button-right`, StockMica+ and PWA windows need it, so FoxMica carries its own copy. If
   it removes `--uc-show-all-tabs-button`, the all-tabs button stays wherever Firefox puts it, in every mode: drop the setting

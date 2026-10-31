@@ -38,12 +38,13 @@ The settings and each flavour are documented in [docs/](https://github.com/snkiz
   instead of hiding it; an expanded strip still hides the bar, since its width is wherever it was dragged.
   `patches/userChrome/34-bookmarks-sidebar.css`.
 
-- **A sidebar panel no longer slides under the launcher with "expand on hover".** With a panel open (History, Settings),
-  Firefox keeps a margin the width of the collapsed launcher on the panel, so it sits beside the launcher. FoxOne's
-  `.chrome-block { margin-inline: 0 !important }` cancels that margin, because the panel carries the `chrome-block`
-  class, so the panel went under the launcher. This is a FoxOne bug, not a FoxMica one; the patch puts Firefox's own
-  margins back for both sidebar sides, and can go once FoxOne fixes it. Tested on ESR 153 with "browser.nova.enabled" on and off, and with the sidebar on
-  either side. `patches/userChrome/37-launcher-flyout.css`.
+- **A sidebar panel no longer slides under the launcher with "expand on hover" on ESR 153.** With a panel open (History,
+  Settings), Firefox keeps a margin the width of the collapsed launcher on the panel, so it sits beside the launcher.
+  FoxOne's `.chrome-block { margin-inline: 0 !important }` cancels that margin, because the panel carries the
+  `chrome-block` class, so the panel went under the launcher's hover trigger. This is a FoxOne bug, not a FoxMica one
+  ([FoxOne #84](https://github.com/Firnschnee/FoxOne/pull/84)). The patch puts Firefox's own margins back for both sidebar sides, only on the old sidebar (newer Firefox does not lose
+  the margin), and can go once FoxOne fixes it. Tested on ESR 153 with "browser.nova.enabled" on and off, and with the
+  sidebar on either side. `patches/userChrome/37-launcher-flyout.css`.
 - **The in-flow bookmarks bar (`--ut-bookmarks-inflow: 1`) no longer grows when you hover the toolbar**
   ([#44](https://github.com/snkiz/FoxMica/issues/44)). It opened on any hover over the whole toolbar, at FoxOne's `4em`
   plus 6px padding. It now follows the floating bar's rules: it opens when the pointer rests on the URL text, on the
