@@ -17,6 +17,9 @@ where they disagree.
 
 ## Next time
 
+- **[#45](https://github.com/snkiz/FoxMica/issues/45): vertical tab fill is a fixed 10px, tuned on ESR 153.** Patch 39's
+  `margin-inline: 10px` is off on main and newer. Rework it from Firefox's tab tokens, the way patch 34 does for the
+  bookmarks bar (which token is still to be measured), keeping a measured fallback for ESR 153. The test list is in the issue.
 - **1.1 docs pass.** (1) Move the install instructions into the docs landing page (`docs/README.md`) and lead with them.
   (2) Cut the OEM tab settings table on `docs/README.md` ("Tab settings (for OEM drop-in replacement tabs)") down to its
   description. (3) New screenshots with the new bookmarks bar. (4) Split the settings table in `docs/foxone-mica.md` into
@@ -100,7 +103,7 @@ where they disagree.
   edge when the sidebar is hidden, so the bar goes full width. May need the bar switched from absolute to fixed
   (anchor rules). Jumps rather than slides; fine for a bar that only shows on hover. Experiment first, test profile.
 
-- Pre-1.0 test pass (2026-10-18): go through every open issue and every TODO feature, drop the ones that are obsolete, and turn the rest into one testing list (it will be a big one). Includes: re-check the about:config prefs table, starting with whether widget.windows.mica alone is enough (README says the `toplevel-backdrop` row is being re-checked); each StockMica+ setting (`micaplus-config.css`) switched off, and each mode (FoxOne-Mica, StockMica+, OEM drop-in replacement tabs, PWA windows) checked and documented with screenshots; ESR 153: both known bugs are fixed (#37, #38), so give it a full test pass in every mode before calling it supported. 0.9.1 is built on FoxOne 3.9.9 (what was tested; 3.9.10 was out on 2026-10-24); for 1.0, pull whatever FoxOne release is current then with `node scripts/pull-foxone.mjs <tag>`, rebuild, and re-test. Also test how the theme behaves with Firefox's built-in pin to taskbar feature (Windows), in every mode of regular Firefox (PWA windows disable the button, so nothing to test there).
+- Pre-1.0 test pass (2026-10-18): go through every open issue and every TODO feature, drop the ones that are obsolete, and turn the rest into one testing list (it will be a big one). Includes: re-check the about:config prefs table, starting with whether widget.windows.mica alone is enough (README says the `toplevel-backdrop` row is being re-checked); each StockMica+ setting (`micaplus-config.css`) switched off, and each mode (FoxOne-Mica, StockMica+, OEM drop-in replacement tabs, PWA windows) checked and documented with screenshots; ESR 153: both known bugs are fixed (#37, #38), so give it a full test pass in every mode before calling it supported. 0.9.1 is built on FoxOne 3.9.9 (what was tested; 3.9.10 was out on 2026-10-24); for 1.0, pull whatever FoxOne release is current then with `node scripts/pull-foxone.mjs <tag>`, rebuild, and re-test. Also test how the theme behaves with Firefox's built-in pin to taskbar feature (Windows), in every mode of regular Firefox (PWA windows disable the button, so nothing to test there). DONE 2026-10-31, briefly: the window has the same toolbar layout as vertical tabs without the tabs, it cannot be customised separately, and the theming looked fine at first glance. Not worth more attention unless someone files an issue.
 
 ## After launch
 

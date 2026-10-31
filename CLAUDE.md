@@ -91,6 +91,25 @@ root is FoxMica's own version (`1.0.2`, 2026-10-28). Details and the patch forma
   `83-sidebar-hover` of his FoxOne fork), #82 (bookmarks bar and sidebar proposal, links patch 34). FoxOne #80 (Ctrl+Tab
   tab-border flash) is covered here by patch 35 and by the pinstripe switch at 0, each on its own. Release steps are in
   `Notes-n-Tools\FoxMica-RELEASING.md`; the 1.0.2 release notes are in `issue-drafts\posted`.
+- **Next release, in progress (2026-10-31; `VERSION` is `1.0.2-dev`, `vendor/` is `4.0.2+pr83`, a pre-release FoxOne
+  copy that `check.mjs` refuses to release on).** Since the 1.0.2 tag: the in-flow bookmarks bar no longer grows on
+  toolbar hover (#44, patch 28, collapsed to 0px) and the star joins the reveal triggers (patches 28, 32); the URL bar
+  click area (#34); patch 34 now works the sidebar offset out from Firefox's tokens, so it follows the density, with
+  `--ut-sidebar-strip` and `--ut-sidebar-strip-vertical` as last-resort overrides in the ADVANCED section of
+  `foxmica-config.css` (ESR 153 is the exception: horizontal is a measured 50.47px, vertical is `--tab-collapsed-width`
+  less 1px, and the bar hides only for expanded states); patch 37 paints the collapsed launcher strip transparent (6b)
+  and, on ESR 153 only, puts back the margin FoxOne's `.chrome-block` reset removes from `#sidebar-box` (6c, keyed on
+  `#sidebar-box.chrome-block`, FoxOne PR #84; remove it when `vendor/` has the fix, see TODO); patch 36 uses the puzzle
+  colour for primary-button text (a stopgap, the maths route is td30). Open: #45 (vertical tab fill is a fixed 10px, tuned
+  on ESR 153), the 1.1 docs pass and the FirefoxCSS-Store listing (both in TODO). The changelog is current.
+- Lesson (2026-10-31): measure before writing a formula. Firefox's own `--sidebar-launcher-collapsed-width` read 52.47px
+  while the strip you can see was 50.47px, and a formula built from `--space-medium` (0.75rem, not 12px) was 5px off.
+  Take the width from the visible element in the inspector, at each density, and keep the reading in the comment.
+- Lesson (2026-10-31): when Firefox's own rule looks struck out in the inspector, look for a vendored rule with
+  `!important` that wins (`.chrome-block { margin-inline: 0 !important }` held the sidebar panel under the launcher).
+  Key the fix on that cause, not on a pref, so it matches only where the problem is.
+- Lesson (2026-10-31): in PowerShell, `R` is an alias for `Invoke-History`; do not name a helper function with one
+  letter. `[IO.File]` in PowerShell resolves relative paths against `C:\Windows\System32`, so use absolute paths.
 - Lesson (2026-10-28): Firefox renamed the toolbox gradient stops between 159 and 160 (`--toolbox-background-color-gradient-*`
   became `--toolbox-background-gradient-*`), so set both spellings. ESR 153's sidebar is different and has no gradient problem.
 - **Road to 1.0 (done, kept for the record):** a full test pass of every mode with screenshots
